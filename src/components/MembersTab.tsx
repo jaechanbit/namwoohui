@@ -19,6 +19,33 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, onSelectMember }) => {
 
   const filters = ['전체', '회장단', '운영진', '상조위원', '감사'];
 
+  // 1. 집행부 정보 동적 추출 (회장, 총무, 재무)
+  const executives = useMemo(() => {
+    const findExec = (roleName: string) => {
+      return members.find(m => m.role === roleName) || 
+             members.find(m => m.role.includes(roleName));
+    };
+
+    return {
+      president: findExec('회장'),
+      secretary: findExec('총무'),
+      treasurer: findExec('재무')
+    };
+  }, [members]);
+
+  // 이름에서 닉네임 요약 (예: 정영구 -> 영구, 홍길동 -> 길동)
+  const getNickname = (name: string) => {
+    if (!name) return '?';
+    if (name.length <= 2) return name;
+    return name.substring(1);
+  };
+
+  const handleCopyAccount = (bankName: string, accountNumber: string) => {
+    navigator.clipboard.writeText(accountNumber)
+      .then(() => alert(`${bankName} 계좌번호(${accountNumber})가 복사되었습니다.`))
+      .catch(() => alert('복사에 실패했습니다. 수동으로 복사해주세요.'));
+  };
+
   // Filter & Search Logic
   const filteredMembers = useMemo(() => {
     return members.filter((member) => {
@@ -63,8 +90,83 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, onSelectMember }) => {
 
   return (
     <div className="animate-fade-in">
+      {/* 남우회 공식 통장 섹션 */}
+      <div className="account-section">
+        <div className="account-header">
+          <span className="account-title">남우회 공식 통장</span>
+          <span className="account-subtitle">입금 시 성명을 적어주세요</span>
+        </div>
+
+        <div className="bank-card membership">
+          <span className="bank-card-type">회비 통장</span>
+          <span className="bank-card-name">국민은행</span>
+          <span className="bank-card-number">000000-00-000000</span>
+          <span className="bank-card-owner">예금주 남우회</span>
+          <button 
+            className="bank-copy-btn btn-interactive" 
+            onClick={() => handleCopyAccount('국민은행', '000000-00-000000')}
+          >
+            복사
+          </button>
+        </div>
+
+        <div className="bank-card mutual-aid">
+          <span className="bank-card-type">상조 통장</span>
+          <span className="bank-card-name">농협은행</span>
+          <span className="bank-card-number">000-0000-0000-00</span>
+          <span className="bank-card-owner">예금주 남우회</span>
+          <button 
+            className="bank-copy-btn btn-interactive" 
+            onClick={() => handleCopyAccount('농협은행', '000-0000-0000-00')}
+          >
+            복사
+          </button>
+        </div>
+      </div>
+
+      {/* 집행부 섹션 */}
+      <div className="exec-section">
+        <div className="exec-label">EXECUTIVE COMMITTEE</div>
+        <div className="exec-title">2026 집행부</div>
+        
+        <div className="exec-grid">
+          {/* 회장 카드 */}
+          <div className="exec-card">
+            <span className="exec-card-title">회장</span>
+            <div className="exec-card-avatar">
+              {getNickname(executives.president?.name || '미지정')}
+            </div>
+            <span className="exec-card-name">
+              {executives.president?.name || '미지정'}
+            </span>
+          </div>
+
+          {/* 총무 카드 */}
+          <div className="exec-card">
+            <span className="exec-card-title">총무</span>
+            <div className="exec-card-avatar">
+              {getNickname(executives.secretary?.name || '미지정')}
+            </div>
+            <span className="exec-card-name">
+              {executives.secretary?.name || '미지정'}
+            </span>
+          </div>
+
+          {/* 재무 카드 */}
+          <div className="exec-card">
+            <span className="exec-card-title">재무</span>
+            <div className="exec-card-avatar">
+              {getNickname(executives.treasurer?.name || '미지정')}
+            </div>
+            <span className="exec-card-name">
+              {executives.treasurer?.name || '미지정'}
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Search Input */}
-      <div className="search-container">
+      <div className="search-container" style={{ marginTop: '24px' }}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="search-icon">
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z" />
         </svg>
