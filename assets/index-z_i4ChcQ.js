@@ -11122,6 +11122,7 @@ var ScheduleTab = ({ schedules }) => {
 };
 //#endregion
 //#region src/components/AdminTab.tsx
+var import_react_dom = require_react_dom();
 var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedules, onAddSchedule, onUpdateSchedule, onDeleteSchedule, accounts, onUpdateAccounts, onAssignExecutive }) => {
 	const [isAuthenticated, setIsAuthenticated] = (0, import_react.useState)(false);
 	const [password, setPassword] = (0, import_react.useState)("");
@@ -11906,7 +11907,7 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 					]
 				})]
 			}),
-			isMemberModalOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			isMemberModalOpen && (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "modal-backdrop animate-fade-in",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
 					onSubmit: handleMemberSubmit,
@@ -11984,8 +11985,8 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 						})
 					]
 				})
-			}),
-			isScheduleModalOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			}), document.body),
+			isScheduleModalOpen && (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "modal-backdrop animate-fade-in",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
 					onSubmit: handleScheduleSubmit,
@@ -12051,7 +12052,7 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 						})
 					]
 				})
-			})
+			}), document.body)
 		]
 	});
 };
