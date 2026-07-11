@@ -39,7 +39,17 @@ function App() {
             .order('name', { ascending: true });
           
           if (!error && data) {
-            setMembers(data as Member[]);
+            // 각 회원 객체에 photo가 없으면 로컬 스토리지에 백업된 로컬 사진이 있는지 연동
+            const membersWithLocalPhotos = (data as Member[]).map(m => {
+              if (!m.photo) {
+                const localPhoto = localStorage.getItem(`namwoohui_photo_${m.id}`);
+                if (localPhoto) {
+                  return { ...m, photo: localPhoto };
+                }
+              }
+              return m;
+            });
+            setMembers(membersWithLocalPhotos);
           } else {
             console.error('Supabase fetch members failed:', error);
             setMembers(initialMembers);
@@ -147,7 +157,32 @@ function App() {
             setMembers((prev) => [data[0] as Member, ...prev]);
           } else {
             console.error('DB Insert failed:', error);
-            alert('데이터 저장 실패: ' + (error?.message || '알 수 없는 오류'));
+            const isColumnError = error?.code === '42703' || error?.message?.includes('column') || error?.message?.includes('photo');
+            
+            if (isColumnError) {
+              // photo 필드가 DB 테이블에 없을 경우, 제외하고 재인서트 시도
+              const { photo, ...dataWithoutPhoto } = newMemberData;
+              supabase
+                .from('members')
+                .insert([dataWithoutPhoto])
+                .select()
+                .then(({ data: retryData, error: retryError }) => {
+                  if (!retryError && retryData && retryData.length > 0) {
+                    const createdMember = retryData[0] as Member;
+                    if (photo) {
+                      localStorage.setItem(`namwoohui_photo_${createdMember.id}`, photo);
+                      createdMember.photo = photo;
+                    }
+                    setMembers((prev) => [createdMember, ...prev]);
+                    alert('실시간 DB에 photo 컬럼이 존재하지 않아, 회원 사진은 브라우저(로컬스토리지)에만 안전하게 백업되었습니다. (회원 정보는 DB에 정상 반영됨)');
+                  } else {
+                    console.error('Retry insert failed:', retryError);
+                    alert('데이터 저장 실패: ' + (retryError?.message || '알 수 없는 오류'));
+                  }
+                });
+            } else {
+              alert('데이터 저장 실패: ' + (error?.message || '알 수 없는 오류'));
+            }
           }
         });
     } else {
@@ -173,12 +208,48 @@ function App() {
         .eq('id', updatedMember.id)
         .then(({ error }) => {
           if (!error) {
+            if (updatedMember.photo) {
+              localStorage.setItem(`namwoohui_photo_${updatedMember.id}`, updatedMember.photo);
+            } else {
+              localStorage.removeItem(`namwoohui_photo_${updatedMember.id}`);
+            }
             setMembers((prev) =>
               prev.map((m) => (m.id === updatedMember.id ? updatedMember : m))
             );
           } else {
             console.error('DB Update failed:', error);
-            alert('데이터 수정 실패: ' + error.message);
+            const isColumnError = error?.code === '42703' || error?.message?.includes('column') || error?.message?.includes('photo');
+            
+            if (isColumnError) {
+              // photo 필드가 DB 테이블에 없을 경우, 제외하고 재수정 시도
+              supabase
+                .from('members')
+                .update({
+                  name: updatedMember.name,
+                  role: updatedMember.role,
+                  company: updatedMember.company,
+                  phone: updatedMember.phone
+                })
+                .eq('id', updatedMember.id)
+                .then(({ error: retryError }) => {
+                  if (!retryError) {
+                    if (updatedMember.photo) {
+                      localStorage.setItem(`namwoohui_photo_${updatedMember.id}`, updatedMember.photo);
+                    } else {
+                      localStorage.removeItem(`namwoohui_photo_${updatedMember.id}`);
+                    }
+                    setMembers((prev) =>
+                      prev.map((m) => (m.id === updatedMember.id ? updatedMember : m))
+                    );
+                    alert('실시간 DB에 photo 컬럼이 존재하지 않아, 회원 사진은 브라우저(로컬스토리지)에만 안전하게 백업되었습니다. (회원 정보는 DB에 정상 반영됨)');
+                  } else {
+                    console.error('Retry update failed:', retryError);
+                    alert('데이터 수정 실패: ' + retryError.message);
+                  }
+                });
+            } else {
+              alert('데이터 수정 실패: ' + error.message);
+            }
           }
         });
     } else {
@@ -196,6 +267,7 @@ function App() {
         .eq('id', id)
         .then(({ error }) => {
           if (!error) {
+            localStorage.removeItem(`namwoohui_photo_${id}`);
             setMembers((prev) => prev.filter((m) => m.id !== id));
           } else {
             console.error('DB Delete failed:', error);
@@ -203,6 +275,7 @@ function App() {
           }
         });
     } else {
+      localStorage.removeItem(`namwoohui_photo_${id}`);
       const updated = members.filter((m) => m.id !== id);
       setMembers(updated);
       localStorage.setItem('namwoohui_members', JSON.stringify(updated));
