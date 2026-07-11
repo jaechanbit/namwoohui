@@ -10268,7 +10268,7 @@ var BottomNav = ({ activeTab, setActiveTab }) => {
 };
 //#endregion
 //#region src/components/MembersTab.tsx
-var MembersTab = ({ members, onSelectMember }) => {
+var MembersTab = ({ members, accounts, onSelectMember }) => {
 	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
 	const [activeFilter, setActiveFilter] = (0, import_react.useState)("전체");
 	const filters = [
@@ -10278,9 +10278,26 @@ var MembersTab = ({ members, onSelectMember }) => {
 		"상조위원",
 		"감사"
 	];
+	const mappedAccounts = (0, import_react.useMemo)(() => {
+		const findAccount = (type) => {
+			return accounts.find((a) => a.type === type);
+		};
+		return {
+			membership: findAccount("membership") || {
+				bank_name: "국민은행",
+				account_number: "000000-00-000000",
+				owner: "남우회"
+			},
+			mutualAid: findAccount("mutual_aid") || {
+				bank_name: "농협은행",
+				account_number: "000-0000-0000-00",
+				owner: "남우회"
+			}
+		};
+	}, [accounts]);
 	const executives = (0, import_react.useMemo)(() => {
 		const findExec = (roleName) => {
-			return members.find((m) => m.role === roleName) || members.find((m) => m.role.includes(roleName));
+			return members.find((m) => m.role === roleName) || members.find((m) => m.role.includes(roleName) && !m.role.includes("부회장"));
 		};
 		return {
 			president: findExec("회장"),
@@ -10300,7 +10317,7 @@ var MembersTab = ({ members, onSelectMember }) => {
 		return members.filter((member) => {
 			if (!(member.name.toLowerCase().includes(searchQuery.toLowerCase()) || member.company.toLowerCase().includes(searchQuery.toLowerCase()) || member.role.toLowerCase().includes(searchQuery.toLowerCase()) || member.phone.replace(/-/g, "").includes(searchQuery.replace(/-/g, "")))) return false;
 			if (activeFilter === "전체") return true;
-			if (activeFilter === "회장단") return member.role.includes("회장");
+			if (activeFilter === "회장단") return member.role.includes("회장") && !member.role.includes("부회장");
 			if (activeFilter === "운영진") return member.role.includes("운영위원") || member.role.includes("총무") || member.role.includes("재무") || member.role.includes("부회장");
 			if (activeFilter === "상조위원") return member.role.includes("상조위");
 			if (activeFilter === "감사") return member.role.includes("감사");
@@ -10340,19 +10357,19 @@ var MembersTab = ({ members, onSelectMember }) => {
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 								className: "bank-card-name",
-								children: "국민은행"
+								children: mappedAccounts.membership.bank_name
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 								className: "bank-card-number",
-								children: "000000-00-000000"
+								children: mappedAccounts.membership.account_number
 							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 								className: "bank-card-owner",
-								children: "예금주 남우회"
+								children: ["예금주 ", mappedAccounts.membership.owner]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 								className: "bank-copy-btn btn-interactive",
-								onClick: () => handleCopyAccount("국민은행", "000000-00-000000"),
+								onClick: () => handleCopyAccount(mappedAccounts.membership.bank_name, mappedAccounts.membership.account_number),
 								children: "복사"
 							})
 						]
@@ -10366,19 +10383,19 @@ var MembersTab = ({ members, onSelectMember }) => {
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 								className: "bank-card-name",
-								children: "농협은행"
+								children: mappedAccounts.mutualAid.bank_name
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 								className: "bank-card-number",
-								children: "000-0000-0000-00"
+								children: mappedAccounts.mutualAid.account_number
 							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 								className: "bank-card-owner",
-								children: "예금주 남우회"
+								children: ["예금주 ", mappedAccounts.mutualAid.owner]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 								className: "bank-copy-btn btn-interactive",
-								onClick: () => handleCopyAccount("농협은행", "000-0000-0000-00"),
+								onClick: () => handleCopyAccount(mappedAccounts.mutualAid.bank_name, mappedAccounts.mutualAid.account_number),
 								children: "복사"
 							})
 						]
@@ -11083,7 +11100,7 @@ var ScheduleTab = ({ schedules }) => {
 };
 //#endregion
 //#region src/components/AdminTab.tsx
-var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedules, onAddSchedule, onUpdateSchedule, onDeleteSchedule }) => {
+var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedules, onAddSchedule, onUpdateSchedule, onDeleteSchedule, accounts, onUpdateAccounts, onAssignExecutive }) => {
 	const [isAuthenticated, setIsAuthenticated] = (0, import_react.useState)(false);
 	const [password, setPassword] = (0, import_react.useState)("");
 	const [errorMsg, setErrorMsg] = (0, import_react.useState)("");
@@ -11104,6 +11121,33 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 		title: "",
 		date: "",
 		location: ""
+	});
+	const membershipAccount = accounts.find((a) => a.type === "membership") || {
+		id: 1,
+		type: "membership",
+		bank_name: "국민은행",
+		account_number: "000000-00-000000",
+		owner: "남우회"
+	};
+	const mutualAidAccount = accounts.find((a) => a.type === "mutual_aid") || {
+		id: 2,
+		type: "mutual_aid",
+		bank_name: "농협은행",
+		account_number: "000-0000-0000-00",
+		owner: "남우회"
+	};
+	const [bankFormData, setBankFormData] = (0, import_react.useState)({
+		membershipBank: membershipAccount.bank_name,
+		membershipNo: membershipAccount.account_number,
+		membershipOwner: membershipAccount.owner,
+		mutualAidBank: mutualAidAccount.bank_name,
+		mutualAidNo: mutualAidAccount.account_number,
+		mutualAidOwner: mutualAidAccount.owner
+	});
+	const [execSelection, setExecSelection] = (0, import_react.useState)({
+		presidentId: members.find((m) => m.role === "회장")?.id || 0,
+		secretaryId: members.find((m) => m.role === "총무")?.id || 0,
+		treasurerId: members.find((m) => m.role === "재무")?.id || 0
 	});
 	const handleLogin = (e) => {
 		e.preventDefault();
@@ -11178,6 +11222,30 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 		});
 		setIsScheduleModalOpen(false);
 	};
+	const handleBankSubmit = (e) => {
+		e.preventDefault();
+		onUpdateAccounts([{
+			id: membershipAccount.id,
+			type: "membership",
+			bank_name: bankFormData.membershipBank,
+			account_number: bankFormData.membershipNo,
+			owner: bankFormData.membershipOwner
+		}, {
+			id: mutualAidAccount.id,
+			type: "mutual_aid",
+			bank_name: bankFormData.mutualAidBank,
+			account_number: bankFormData.mutualAidNo,
+			owner: bankFormData.mutualAidOwner
+		}]);
+	};
+	const handleAssignRole = (role, targetId) => {
+		if (targetId === 0) {
+			alert("올바른 회원을 선택해주세요.");
+			return;
+		}
+		const memberName = members.find((m) => m.id === targetId)?.name;
+		if (window.confirm(`${memberName} 회원을 새로운 '${role}'(으)로 임명하시겠습니까?`)) onAssignExecutive(role, targetId);
+	};
 	if (!isAuthenticated) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "admin-auth-container glass animate-fade-in",
 		style: { borderRadius: "var(--radius-md)" },
@@ -11213,7 +11281,7 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 					fontSize: "13px",
 					color: "var(--text-muted)"
 				},
-				children: "친구 및 일정을 관리할 수 있습니다."
+				children: "친구, 일정, 통장 및 집행부를 관리할 수 있습니다."
 			})] }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
 				onSubmit: handleLogin,
@@ -11289,42 +11357,60 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				style: {
 					display: "grid",
-					gridTemplateColumns: "1fr 1fr",
-					gap: "8px",
+					gridTemplateColumns: "1fr 1fr 1fr",
+					gap: "6px",
 					background: "var(--background)",
 					padding: "4px",
 					borderRadius: "var(--radius-md)",
 					border: "1px solid var(--border-color)"
 				},
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-					onClick: () => setSubTab("members"),
-					style: {
-						padding: "10px 0",
-						border: "none",
-						borderRadius: "var(--radius-sm)",
-						fontSize: "14px",
-						fontWeight: 700,
-						cursor: "pointer",
-						background: subTab === "members" ? "var(--primary)" : "transparent",
-						color: subTab === "members" ? "white" : "var(--text-muted)",
-						transition: "all 0.2s ease"
-					},
-					children: "친구 정보 관리"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-					onClick: () => setSubTab("schedules"),
-					style: {
-						padding: "10px 0",
-						border: "none",
-						borderRadius: "var(--radius-sm)",
-						fontSize: "14px",
-						fontWeight: 700,
-						cursor: "pointer",
-						background: subTab === "schedules" ? "var(--primary)" : "transparent",
-						color: subTab === "schedules" ? "white" : "var(--text-muted)",
-						transition: "all 0.2s ease"
-					},
-					children: "모임 일정 관리"
-				})]
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						onClick: () => setSubTab("members"),
+						style: {
+							padding: "8px 0",
+							border: "none",
+							borderRadius: "var(--radius-sm)",
+							fontSize: "12px",
+							fontWeight: 700,
+							cursor: "pointer",
+							background: subTab === "members" ? "var(--primary)" : "transparent",
+							color: subTab === "members" ? "white" : "var(--text-muted)",
+							transition: "all 0.2s ease"
+						},
+						children: "친구 정보"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						onClick: () => setSubTab("schedules"),
+						style: {
+							padding: "8px 0",
+							border: "none",
+							borderRadius: "var(--radius-sm)",
+							fontSize: "12px",
+							fontWeight: 700,
+							cursor: "pointer",
+							background: subTab === "schedules" ? "var(--primary)" : "transparent",
+							color: subTab === "schedules" ? "white" : "var(--text-muted)",
+							transition: "all 0.2s ease"
+						},
+						children: "모임 일정"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						onClick: () => setSubTab("settings"),
+						style: {
+							padding: "8px 0",
+							border: "none",
+							borderRadius: "var(--radius-sm)",
+							fontSize: "12px",
+							fontWeight: 700,
+							cursor: "pointer",
+							background: subTab === "settings" ? "var(--primary)" : "transparent",
+							color: subTab === "settings" ? "white" : "var(--text-muted)",
+							transition: "all 0.2s ease"
+						},
+						children: "통장/집행부"
+					})
+				]
 			}),
 			subTab === "members" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "admin-controls",
@@ -11529,6 +11615,275 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 					})]
 				}, schedule.id))
 			})] }),
+			subTab === "settings" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					gap: "20px"
+				},
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "info-card",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							className: "info-title",
+							style: { fontSize: "15px" },
+							children: "집행부 임명 관리"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "form-group",
+							style: { marginTop: "10px" },
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "회장 임명" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									gap: "8px"
+								},
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", {
+									className: "input-field",
+									value: execSelection.presidentId,
+									onChange: (e) => setExecSelection({
+										...execSelection,
+										presidentId: Number(e.target.value)
+									}),
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: 0,
+										children: "선택 안함 (공석)"
+									}), members.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+										value: m.id,
+										children: [
+											m.name,
+											" (",
+											m.company || "소속없음",
+											")"
+										]
+									}, m.id))]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									className: "btn-primary btn-interactive",
+									style: {
+										width: "auto",
+										padding: "0 16px",
+										fontSize: "13px"
+									},
+									onClick: () => handleAssignRole("회장", execSelection.presidentId),
+									children: "임명"
+								})]
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "form-group",
+							style: { marginTop: "10px" },
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "총무 임명" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									gap: "8px"
+								},
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", {
+									className: "input-field",
+									value: execSelection.secretaryId,
+									onChange: (e) => setExecSelection({
+										...execSelection,
+										secretaryId: Number(e.target.value)
+									}),
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: 0,
+										children: "선택 안함 (공석)"
+									}), members.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+										value: m.id,
+										children: [
+											m.name,
+											" (",
+											m.company || "소속없음",
+											")"
+										]
+									}, m.id))]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									className: "btn-primary btn-interactive",
+									style: {
+										width: "auto",
+										padding: "0 16px",
+										fontSize: "13px"
+									},
+									onClick: () => handleAssignRole("총무", execSelection.secretaryId),
+									children: "임명"
+								})]
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "form-group",
+							style: { marginTop: "10px" },
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "재무 임명" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									gap: "8px"
+								},
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", {
+									className: "input-field",
+									value: execSelection.treasurerId,
+									onChange: (e) => setExecSelection({
+										...execSelection,
+										treasurerId: Number(e.target.value)
+									}),
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: 0,
+										children: "선택 안함 (공석)"
+									}), members.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+										value: m.id,
+										children: [
+											m.name,
+											" (",
+											m.company || "소속없음",
+											")"
+										]
+									}, m.id))]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									className: "btn-primary btn-interactive",
+									style: {
+										width: "auto",
+										padding: "0 16px",
+										fontSize: "13px"
+									},
+									onClick: () => handleAssignRole("재무", execSelection.treasurerId),
+									children: "임명"
+								})]
+							})]
+						})
+					]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+					onSubmit: handleBankSubmit,
+					className: "info-card",
+					style: {
+						display: "flex",
+						flexDirection: "column",
+						gap: "14px"
+					},
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							className: "info-title",
+							style: { fontSize: "15px" },
+							children: "공식 통장 정보 설정"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							style: {
+								borderBottom: "1px solid var(--border-color)",
+								paddingBottom: "14px",
+								display: "flex",
+								flexDirection: "column",
+								gap: "10px"
+							},
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									style: {
+										fontSize: "13px",
+										fontWeight: 700,
+										color: "var(--primary)"
+									},
+									children: "회비 통장 설정"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "form-group",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "은행명" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+										type: "text",
+										className: "input-field",
+										required: true,
+										value: bankFormData.membershipBank,
+										onChange: (e) => setBankFormData({
+											...bankFormData,
+											membershipBank: e.target.value
+										})
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "form-group",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "계좌번호" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+										type: "text",
+										className: "input-field",
+										required: true,
+										value: bankFormData.membershipNo,
+										onChange: (e) => setBankFormData({
+											...bankFormData,
+											membershipNo: e.target.value
+										})
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "form-group",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "예금주" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+										type: "text",
+										className: "input-field",
+										required: true,
+										value: bankFormData.membershipOwner,
+										onChange: (e) => setBankFormData({
+											...bankFormData,
+											membershipOwner: e.target.value
+										})
+									})]
+								})
+							]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							style: {
+								display: "flex",
+								flexDirection: "column",
+								gap: "10px"
+							},
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									style: {
+										fontSize: "13px",
+										fontWeight: 700,
+										color: "#765d3d"
+									},
+									children: "상조 통장 설정"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "form-group",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "은행명" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+										type: "text",
+										className: "input-field",
+										required: true,
+										value: bankFormData.mutualAidBank,
+										onChange: (e) => setBankFormData({
+											...bankFormData,
+											mutualAidBank: e.target.value
+										})
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "form-group",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "계좌번호" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+										type: "text",
+										className: "input-field",
+										required: true,
+										value: bankFormData.mutualAidNo,
+										onChange: (e) => setBankFormData({
+											...bankFormData,
+											mutualAidNo: e.target.value
+										})
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "form-group",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "예금주" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+										type: "text",
+										className: "input-field",
+										required: true,
+										value: bankFormData.mutualAidOwner,
+										onChange: (e) => setBankFormData({
+											...bankFormData,
+											mutualAidOwner: e.target.value
+										})
+									})]
+								})
+							]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							type: "submit",
+							className: "btn-primary btn-interactive",
+							style: { marginTop: "6px" },
+							children: "통장 정보 저장"
+						})
+					]
+				})]
+			}),
 			isMemberModalOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "modal-backdrop animate-fade-in",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
@@ -11554,10 +11909,10 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "form-group",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "직책 (예: 회장, 운영위원, 총무 등)" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "직책 (예: 부회장, 운영위원, 상조위원 등)" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 								type: "text",
 								className: "input-field",
-								placeholder: "공란 입력 시 일반회원",
+								placeholder: "회장/총무/재무는 상단 설정탭을 이용해주세요",
 								value: memberFormData.role,
 								onChange: (e) => setMemberFormData({
 									...memberFormData,
@@ -32917,10 +33272,24 @@ var supabase = createClient("https://wxrcvkjxmlflpwhilnvf.supabase.co", "sb_publ
 var isSupabaseConfigured = () => {
 	return true;
 };
+var initialAccounts = [{
+	id: 1,
+	type: "membership",
+	bank_name: "국민은행",
+	account_number: "000000-00-000000",
+	owner: "남우회"
+}, {
+	id: 2,
+	type: "mutual_aid",
+	bank_name: "농협은행",
+	account_number: "000-0000-0000-00",
+	owner: "남우회"
+}];
 function App() {
 	const [activeTab, setActiveTab] = (0, import_react.useState)("members");
 	const [members, setMembers] = (0, import_react.useState)([]);
 	const [schedules, setSchedules] = (0, import_react.useState)([]);
+	const [accounts, setAccounts] = (0, import_react.useState)([]);
 	const [selectedMember, setSelectedMember] = (0, import_react.useState)(null);
 	const [isUsingDB, setIsUsingDB] = (0, import_react.useState)(false);
 	(0, import_react.useEffect)(() => {
@@ -32971,6 +33340,32 @@ function App() {
 				setSchedules([]);
 			}
 			else setSchedules([]);
+		}
+	}, []);
+	(0, import_react.useEffect)(() => {
+		if (isSupabaseConfigured()) {
+			const fetchAccounts = async () => {
+				try {
+					const { data, error } = await supabase.from("accounts").select("*").order("id", { ascending: true });
+					if (!error && data && data.length > 0) setAccounts(data);
+					else {
+						console.warn("Supabase fetch accounts empty or failed, using defaults");
+						setAccounts(initialAccounts);
+					}
+				} catch (e) {
+					console.error("Supabase connect error for accounts:", e);
+					setAccounts(initialAccounts);
+				}
+			};
+			fetchAccounts();
+		} else {
+			const savedAccounts = localStorage.getItem("namwoohui_accounts");
+			if (savedAccounts) try {
+				setAccounts(JSON.parse(savedAccounts));
+			} catch (e) {
+				setAccounts(initialAccounts);
+			}
+			else setAccounts(initialAccounts);
 		}
 	}, []);
 	const handleAddMember = (newMemberData) => {
@@ -33073,10 +33468,63 @@ function App() {
 			localStorage.setItem("namwoohui_schedules", JSON.stringify(updated));
 		}
 	};
+	const handleUpdateAccounts = (updatedAccounts) => {
+		if (isUsingDB) {
+			const updatePromises = updatedAccounts.map((account) => supabase.from("accounts").update({
+				bank_name: account.bank_name,
+				account_number: account.account_number,
+				owner: account.owner
+			}).eq("id", account.id));
+			Promise.all(updatePromises).then((results) => {
+				if (!results.some((r) => r.error)) {
+					setAccounts(updatedAccounts);
+					alert("통장 정보가 실시간 DB에 안전하게 저장되었습니다.");
+				} else {
+					console.error("Some account updates failed");
+					alert("일부 통장 정보 저장 실패");
+				}
+			});
+		} else {
+			setAccounts(updatedAccounts);
+			localStorage.setItem("namwoohui_accounts", JSON.stringify(updatedAccounts));
+			alert("데모용 통장 정보가 로컬스토리지에 저장되었습니다.");
+		}
+	};
+	const handleAssignExecutive = async (role, targetMemberId) => {
+		if (isUsingDB) try {
+			await supabase.from("members").update({ role: "" }).eq("role", role);
+			await supabase.from("members").update({ role }).eq("id", targetMemberId);
+			const { data, error } = await supabase.from("members").select("*").order("name", { ascending: true });
+			if (!error && data) {
+				setMembers(data);
+				alert(`새로운 ${role} 임명이 성공적으로 완료되었습니다.`);
+			}
+		} catch (err) {
+			console.error("Assign executive failed:", err);
+			alert("임원 변경 처리 중 실패");
+		}
+		else {
+			const updated = members.map((m) => {
+				if (m.role === role) return {
+					...m,
+					role: ""
+				};
+				if (m.id === targetMemberId) return {
+					...m,
+					role
+				};
+				return m;
+			});
+			setMembers(updated);
+			localStorage.setItem("namwoohui_members", JSON.stringify(updated));
+			alert(`데모용 ${role} 임명이 로컬에 기록되었습니다.`);
+		}
+	};
 	const renderTabContent = () => {
 		switch (activeTab) {
 			case "members": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MembersTab, {
 				members,
+				accounts,
 				onSelectMember: (member) => setSelectedMember(member)
 			});
 			case "schedule": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ScheduleTab, { schedules });
@@ -33088,10 +33536,14 @@ function App() {
 				schedules,
 				onAddSchedule: handleAddSchedule,
 				onUpdateSchedule: handleUpdateSchedule,
-				onDeleteSchedule: handleDeleteSchedule
+				onDeleteSchedule: handleDeleteSchedule,
+				accounts,
+				onUpdateAccounts: handleUpdateAccounts,
+				onAssignExecutive: handleAssignExecutive
 			});
 			default: return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MembersTab, {
 				members,
+				accounts,
 				onSelectMember: (member) => setSelectedMember(member)
 			});
 		}
