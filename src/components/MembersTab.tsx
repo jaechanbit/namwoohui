@@ -76,6 +76,31 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
       .catch(() => alert('복사에 실패했습니다. 수동으로 복사해주세요.'));
   };
 
+  // 3. 각 필터별 인원수 계산 헬퍼 함수
+  const getFilterCount = (filterName: string) => {
+    return members.filter((member) => {
+      if (filterName === '전체') return true;
+      if (filterName === '회장단') {
+        return member.role.includes('회장') && !member.role.includes('부회장');
+      }
+      if (filterName === '운영진') {
+        return (
+          member.role.includes('운영위원') ||
+          member.role.includes('총무') ||
+          member.role.includes('재무') ||
+          member.role.includes('부회장')
+        );
+      }
+      if (filterName === '상조위원') {
+        return member.role.includes('상조위');
+      }
+      if (filterName === '감사') {
+        return member.role.includes('감사');
+      }
+      return true;
+    }).length;
+  };
+
   // Filter & Search Logic
   const filteredMembers = useMemo(() => {
     return members.filter((member) => {
@@ -219,7 +244,7 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
             className={`filter-chip btn-interactive ${activeFilter === filter ? 'active' : ''}`}
             onClick={() => setActiveFilter(filter)}
           >
-            {filter}
+            {filter} <span style={{ fontSize: '11px', opacity: 0.6, marginLeft: '2px', fontWeight: 'normal' }}>{getFilterCount(filter)}</span>
           </button>
         ))}
       </div>
