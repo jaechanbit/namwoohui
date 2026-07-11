@@ -91,11 +91,12 @@ const AdminTab: React.FC<AdminTabProps> = ({
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === '1234') {
+    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || '1234';
+    if (password === adminPassword) {
       setIsAuthenticated(true);
       setErrorMsg('');
     } else {
-      setErrorMsg('비밀번호가 올바르지 않습니다. (테스트용: 1234)');
+      setErrorMsg('비밀번호가 올바르지 않습니다.');
     }
   };
 
@@ -214,7 +215,7 @@ const AdminTab: React.FC<AdminTabProps> = ({
           <input
             type="password"
             className="input-field"
-            placeholder="비밀번호 입력 (테스트: 1234)"
+            placeholder="비밀번호를 입력하세요."
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
