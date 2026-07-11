@@ -146,9 +146,11 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
     window.location.href = `${type}:${phone}`;
   };
 
-  const handleExecClick = (phone?: string) => {
+  const handleExecClick = (name: string, role: string, phone?: string) => {
     if (phone) {
-      window.location.href = `tel:${phone}`;
+      if (window.confirm(`${role} '${name}' 님에게 전화를 거시겠습니까?`)) {
+        window.location.href = `tel:${phone}`;
+      }
     }
   };
 
@@ -198,7 +200,7 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           <div 
             className="exec-card btn-interactive" 
             style={{ cursor: executives.president?.phone ? 'pointer' : 'default' }}
-            onClick={() => handleExecClick(executives.president?.phone)}
+            onClick={() => handleExecClick(executives.president?.name || '미지정', '회장', executives.president?.phone)}
           >
             <span className="exec-card-title">회장</span>
             <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -217,7 +219,7 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           <div 
             className="exec-card btn-interactive" 
             style={{ cursor: executives.secretary?.phone ? 'pointer' : 'default' }}
-            onClick={() => handleExecClick(executives.secretary?.phone)}
+            onClick={() => handleExecClick(executives.secretary?.name || '미지정', '총무', executives.secretary?.phone)}
           >
             <span className="exec-card-title">총무</span>
             <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -236,7 +238,7 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           <div 
             className="exec-card btn-interactive" 
             style={{ cursor: executives.treasurer?.phone ? 'pointer' : 'default' }}
-            onClick={() => handleExecClick(executives.treasurer?.phone)}
+            onClick={() => handleExecClick(executives.treasurer?.name || '미지정', '재무', executives.treasurer?.phone)}
           >
             <span className="exec-card-title">재무</span>
             <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
