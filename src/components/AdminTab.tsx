@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { Member, BankAccount } from './MembersTab';
 import type { MeetingSchedule } from './ScheduleTab';
 
@@ -548,7 +549,7 @@ const AdminTab: React.FC<AdminTabProps> = ({
       )}
 
       {/* 친구 CRUD 모달 */}
-      {isMemberModalOpen && (
+      {isMemberModalOpen && createPortal(
         <div className="modal-backdrop animate-fade-in">
           <form onSubmit={handleMemberSubmit} className="modal-content">
             <h3 className="modal-title">
@@ -608,11 +609,12 @@ const AdminTab: React.FC<AdminTabProps> = ({
               </button>
             </div>
           </form>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* 일정 CRUD 모달 */}
-      {isScheduleModalOpen && (
+      {isScheduleModalOpen && createPortal(
         <div className="modal-backdrop animate-fade-in">
           <form onSubmit={handleScheduleSubmit} className="modal-content">
             <h3 className="modal-title">
@@ -662,7 +664,8 @@ const AdminTab: React.FC<AdminTabProps> = ({
               </button>
             </div>
           </form>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
