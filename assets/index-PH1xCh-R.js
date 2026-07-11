@@ -10435,7 +10435,22 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "exec-card-avatar",
-										children: getNickname(executives.president?.name || "미지정")
+										style: {
+											padding: 0,
+											overflow: "hidden",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center"
+										},
+										children: executives.president?.photo ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+											src: executives.president.photo,
+											alt: "회장",
+											style: {
+												width: "100%",
+												height: "100%",
+												objectFit: "cover"
+											}
+										}) : getNickname(executives.president?.name || "미지정")
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "exec-card-name",
@@ -10452,7 +10467,22 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "exec-card-avatar",
-										children: getNickname(executives.secretary?.name || "미지정")
+										style: {
+											padding: 0,
+											overflow: "hidden",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center"
+										},
+										children: executives.secretary?.photo ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+											src: executives.secretary.photo,
+											alt: "총무",
+											style: {
+												width: "100%",
+												height: "100%",
+												objectFit: "cover"
+											}
+										}) : getNickname(executives.secretary?.name || "미지정")
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "exec-card-name",
@@ -10469,7 +10499,22 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "exec-card-avatar",
-										children: getNickname(executives.treasurer?.name || "미지정")
+										style: {
+											padding: 0,
+											overflow: "hidden",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center"
+										},
+										children: executives.treasurer?.photo ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+											src: executives.treasurer.photo,
+											alt: "재무",
+											style: {
+												width: "100%",
+												height: "100%",
+												objectFit: "cover"
+											}
+										}) : getNickname(executives.treasurer?.name || "미지정")
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "exec-card-name",
@@ -10533,7 +10578,22 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 						className: "member-info-wrapper",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 							className: "member-avatar",
-							children: member.name.charAt(0)
+							style: {
+								padding: 0,
+								overflow: "hidden",
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center"
+							},
+							children: member.photo ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+								src: member.photo,
+								alt: member.name,
+								style: {
+									width: "100%",
+									height: "100%",
+									objectFit: "cover"
+								}
+							}) : member.name.charAt(0)
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "member-text",
 							children: [
@@ -10641,7 +10701,22 @@ var MemberDetail = ({ member, onClose }) => {
 				className: "drawer-header",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "member-avatar drawer-avatar",
-					children: member.name.charAt(0)
+					style: {
+						padding: 0,
+						overflow: "hidden",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center"
+					},
+					children: member.photo ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+						src: member.photo,
+						alt: member.name,
+						style: {
+							width: "100%",
+							height: "100%",
+							objectFit: "cover"
+						}
+					}) : member.name.charAt(0)
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 					className: "drawer-close btn-interactive",
 					onClick: onClose,
@@ -11149,7 +11224,8 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 		name: "",
 		role: "",
 		company: "",
-		phone: ""
+		phone: "",
+		photo: ""
 	});
 	const [isScheduleModalOpen, setIsScheduleModalOpen] = (0, import_react.useState)(false);
 	const [scheduleModalMode, setScheduleModalMode] = (0, import_react.useState)("add");
@@ -11199,7 +11275,8 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 			name: "",
 			role: "",
 			company: "",
-			phone: ""
+			phone: "",
+			photo: ""
 		});
 		setIsMemberModalOpen(true);
 	};
@@ -11210,9 +11287,27 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 			name: member.name,
 			role: member.role,
 			company: member.company,
-			phone: member.phone
+			phone: member.phone,
+			photo: member.photo || ""
 		});
 		setIsMemberModalOpen(true);
+	};
+	const handlePhotoChange = (e) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			if (file.size > 1 * 1024 * 1024) {
+				alert("이미지 크기는 1MB 이하여야 합니다.");
+				return;
+			}
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				setMemberFormData((prev) => ({
+					...prev,
+					photo: reader.result
+				}));
+			};
+			reader.readAsDataURL(file);
+		}
 	};
 	const handleMemberSubmit = (e) => {
 		e.preventDefault();
@@ -11981,6 +12076,106 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 									...memberFormData,
 									phone: e.target.value
 								})
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "form-group",
+							style: { marginTop: "10px" },
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "회원 사진" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									alignItems: "center",
+									gap: "12px",
+									marginTop: "4px"
+								},
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									style: {
+										width: "52px",
+										height: "52px",
+										borderRadius: "50%",
+										background: "var(--background)",
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										overflow: "hidden",
+										border: "1px solid var(--border-color)",
+										flexShrink: 0
+									},
+									children: memberFormData.photo ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+										src: memberFormData.photo,
+										alt: "미리보기",
+										style: {
+											width: "100%",
+											height: "100%",
+											objectFit: "cover"
+										}
+									}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
+										xmlns: "http://www.w3.org/2000/svg",
+										fill: "none",
+										viewBox: "0 0 24 24",
+										strokeWidth: 1.5,
+										stroke: "currentColor",
+										style: {
+											width: "20px",
+											height: "20px",
+											color: "var(--text-muted)"
+										},
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+											strokeLinecap: "round",
+											strokeLinejoin: "round",
+											d: "M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+											strokeLinecap: "round",
+											strokeLinejoin: "round",
+											d: "M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+										})]
+									})
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									style: {
+										display: "flex",
+										alignItems: "center",
+										gap: "8px"
+									},
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+											type: "file",
+											accept: "image/*",
+											id: "photo-upload",
+											style: { display: "none" },
+											onChange: handlePhotoChange
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+											htmlFor: "photo-upload",
+											className: "btn-secondary btn-interactive",
+											style: {
+												margin: 0,
+												fontSize: "13px",
+												padding: "6px 12px",
+												cursor: "pointer",
+												border: "1px solid var(--border-color)",
+												borderRadius: "var(--radius-sm)",
+												display: "inline-block"
+											},
+											children: "사진 선택"
+										}),
+										memberFormData.photo && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+											type: "button",
+											onClick: () => setMemberFormData({
+												...memberFormData,
+												photo: ""
+											}),
+											style: {
+												fontSize: "12px",
+												background: "transparent",
+												border: "none",
+												color: "hsl(0, 85%, 45%)",
+												cursor: "pointer",
+												fontWeight: 500
+											},
+											children: "삭제"
+										})
+									]
+								})]
 							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -33427,7 +33622,8 @@ function App() {
 			name: updatedMember.name,
 			role: updatedMember.role,
 			company: updatedMember.company,
-			phone: updatedMember.phone
+			phone: updatedMember.phone,
+			photo: updatedMember.photo
 		}).eq("id", updatedMember.id).then(({ error }) => {
 			if (!error) setMembers((prev) => prev.map((m) => m.id === updatedMember.id ? updatedMember : m));
 			else {
