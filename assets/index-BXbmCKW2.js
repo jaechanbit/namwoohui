@@ -10771,7 +10771,7 @@ var getNextMeeting = (now, dbSchedules) => {
 				hour: "numeric",
 				minute: "numeric"
 			}),
-			meetingLocation: "남원중앙새마을금고 3층",
+			meetingLocation: "남원중앙새마을금고 본점 3층",
 			dinnerLocation: next.dinnerLocation
 		};
 	}
@@ -10799,7 +10799,7 @@ var getNextMeeting = (now, dbSchedules) => {
 		name: "정기 모임",
 		dday: 0,
 		formattedDate: "",
-		meetingLocation: "남원중앙새마을금고 3층",
+		meetingLocation: "남원중앙새마을금고 본점 3층",
 		dinnerLocation: "추후 공지"
 	};
 	const diffTime = next.date.getTime() - now.getTime();
@@ -10815,7 +10815,7 @@ var getNextMeeting = (now, dbSchedules) => {
 			hour: "numeric",
 			minute: "numeric"
 		}),
-		meetingLocation: "남원중앙새마을금고 3층",
+		meetingLocation: "남원중앙새마을금고 본점 3층",
 		dinnerLocation: "추후 공지"
 	};
 };
@@ -10911,7 +10911,7 @@ var ScheduleTab = ({ schedules }) => {
 							gridTemplateColumns: "1fr 1fr"
 						},
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent("남원중앙새마을금고")}`,
+							href: `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent("남원중앙새마을금고 본점")}`,
 							target: "_blank",
 							rel: "noopener noreferrer",
 							className: "map-link btn-interactive",
@@ -10921,7 +10921,7 @@ var ScheduleTab = ({ schedules }) => {
 							},
 							children: "회의 장소 네이버 지도"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: `https://map.kakao.com/?q=${encodeURIComponent("남원중앙새마을금고")}`,
+							href: `https://map.kakao.com/?q=${encodeURIComponent("남원중앙새마을금고 본점")}`,
 							target: "_blank",
 							rel: "noopener noreferrer",
 							className: "map-link btn-interactive",
@@ -11053,7 +11053,7 @@ var ScheduleTab = ({ schedules }) => {
 									color: "var(--text-muted)",
 									marginTop: "2px"
 								},
-								children: ["회의: 남원중앙새마을금고 3층 | 식사: ", schedule.location || "추후 공지"]
+								children: ["회의: 남원중앙새마을금고 본점 3층 | 식사: ", schedule.location || "추후 공지"]
 							})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 								style: {
 									fontSize: "12px",
