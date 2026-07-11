@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import BottomNav from './components/BottomNav';
-import MembersTab, { type Member } from './components/MembersTab';
+import MembersTab, { type Member, type BankAccount } from './components/MembersTab';
 import MemberDetail from './components/MemberDetail';
 import ScheduleTab, { type MeetingSchedule } from './components/ScheduleTab';
 import AdminTab from './components/AdminTab';
@@ -13,10 +13,17 @@ const isSupabaseConfigured = () => {
   return url && url !== 'YOUR_SUPABASE_URL' && key && key !== 'YOUR_SUPABASE_ANON_KEY';
 };
 
+// 기본 데모용 계좌번호 데이터
+const initialAccounts: BankAccount[] = [
+  { id: 1, type: 'membership', bank_name: '국민은행', account_number: '000000-00-000000', owner: '남우회' },
+  { id: 2, type: 'mutual_aid', bank_name: '농협은행', account_number: '000-0000-0000-00', owner: '남우회' }
+];
+
 function App() {
   const [activeTab, setActiveTab] = useState<string>('members');
   const [members, setMembers] = useState<Member[]>([]);
   const [schedules, setSchedules] = useState<MeetingSchedule[]>([]);
+  const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isUsingDB, setIsUsingDB] = useState<boolean>(false);
 
@@ -92,7 +99,43 @@ function App() {
     }
   }, []);
 
-  // 3. 친구 CRUD 핸들러
+  // 3. 통장 정보 로드
+  useEffect(() => {
+    if (isSupabaseConfigured()) {
+      const fetchAccounts = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('accounts')
+            .select('*')
+            .order('id', { ascending: true });
+          
+          if (!error && data && data.length > 0) {
+            setAccounts(data as BankAccount[]);
+          } else {
+            console.warn('Supabase fetch accounts empty or failed, using defaults');
+            setAccounts(initialAccounts);
+          }
+        } catch (e: unknown) {
+          console.error('Supabase connect error for accounts:', e);
+          setAccounts(initialAccounts);
+        }
+      };
+      fetchAccounts();
+    } else {
+      const savedAccounts = localStorage.getItem('namwoohui_accounts');
+      if (savedAccounts) {
+        try {
+          setAccounts(JSON.parse(savedAccounts));
+        } catch (e) {
+          setAccounts(initialAccounts);
+        }
+      } else {
+        setAccounts(initialAccounts);
+      }
+    }
+  }, []);
+
+  // 4. 친구 CRUD 핸들러
   const handleAddMember = (newMemberData: Omit<Member, 'id'>) => {
     if (isUsingDB) {
       supabase
@@ -165,7 +208,7 @@ function App() {
     }
   };
 
-  // 4. 모임 일정 CRUD 핸들러
+  // 5. 모임 일정 CRUD 핸들러
   const handleAddSchedule = (newScheduleData: Omit<MeetingSchedule, 'id'>) => {
     if (isUsingDB) {
       supabase
@@ -237,6 +280,74 @@ function App() {
     }
   };
 
+  // 6. 통장 정보 수정 핸들러
+  const handleUpdateAccounts = (updatedAccounts: BankAccount[]) => {
+    if (isUsingDB) {
+      // 순차적으로 수파베이스에 update를 실행
+      const updatePromises = updatedAccounts.map(account => 
+        supabase
+          .from('accounts')
+          .update({
+            bank_name: account.bank_name,
+            account_number: account.account_number,
+            owner: account.owner
+          })
+          .eq('id', account.id)
+      );
+
+      Promise.all(updatePromises).then((results) => {
+        const hasError = results.some(r => r.error);
+        if (!hasError) {
+          setAccounts(updatedAccounts);
+          alert('통장 정보가 실시간 DB에 안전하게 저장되었습니다.');
+        } else {
+          console.error('Some account updates failed');
+          alert('일부 통장 정보 저장 실패');
+        }
+      });
+    } else {
+      setAccounts(updatedAccounts);
+      localStorage.setItem('namwoohui_accounts', JSON.stringify(updatedAccounts));
+      alert('데모용 통장 정보가 로컬스토리지에 저장되었습니다.');
+    }
+  };
+
+  // 7. 집행부 임원 변경 핸들러
+  const handleAssignExecutive = async (role: '회장' | '총무' | '재무', targetMemberId: number) => {
+    if (isUsingDB) {
+      try {
+        // 1) 기존에 해당 직책을 맡았던 사람들의 직책을 빈 값('')으로 초기화
+        await supabase.from('members').update({ role: '' }).eq('role', role);
+        // 2) 새로 임명된 회원에게 직책을 부여
+        await supabase.from('members').update({ role: role }).eq('id', targetMemberId);
+        
+        // 3) 전체 리로드하여 갱신
+        const { data, error } = await supabase
+          .from('members')
+          .select('*')
+          .order('name', { ascending: true });
+        
+        if (!error && data) {
+          setMembers(data as Member[]);
+          alert(`새로운 ${role} 임명이 성공적으로 완료되었습니다.`);
+        }
+      } catch (err) {
+        console.error('Assign executive failed:', err);
+        alert('임원 변경 처리 중 실패');
+      }
+    } else {
+      // 로컬스토리지 기반 데모 모드 작동
+      const updated = members.map(m => {
+        if (m.role === role) return { ...m, role: '' };
+        if (m.id === targetMemberId) return { ...m, role: role };
+        return m;
+      });
+      setMembers(updated);
+      localStorage.setItem('namwoohui_members', JSON.stringify(updated));
+      alert(`데모용 ${role} 임명이 로컬에 기록되었습니다.`);
+    }
+  };
+
   // 현재 활성화된 탭 컨텐츠 렌더링
   const renderTabContent = () => {
     switch (activeTab) {
@@ -244,6 +355,7 @@ function App() {
         return (
           <MembersTab
             members={members}
+            accounts={accounts}
             onSelectMember={(member) => setSelectedMember(member)}
           />
         );
@@ -260,12 +372,16 @@ function App() {
             onAddSchedule={handleAddSchedule}
             onUpdateSchedule={handleUpdateSchedule}
             onDeleteSchedule={handleDeleteSchedule}
+            accounts={accounts}
+            onUpdateAccounts={handleUpdateAccounts}
+            onAssignExecutive={handleAssignExecutive}
           />
         );
       default:
         return (
           <MembersTab
             members={members}
+            accounts={accounts}
             onSelectMember={(member) => setSelectedMember(member)}
           />
         );

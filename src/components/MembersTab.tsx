@@ -8,22 +8,52 @@ export interface Member {
   phone: string;
 }
 
+export interface BankAccount {
+  id: number;
+  type: 'membership' | 'mutual_aid';
+  bank_name: string;
+  account_number: string;
+  owner: string;
+}
+
 interface MembersTabProps {
   members: Member[];
+  accounts: BankAccount[];
   onSelectMember: (member: Member) => void;
 }
 
-const MembersTab: React.FC<MembersTabProps> = ({ members, onSelectMember }) => {
+const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMember }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('전체');
 
   const filters = ['전체', '회장단', '운영진', '상조위원', '감사'];
 
-  // 1. 집행부 정보 동적 추출 (회장, 총무, 재무)
+  // 1. 통장 데이터 매핑 (DB 데이터 우선, 실패 시 기본값 폴백)
+  const mappedAccounts = useMemo(() => {
+    const findAccount = (type: 'membership' | 'mutual_aid') => {
+      return accounts.find(a => a.type === type);
+    };
+
+    return {
+      membership: findAccount('membership') || {
+        bank_name: '국민은행',
+        account_number: '000000-00-000000',
+        owner: '남우회'
+      },
+      mutualAid: findAccount('mutual_aid') || {
+        bank_name: '농협은행',
+        account_number: '000-0000-0000-00',
+        owner: '남우회'
+      }
+    };
+  }, [accounts]);
+
+  // 2. 집행부 정보 동적 추출 (회장, 총무, 재무)
   const executives = useMemo(() => {
     const findExec = (roleName: string) => {
+      // 정확한 매칭을 시도하고, 없으면 부분 매칭 시도
       return members.find(m => m.role === roleName) || 
-             members.find(m => m.role.includes(roleName));
+             members.find(m => m.role.includes(roleName) && !m.role.includes('부회장'));
     };
 
     return {
@@ -61,9 +91,11 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, onSelectMember }) => {
       // 2. Tab Filter Match
       if (activeFilter === '전체') return true;
       if (activeFilter === '회장단') {
-        return member.role.includes('회장');
+        // 부회장은 제외
+        return member.role.includes('회장') && !member.role.includes('부회장');
       }
       if (activeFilter === '운영진') {
+        // 부회장은 운영진에 포함
         return (
           member.role.includes('운영위원') ||
           member.role.includes('총무') ||
@@ -99,12 +131,12 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, onSelectMember }) => {
 
         <div className="bank-card membership">
           <span className="bank-card-type">회비 통장</span>
-          <span className="bank-card-name">국민은행</span>
-          <span className="bank-card-number">000000-00-000000</span>
-          <span className="bank-card-owner">예금주 남우회</span>
+          <span className="bank-card-name">{mappedAccounts.membership.bank_name}</span>
+          <span className="bank-card-number">{mappedAccounts.membership.account_number}</span>
+          <span className="bank-card-owner">예금주 {mappedAccounts.membership.owner}</span>
           <button 
             className="bank-copy-btn btn-interactive" 
-            onClick={() => handleCopyAccount('국민은행', '000000-00-000000')}
+            onClick={() => handleCopyAccount(mappedAccounts.membership.bank_name, mappedAccounts.membership.account_number)}
           >
             복사
           </button>
@@ -112,12 +144,12 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, onSelectMember }) => {
 
         <div className="bank-card mutual-aid">
           <span className="bank-card-type">상조 통장</span>
-          <span className="bank-card-name">농협은행</span>
-          <span className="bank-card-number">000-0000-0000-00</span>
-          <span className="bank-card-owner">예금주 남우회</span>
+          <span className="bank-card-name">{mappedAccounts.mutualAid.bank_name}</span>
+          <span className="bank-card-number">{mappedAccounts.mutualAid.account_number}</span>
+          <span className="bank-card-owner">예금주 {mappedAccounts.mutualAid.owner}</span>
           <button 
             className="bank-copy-btn btn-interactive" 
-            onClick={() => handleCopyAccount('농협은행', '000-0000-0000-00')}
+            onClick={() => handleCopyAccount(mappedAccounts.mutualAid.bank_name, mappedAccounts.mutualAid.account_number)}
           >
             복사
           </button>
