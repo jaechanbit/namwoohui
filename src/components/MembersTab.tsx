@@ -146,6 +146,12 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
     window.location.href = `${type}:${phone}`;
   };
 
+  const handleExecClick = (phone?: string) => {
+    if (phone) {
+      window.location.href = `tel:${phone}`;
+    }
+  };
+
   return (
     <div className="animate-fade-in">
       {/* 남우회 공식 통장 섹션 */}
@@ -189,7 +195,11 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
         
         <div className="exec-grid">
           {/* 회장 카드 */}
-          <div className="exec-card">
+          <div 
+            className="exec-card btn-interactive" 
+            style={{ cursor: executives.president?.phone ? 'pointer' : 'default' }}
+            onClick={() => handleExecClick(executives.president?.phone)}
+          >
             <span className="exec-card-title">회장</span>
             <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {executives.president?.photo ? (
@@ -204,7 +214,11 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           </div>
 
           {/* 총무 카드 */}
-          <div className="exec-card">
+          <div 
+            className="exec-card btn-interactive" 
+            style={{ cursor: executives.secretary?.phone ? 'pointer' : 'default' }}
+            onClick={() => handleExecClick(executives.secretary?.phone)}
+          >
             <span className="exec-card-title">총무</span>
             <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {executives.secretary?.photo ? (
@@ -214,12 +228,16 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
               )}
             </div>
             <span className="exec-card-name">
-              {executives.secretary?.name || '미지정'}
+              {executives.secretary?.name || '미정'}
             </span>
           </div>
 
           {/* 재무 카드 */}
-          <div className="exec-card">
+          <div 
+            className="exec-card btn-interactive" 
+            style={{ cursor: executives.treasurer?.phone ? 'pointer' : 'default' }}
+            onClick={() => handleExecClick(executives.treasurer?.phone)}
+          >
             <span className="exec-card-title">재무</span>
             <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {executives.treasurer?.photo ? (
