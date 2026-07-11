@@ -272,6 +272,11 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
                   <span className="member-company">
                     {member.company || '정보 없음'}
                   </span>
+                  {member.phone && (
+                    <span className="member-phone" style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px', fontFamily: 'var(--font-eng)', fontWeight: 500 }}>
+                      {member.phone}
+                    </span>
+                  )}
                 </div>
               </div>
 
