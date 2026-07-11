@@ -23,22 +23,25 @@ function App() {
   useEffect(() => {
     if (isSupabaseConfigured()) {
       setIsUsingDB(true);
-      supabase
-        .from('members')
-        .select('*')
-        .order('name', { ascending: true }) // 기본 가나다 정렬
-        .then(({ data, error }) => {
+      const fetchMembers = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('members')
+            .select('*')
+            .order('name', { ascending: true });
+          
           if (!error && data) {
             setMembers(data as Member[]);
           } else {
             console.error('Supabase fetch failed, falling back to local data:', error);
             setMembers(initialMembers);
           }
-        })
-        .catch((e) => {
+        } catch (e: unknown) {
           console.error('Supabase connect error, falling back to local data:', e);
           setMembers(initialMembers);
-        });
+        }
+      };
+      fetchMembers();
     } else {
       setIsUsingDB(false);
       // 로컬스토리지 연동하여 데모 로드
