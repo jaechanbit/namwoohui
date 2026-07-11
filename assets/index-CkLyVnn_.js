@@ -32331,11 +32331,11 @@ function shouldShowDeprecationWarning() {
 	return parseInt(versionMatch[1], 10) <= 20;
 }
 if (shouldShowDeprecationWarning()) console.warn("⚠️  Node.js 20 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 22 or later. For more information, visit: https://github.com/orgs/supabase/discussions/45715");
-var supabase = createClient("YOUR_SUPABASE_URL", "YOUR_SUPABASE_ANON_KEY");
+var supabase = createClient("https://wxrcvkjxmlflpwhilnvf.supabase.co", "sb_publishable_T5iyn7H-yw43C1W_DBi0BQ_28niP4vs");
 //#endregion
 //#region src/App.tsx
 var isSupabaseConfigured = () => {
-	return false;
+	return true;
 };
 function App() {
 	const [activeTab, setActiveTab] = (0, import_react.useState)("members");
