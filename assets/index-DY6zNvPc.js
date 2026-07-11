@@ -10313,6 +10313,16 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 	const handleCopyAccount = (bankName, accountNumber) => {
 		navigator.clipboard.writeText(accountNumber).then(() => alert(`${bankName} 계좌번호(${accountNumber})가 복사되었습니다.`)).catch(() => alert("복사에 실패했습니다. 수동으로 복사해주세요."));
 	};
+	const getFilterCount = (filterName) => {
+		return members.filter((member) => {
+			if (filterName === "전체") return true;
+			if (filterName === "회장단") return member.role.includes("회장") && !member.role.includes("부회장");
+			if (filterName === "운영진") return member.role.includes("운영위원") || member.role.includes("총무") || member.role.includes("재무") || member.role.includes("부회장");
+			if (filterName === "상조위원") return member.role.includes("상조위");
+			if (filterName === "감사") return member.role.includes("감사");
+			return true;
+		}).length;
+	};
 	const filteredMembers = (0, import_react.useMemo)(() => {
 		return members.filter((member) => {
 			if (!(member.name.toLowerCase().includes(searchQuery.toLowerCase()) || member.company.toLowerCase().includes(searchQuery.toLowerCase()) || member.role.toLowerCase().includes(searchQuery.toLowerCase()) || member.phone.replace(/-/g, "").includes(searchQuery.replace(/-/g, "")))) return false;
@@ -10496,10 +10506,22 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "filter-container",
-				children: filters.map((filter) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+				children: filters.map((filter) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 					className: `filter-chip btn-interactive ${activeFilter === filter ? "active" : ""}`,
 					onClick: () => setActiveFilter(filter),
-					children: filter
+					children: [
+						filter,
+						" ",
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							style: {
+								fontSize: "11px",
+								opacity: .6,
+								marginLeft: "2px",
+								fontWeight: "normal"
+							},
+							children: getFilterCount(filter)
+						})
+					]
 				}, filter))
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
