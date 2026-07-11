@@ -29,7 +29,7 @@ const getNextMeeting = (now: Date, dbSchedules: MeetingSchedule[]) => {
     .map(s => ({
       date: new Date(`${s.date}T19:00:00`),
       name: s.title,
-      location: s.location || '추후 공지'
+      dinnerLocation: s.location || '추후 공지'
     }))
     .filter(s => s.date.getTime() > now.getTime())
     .sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -50,7 +50,8 @@ const getNextMeeting = (now: Date, dbSchedules: MeetingSchedule[]) => {
       name: next.name,
       dday: diffDays,
       formattedDate: next.date.toLocaleDateString('ko-KR', options),
-      location: next.location
+      meetingLocation: '남원중앙새마을금고 3층',
+      dinnerLocation: next.dinnerLocation
     };
   }
 
@@ -74,7 +75,8 @@ const getNextMeeting = (now: Date, dbSchedules: MeetingSchedule[]) => {
       name: '정기 모임',
       dday: 0,
       formattedDate: '',
-      location: '남원용성로타리클럽 2층'
+      meetingLocation: '남원중앙새마을금고 3층',
+      dinnerLocation: '추후 공지'
     };
   }
 
@@ -93,7 +95,8 @@ const getNextMeeting = (now: Date, dbSchedules: MeetingSchedule[]) => {
     name: next.name,
     dday: diffDays,
     formattedDate: next.date.toLocaleDateString('ko-KR', options),
-    location: '남원용성로타리클럽 2층 (정기 장소)'
+    meetingLocation: '남원중앙새마을금고 3층',
+    dinnerLocation: '추후 공지'
   };
 };
 
@@ -131,36 +134,64 @@ const ScheduleTab: React.FC<ScheduleTabProps> = ({ schedules }) => {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z" />
           </svg>
-          다가오는 모임 위치
+          모임 상세 장소
         </h3>
+        
+        {/* 회의 장소 (고정) */}
+        <div className="info-item">
+          <span className="info-label">1부 회의</span>
+          <span className="info-value" style={{ fontWeight: 700, color: 'var(--text-main)' }}>
+            {nextMeeting.meetingLocation}
+          </span>
+        </div>
+        <div className="map-btn-container" style={{ marginTop: '8px', marginBottom: '14px', gridTemplateColumns: '1fr 1fr' }}>
+          <a
+            href={`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent('남원중앙새마을금고')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="map-link btn-interactive"
+            style={{ fontSize: '12px', padding: '6px' }}
+          >
+            회의 장소 네이버 지도
+          </a>
+          <a
+            href={`https://map.kakao.com/?q=${encodeURIComponent('남원중앙새마을금고')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="map-link btn-interactive"
+            style={{ fontSize: '12px', padding: '6px' }}
+          >
+            회의 장소 카카오 맵
+          </a>
+        </div>
+
+        {/* 식사 장소 (동적) */}
         <div className="info-item" style={{ borderBottom: 'none', paddingBottom: 0 }}>
-          <span className="info-label">모임 장소</span>
-          <span className="info-value" style={{ fontWeight: 700, color: 'var(--primary)' }}>
-            {nextMeeting.location}
+          <span className="info-label">2부 식사</span>
+          <span className="info-value" style={{ fontWeight: 700, color: nextMeeting.dinnerLocation === '추후 공지' ? 'var(--text-muted)' : 'var(--primary)' }}>
+            {nextMeeting.dinnerLocation}
           </span>
         </div>
 
-        {nextMeeting.location && nextMeeting.location !== '추후 공지' && (
-          <div className="map-btn-container" style={{ marginTop: '14px' }}>
+        {nextMeeting.dinnerLocation && nextMeeting.dinnerLocation !== '추후 공지' && (
+          <div className="map-btn-container" style={{ marginTop: '10px' }}>
             <a
-              href={`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(
-                nextMeeting.location.includes('로타리') ? '남원 용성로타리클럽' : '남원 ' + nextMeeting.location
-              )}`}
+              href={`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent('남원 ' + nextMeeting.dinnerLocation)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="map-link btn-interactive"
+              style={{ fontSize: '12px', padding: '6px', background: 'var(--accent-light)', color: 'var(--accent)', border: '1px solid var(--accent)' }}
             >
-              네이버 지도
+              식사 장소 네이버 지도
             </a>
             <a
-              href={`https://map.kakao.com/?q=${encodeURIComponent(
-                nextMeeting.location.includes('로타리') ? '남원 용성로타리클럽' : '남원 ' + nextMeeting.location
-              )}`}
+              href={`https://map.kakao.com/?q=${encodeURIComponent('남원 ' + nextMeeting.dinnerLocation)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="map-link btn-interactive"
+              style={{ fontSize: '12px', padding: '6px', background: 'var(--accent-light)', color: 'var(--accent)', border: '1px solid var(--accent)' }}
             >
-              카카오 맵
+              식사 장소 카카오 맵
             </a>
           </div>
         )}
@@ -191,7 +222,7 @@ const ScheduleTab: React.FC<ScheduleTabProps> = ({ schedules }) => {
                   <div>
                     <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-main)' }}>{schedule.title}</div>
                     <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      일시: {schedule.date} (토) 19:00 | 장소: {schedule.location || '추후 공지'}
+                      회의: 남원중앙새마을금고 3층 | 식사: {schedule.location || '추후 공지'}
                     </div>
                   </div>
                   <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--primary)', background: 'var(--primary-light)', padding: '2px 8px', borderRadius: '10px' }}>

@@ -406,7 +406,7 @@ const AdminTab: React.FC<AdminTabProps> = ({
             </div>
 
             <div className="form-group">
-              <label>모임 장소</label>
+              <label>2부 식사 장소 (공란 입력 시 '추후 공지')</label>
               <input
                 type="text"
                 className="input-field"
