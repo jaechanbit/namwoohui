@@ -219,11 +219,7 @@ const AdminTab: React.FC<AdminTabProps> = ({
   if (!isAuthenticated) {
     return (
       <div className="admin-auth-container glass animate-fade-in" style={{ borderRadius: 'var(--radius-md)' }}>
-        <div className="admin-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: '32px', height: '32px' }}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-          </svg>
-        </div>
+        <img src="/namwoohui/logo.png" alt="남우회 로고" style={{ width: '80px', height: '80px', objectFit: 'contain', marginBottom: '8px' }} />
         <div>
           <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>관리자 모드 접속</h2>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>친구, 일정, 통장 및 집행부를 관리할 수 있습니다.</p>

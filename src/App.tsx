@@ -466,7 +466,8 @@ function App() {
     <div className="app-container">
       {/* Header */}
       <header className="app-header glass">
-        <h1 className="app-title">
+        <h1 className="app-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src="/namwoohui/logo.png" alt="남우회 로고" style={{ height: '32px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }} />
           남우회 <span>NAMWOOHUI</span>
         </h1>
         {isUsingDB && <span className="db-sync-badge">실시간 DB 동기화</span>}
