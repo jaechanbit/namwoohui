@@ -11191,7 +11191,7 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 		if (password === "1234") {
 			setIsAuthenticated(true);
 			setErrorMsg("");
-		} else setErrorMsg("비밀번호가 올바르지 않습니다. (테스트용: 1234)");
+		} else setErrorMsg("비밀번호가 올바르지 않습니다.");
 	};
 	const openAddMemberModal = () => {
 		setMemberModalMode("add");
@@ -11327,7 +11327,7 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 						type: "password",
 						className: "input-field",
-						placeholder: "비밀번호 입력 (테스트: 1234)",
+						placeholder: "비밀번호를 입력하세요.",
 						value: password,
 						onChange: (e) => setPassword(e.target.value)
 					}),
