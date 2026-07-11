@@ -10560,7 +10560,7 @@ var getNextMeeting = (now, dbSchedules) => {
 	const futureDbSchedules = dbSchedules.map((s) => ({
 		date: /* @__PURE__ */ new Date(`${s.date}T19:00:00`),
 		name: s.title,
-		location: s.location || "추후 공지"
+		dinnerLocation: s.location || "추후 공지"
 	})).filter((s) => s.date.getTime() > now.getTime()).sort((a, b) => a.date.getTime() - b.date.getTime());
 	if (futureDbSchedules.length > 0) {
 		const next = futureDbSchedules[0];
@@ -10577,7 +10577,8 @@ var getNextMeeting = (now, dbSchedules) => {
 				hour: "numeric",
 				minute: "numeric"
 			}),
-			location: next.location
+			meetingLocation: "남원중앙새마을금고 3층",
+			dinnerLocation: next.dinnerLocation
 		};
 	}
 	const currentYear = now.getFullYear();
@@ -10604,7 +10605,8 @@ var getNextMeeting = (now, dbSchedules) => {
 		name: "정기 모임",
 		dday: 0,
 		formattedDate: "",
-		location: "남원용성로타리클럽 2층"
+		meetingLocation: "남원중앙새마을금고 3층",
+		dinnerLocation: "추후 공지"
 	};
 	const diffTime = next.date.getTime() - now.getTime();
 	const diffDays = Math.ceil(diffTime / (1e3 * 60 * 60 * 24));
@@ -10619,7 +10621,8 @@ var getNextMeeting = (now, dbSchedules) => {
 			hour: "numeric",
 			minute: "numeric"
 		}),
-		location: "남원용성로타리클럽 2층 (정기 장소)"
+		meetingLocation: "남원중앙새마을금고 3층",
+		dinnerLocation: "추후 공지"
 	};
 };
 var ScheduleTab = ({ schedules }) => {
@@ -10690,7 +10693,50 @@ var ScheduleTab = ({ schedules }) => {
 								strokeLinejoin: "round",
 								d: "M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z"
 							})]
-						}), "다가오는 모임 위치"]
+						}), "모임 상세 장소"]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "info-item",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "info-label",
+							children: "1부 회의"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "info-value",
+							style: {
+								fontWeight: 700,
+								color: "var(--text-main)"
+							},
+							children: nextMeeting.meetingLocation
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "map-btn-container",
+						style: {
+							marginTop: "8px",
+							marginBottom: "14px",
+							gridTemplateColumns: "1fr 1fr"
+						},
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+							href: `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent("남원중앙새마을금고")}`,
+							target: "_blank",
+							rel: "noopener noreferrer",
+							className: "map-link btn-interactive",
+							style: {
+								fontSize: "12px",
+								padding: "6px"
+							},
+							children: "회의 장소 네이버 지도"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+							href: `https://map.kakao.com/?q=${encodeURIComponent("남원중앙새마을금고")}`,
+							target: "_blank",
+							rel: "noopener noreferrer",
+							className: "map-link btn-interactive",
+							style: {
+								fontSize: "12px",
+								padding: "6px"
+							},
+							children: "회의 장소 카카오 맵"
+						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "info-item",
@@ -10700,31 +10746,45 @@ var ScheduleTab = ({ schedules }) => {
 						},
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "info-label",
-							children: "모임 장소"
+							children: "2부 식사"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "info-value",
 							style: {
 								fontWeight: 700,
-								color: "var(--primary)"
+								color: nextMeeting.dinnerLocation === "추후 공지" ? "var(--text-muted)" : "var(--primary)"
 							},
-							children: nextMeeting.location
+							children: nextMeeting.dinnerLocation
 						})]
 					}),
-					nextMeeting.location && nextMeeting.location !== "추후 공지" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					nextMeeting.dinnerLocation && nextMeeting.dinnerLocation !== "추후 공지" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "map-btn-container",
-						style: { marginTop: "14px" },
+						style: { marginTop: "10px" },
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(nextMeeting.location.includes("로타리") ? "남원 용성로타리클럽" : "남원 " + nextMeeting.location)}`,
+							href: `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent("남원 " + nextMeeting.dinnerLocation)}`,
 							target: "_blank",
 							rel: "noopener noreferrer",
 							className: "map-link btn-interactive",
-							children: "네이버 지도"
+							style: {
+								fontSize: "12px",
+								padding: "6px",
+								background: "var(--accent-light)",
+								color: "var(--accent)",
+								border: "1px solid var(--accent)"
+							},
+							children: "식사 장소 네이버 지도"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: `https://map.kakao.com/?q=${encodeURIComponent(nextMeeting.location.includes("로타리") ? "남원 용성로타리클럽" : "남원 " + nextMeeting.location)}`,
+							href: `https://map.kakao.com/?q=${encodeURIComponent("남원 " + nextMeeting.dinnerLocation)}`,
 							target: "_blank",
 							rel: "noopener noreferrer",
 							className: "map-link btn-interactive",
-							children: "카카오 맵"
+							style: {
+								fontSize: "12px",
+								padding: "6px",
+								background: "var(--accent-light)",
+								color: "var(--accent)",
+								border: "1px solid var(--accent)"
+							},
+							children: "식사 장소 카카오 맵"
 						})]
 					})
 				]
@@ -10799,12 +10859,7 @@ var ScheduleTab = ({ schedules }) => {
 									color: "var(--text-muted)",
 									marginTop: "2px"
 								},
-								children: [
-									"일시: ",
-									schedule.date,
-									" (토) 19:00 | 장소: ",
-									schedule.location || "추후 공지"
-								]
+								children: ["회의: 남원중앙새마을금고 3층 | 식사: ", schedule.location || "추후 공지"]
 							})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 								style: {
 									fontSize: "12px",
@@ -11437,7 +11492,7 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "form-group",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "모임 장소" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "2부 식사 장소 (공란 입력 시 '추후 공지')" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 								type: "text",
 								className: "input-field",
 								placeholder: "예: 백제갈비, 궁 식당",
