@@ -50,7 +50,7 @@ const getNextMeeting = (now: Date, dbSchedules: MeetingSchedule[]) => {
       name: next.name,
       dday: diffDays,
       formattedDate: next.date.toLocaleDateString('ko-KR', options),
-      meetingLocation: '남원중앙새마을금고 3층',
+      meetingLocation: '남원중앙새마을금고 본점 3층',
       dinnerLocation: next.dinnerLocation
     };
   }
@@ -75,7 +75,7 @@ const getNextMeeting = (now: Date, dbSchedules: MeetingSchedule[]) => {
       name: '정기 모임',
       dday: 0,
       formattedDate: '',
-      meetingLocation: '남원중앙새마을금고 3층',
+      meetingLocation: '남원중앙새마을금고 본점 3층',
       dinnerLocation: '추후 공지'
     };
   }
@@ -95,7 +95,7 @@ const getNextMeeting = (now: Date, dbSchedules: MeetingSchedule[]) => {
     name: next.name,
     dday: diffDays,
     formattedDate: next.date.toLocaleDateString('ko-KR', options),
-    meetingLocation: '남원중앙새마을금고 3층',
+    meetingLocation: '남원중앙새마을금고 본점 3층',
     dinnerLocation: '추후 공지'
   };
 };
@@ -146,7 +146,7 @@ const ScheduleTab: React.FC<ScheduleTabProps> = ({ schedules }) => {
         </div>
         <div className="map-btn-container" style={{ marginTop: '8px', marginBottom: '14px', gridTemplateColumns: '1fr 1fr' }}>
           <a
-            href={`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent('남원중앙새마을금고')}`}
+            href={`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent('남원중앙새마을금고 본점')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="map-link btn-interactive"
@@ -155,7 +155,7 @@ const ScheduleTab: React.FC<ScheduleTabProps> = ({ schedules }) => {
             회의 장소 네이버 지도
           </a>
           <a
-            href={`https://map.kakao.com/?q=${encodeURIComponent('남원중앙새마을금고')}`}
+            href={`https://map.kakao.com/?q=${encodeURIComponent('남원중앙새마을금고 본점')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="map-link btn-interactive"
@@ -222,7 +222,7 @@ const ScheduleTab: React.FC<ScheduleTabProps> = ({ schedules }) => {
                   <div>
                     <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-main)' }}>{schedule.title}</div>
                     <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      회의: 남원중앙새마을금고 3층 | 식사: {schedule.location || '추후 공지'}
+                      회의: 남원중앙새마을금고 본점 3층 | 식사: {schedule.location || '추후 공지'}
                     </div>
                   </div>
                   <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--primary)', background: 'var(--primary-light)', padding: '2px 8px', borderRadius: '10px' }}>
