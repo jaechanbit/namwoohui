@@ -10342,6 +10342,9 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 		e.stopPropagation();
 		window.location.href = `${type}:${phone}`;
 	};
+	const handleExecClick = (phone) => {
+		if (phone) window.location.href = `tel:${phone}`;
+	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "animate-fade-in",
 		children: [
@@ -10427,7 +10430,9 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 						className: "exec-grid",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "exec-card",
+								className: "exec-card btn-interactive",
+								style: { cursor: executives.president?.phone ? "pointer" : "default" },
+								onClick: () => handleExecClick(executives.president?.phone),
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "exec-card-title",
@@ -10459,7 +10464,9 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 								]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "exec-card",
+								className: "exec-card btn-interactive",
+								style: { cursor: executives.secretary?.phone ? "pointer" : "default" },
+								onClick: () => handleExecClick(executives.secretary?.phone),
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "exec-card-title",
@@ -10486,12 +10493,14 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "exec-card-name",
-										children: executives.secretary?.name || "미지정"
+										children: executives.secretary?.name || "미정"
 									})
 								]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "exec-card",
+								className: "exec-card btn-interactive",
+								style: { cursor: executives.treasurer?.phone ? "pointer" : "default" },
+								onClick: () => handleExecClick(executives.treasurer?.phone),
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "exec-card-title",
