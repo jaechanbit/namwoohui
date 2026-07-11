@@ -10556,7 +10556,30 @@ var getFirstSaturday = (year, month) => {
 	date.setHours(19, 0, 0, 0);
 	return date;
 };
-var getNextMeeting = (now) => {
+var getNextMeeting = (now, dbSchedules) => {
+	const futureDbSchedules = dbSchedules.map((s) => ({
+		date: /* @__PURE__ */ new Date(`${s.date}T19:00:00`),
+		name: s.title,
+		location: s.location || "추후 공지"
+	})).filter((s) => s.date.getTime() > now.getTime()).sort((a, b) => a.date.getTime() - b.date.getTime());
+	if (futureDbSchedules.length > 0) {
+		const next = futureDbSchedules[0];
+		const diffTime = next.date.getTime() - now.getTime();
+		const diffDays = Math.ceil(diffTime / (1e3 * 60 * 60 * 24));
+		return {
+			name: next.name,
+			dday: diffDays,
+			formattedDate: next.date.toLocaleDateString("ko-KR", {
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+				weekday: "short",
+				hour: "numeric",
+				minute: "numeric"
+			}),
+			location: next.location
+		};
+	}
 	const currentYear = now.getFullYear();
 	const meetingMonths = [
 		2,
@@ -10578,33 +10601,40 @@ var getNextMeeting = (now) => {
 	});
 	const next = candidateMeetings.find((m) => m.date.getTime() > now.getTime());
 	if (!next) return {
-		date: /* @__PURE__ */ new Date(),
 		name: "정기 모임",
 		dday: 0,
-		formattedDate: ""
+		formattedDate: "",
+		location: "남원용성로타리클럽 2층"
 	};
 	const diffTime = next.date.getTime() - now.getTime();
 	const diffDays = Math.ceil(diffTime / (1e3 * 60 * 60 * 24));
-	const formattedDate = next.date.toLocaleDateString("ko-KR", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-		weekday: "short",
-		hour: "numeric",
-		minute: "numeric"
-	});
 	return {
-		date: next.date,
 		name: next.name,
 		dday: diffDays,
-		formattedDate
+		formattedDate: next.date.toLocaleDateString("ko-KR", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+			weekday: "short",
+			hour: "numeric",
+			minute: "numeric"
+		}),
+		location: "남원용성로타리클럽 2층 (정기 장소)"
 	};
 };
-var ScheduleTab = () => {
-	const now = /* @__PURE__ */ new Date();
-	const nextMeeting = (0, import_react.useMemo)(() => getNextMeeting(now), []);
+var ScheduleTab = ({ schedules }) => {
+	const now = (0, import_react.useMemo)(() => /* @__PURE__ */ new Date(), []);
+	const nextMeeting = (0, import_react.useMemo)(() => getNextMeeting(now, schedules), [now, schedules]);
+	const upcomingSchedules = (0, import_react.useMemo)(() => {
+		return [...schedules].filter((s) => (/* @__PURE__ */ new Date(`${s.date}T23:59:59`)).getTime() > now.getTime()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+	}, [schedules, now]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "schedule-container animate-fade-in",
+		style: {
+			display: "flex",
+			flexDirection: "column",
+			gap: "16px"
+		},
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "dday-card",
@@ -10622,71 +10652,16 @@ var ScheduleTab = () => {
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 							style: {
 								fontWeight: 700,
-								fontSize: "16px",
+								fontSize: "17px",
 								marginBottom: "4px"
 							},
 							children: nextMeeting.name
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							style: { opacity: .9 },
-							children: nextMeeting.formattedDate
-						})]
-					})
-				]
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "info-card",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
-						className: "info-title",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
-							xmlns: "http://www.w3.org/2000/svg",
-							fill: "none",
-							viewBox: "0 0 24 24",
-							strokeWidth: 2,
-							stroke: "currentColor",
 							style: {
-								width: "18px",
-								height: "18px"
+								opacity: .9,
+								fontSize: "13px"
 							},
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-								strokeLinecap: "round",
-								strokeLinejoin: "round",
-								d: "M11.25 11.25l.041-.02a.75.75 0 111.083.985l-.04.022c-.296.216-.625.377-.98.478l-.107.03a.75.75 0 00-.544.712v.225a.75.75 0 001.5 0v-.071c.48-.11.935-.31 1.346-.597l.088-.063a2.25 2.25 0 10-3.322-2.914l-.066.089a.75.75 0 001.242.84l.067-.09z"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-								strokeLinecap: "round",
-								strokeLinejoin: "round",
-								d: "M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-							})]
-						}), "남우회 정기일정 규정"]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "info-item",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-label",
-							children: "정기모임"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-value",
-							children: "매년 3월, 6월, 9월, 11월 첫째 주 토요일 (19:00)"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "info-item",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-label",
-							children: "정기총회"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-value",
-							children: "매년 12월 첫째 주 토요일 (19:00)"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "info-item",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-label",
-							children: "회비 납부"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-value",
-							children: "총무 및 재무 문의"
+							children: nextMeeting.formattedDate
 						})]
 					})
 				]
@@ -10715,42 +10690,180 @@ var ScheduleTab = () => {
 								strokeLinejoin: "round",
 								d: "M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z"
 							})]
-						}), "모임 장소 안내"]
+						}), "다가오는 모임 위치"]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "info-item",
+						style: {
+							borderBottom: "none",
+							paddingBottom: 0
+						},
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "info-label",
-							children: "기본 장소"
+							children: "모임 장소"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "info-value",
-							children: "남원용성로타리클럽 2층"
+							style: {
+								fontWeight: 700,
+								color: "var(--primary)"
+							},
+							children: nextMeeting.location
 						})]
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "info-item",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-label",
-							children: "상세 주소"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-value",
-							children: "전라북도 남원시 용성로 인근"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					nextMeeting.location && nextMeeting.location !== "추후 공지" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "map-btn-container",
+						style: { marginTop: "14px" },
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: "https://m.map.naver.com/search2/search.naver?query=남원+용성로타리클럽",
+							href: `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(nextMeeting.location.includes("로타리") ? "남원 용성로타리클럽" : "남원 " + nextMeeting.location)}`,
 							target: "_blank",
 							rel: "noopener noreferrer",
 							className: "map-link btn-interactive",
-							children: "네이버 지도 보기"
+							children: "네이버 지도"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: "https://map.kakao.com/?q=남원+용성로타리클럽",
+							href: `https://map.kakao.com/?q=${encodeURIComponent(nextMeeting.location.includes("로타리") ? "남원 용성로타리클럽" : "남원 " + nextMeeting.location)}`,
 							target: "_blank",
 							rel: "noopener noreferrer",
 							className: "map-link btn-interactive",
-							children: "카카오 맵 보기"
+							children: "카카오 맵"
+						})]
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "info-card",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
+					className: "info-title",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+							xmlns: "http://www.w3.org/2000/svg",
+							fill: "none",
+							viewBox: "0 0 24 24",
+							strokeWidth: 2,
+							stroke: "currentColor",
+							style: {
+								width: "18px",
+								height: "18px"
+							},
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+								strokeLinecap: "round",
+								strokeLinejoin: "round",
+								d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
+							})
+						}),
+						"등록된 모임 일정 (",
+						upcomingSchedules.length,
+						"개)"
+					]
+				}), upcomingSchedules.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+					style: {
+						fontSize: "13px",
+						color: "var(--text-muted)",
+						textAlign: "center",
+						padding: "16px 0"
+					},
+					children: [
+						"새로 등록된 특별 일정이 없습니다.",
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+						"(기본 정기 일정으로 작동 중)"
+					]
+				}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					style: {
+						display: "flex",
+						flexDirection: "column",
+						gap: "12px",
+						marginTop: "8px"
+					},
+					children: upcomingSchedules.map((schedule) => {
+						const dTime = (/* @__PURE__ */ new Date(`${schedule.date}T19:00:00`)).getTime() - now.getTime();
+						const dDays = Math.ceil(dTime / (1e3 * 60 * 60 * 24));
+						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							style: {
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								padding: "10px 12px",
+								background: "var(--background)",
+								borderRadius: "var(--radius-sm)",
+								border: "1px solid var(--border-color)"
+							},
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								style: {
+									fontWeight: 700,
+									fontSize: "14px",
+									color: "var(--text-main)"
+								},
+								children: schedule.title
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: {
+									fontSize: "12px",
+									color: "var(--text-muted)",
+									marginTop: "2px"
+								},
+								children: [
+									"일시: ",
+									schedule.date,
+									" (토) 19:00 | 장소: ",
+									schedule.location || "추후 공지"
+								]
+							})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								style: {
+									fontSize: "12px",
+									fontWeight: 700,
+									color: "var(--primary)",
+									background: "var(--primary-light)",
+									padding: "2px 8px",
+									borderRadius: "10px"
+								},
+								children: dDays === 0 ? "D-Day" : `D-${dDays}`
+							})]
+						}, schedule.id);
+					})
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "info-card",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
+						className: "info-title",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+							xmlns: "http://www.w3.org/2000/svg",
+							fill: "none",
+							viewBox: "0 0 24 24",
+							strokeWidth: 2,
+							stroke: "currentColor",
+							style: {
+								width: "18px",
+								height: "18px"
+							},
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+								strokeLinecap: "round",
+								strokeLinejoin: "round",
+								d: "M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+							})
+						}), "남우회 정기 모임 규정"]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "info-item",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "info-label",
+							children: "정기모임"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "info-value",
+							children: "매년 3, 6, 9, 11월 첫째 주 토요일 (19:00)"
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "info-item",
+						style: {
+							borderBottom: "none",
+							paddingBottom: 0
+						},
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "info-label",
+							children: "정기총회"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "info-value",
+							children: "매년 12월 첫째 주 토요일 (19:00)"
 						})]
 					})
 				]
@@ -10760,18 +10873,27 @@ var ScheduleTab = () => {
 };
 //#endregion
 //#region src/components/AdminTab.tsx
-var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
+var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedules, onAddSchedule, onUpdateSchedule, onDeleteSchedule }) => {
 	const [isAuthenticated, setIsAuthenticated] = (0, import_react.useState)(false);
 	const [password, setPassword] = (0, import_react.useState)("");
 	const [errorMsg, setErrorMsg] = (0, import_react.useState)("");
-	const [isModalOpen, setIsModalOpen] = (0, import_react.useState)(false);
-	const [modalMode, setModalMode] = (0, import_react.useState)("add");
+	const [subTab, setSubTab] = (0, import_react.useState)("members");
+	const [isMemberModalOpen, setIsMemberModalOpen] = (0, import_react.useState)(false);
+	const [memberModalMode, setMemberModalMode] = (0, import_react.useState)("add");
 	const [selectedMember, setSelectedMember] = (0, import_react.useState)(null);
-	const [formData, setFormData] = (0, import_react.useState)({
+	const [memberFormData, setMemberFormData] = (0, import_react.useState)({
 		name: "",
 		role: "",
 		company: "",
 		phone: ""
+	});
+	const [isScheduleModalOpen, setIsScheduleModalOpen] = (0, import_react.useState)(false);
+	const [scheduleModalMode, setScheduleModalMode] = (0, import_react.useState)("add");
+	const [selectedSchedule, setSelectedSchedule] = (0, import_react.useState)(null);
+	const [scheduleFormData, setScheduleFormData] = (0, import_react.useState)({
+		title: "",
+		date: "",
+		location: ""
 	});
 	const handleLogin = (e) => {
 		e.preventDefault();
@@ -10780,42 +10902,71 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 			setErrorMsg("");
 		} else setErrorMsg("비밀번호가 올바르지 않습니다. (테스트용: 1234)");
 	};
-	const openAddModal = () => {
-		setModalMode("add");
-		setFormData({
+	const openAddMemberModal = () => {
+		setMemberModalMode("add");
+		setMemberFormData({
 			name: "",
 			role: "",
 			company: "",
 			phone: ""
 		});
-		setIsModalOpen(true);
+		setIsMemberModalOpen(true);
 	};
-	const openEditModal = (member) => {
-		setModalMode("edit");
+	const openEditMemberModal = (member) => {
+		setMemberModalMode("edit");
 		setSelectedMember(member);
-		setFormData({
+		setMemberFormData({
 			name: member.name,
 			role: member.role,
 			company: member.company,
 			phone: member.phone
 		});
-		setIsModalOpen(true);
+		setIsMemberModalOpen(true);
 	};
-	const handleFormSubmit = (e) => {
+	const handleMemberSubmit = (e) => {
 		e.preventDefault();
-		if (!formData.name.trim() || !formData.phone.trim()) {
+		if (!memberFormData.name.trim() || !memberFormData.phone.trim()) {
 			alert("이름과 전화번호는 필수 입력 항목입니다.");
 			return;
 		}
-		if (modalMode === "add") onAddMember(formData);
-		else if (modalMode === "edit" && selectedMember) onUpdateMember({
+		if (memberModalMode === "add") onAddMember(memberFormData);
+		else if (memberModalMode === "edit" && selectedMember) onUpdateMember({
 			...selectedMember,
-			...formData
+			...memberFormData
 		});
-		setIsModalOpen(false);
+		setIsMemberModalOpen(false);
 	};
-	const handleDelete = (id, name) => {
-		if (window.confirm(`정말 ${name} 회원을 삭제하시겠습니까?`)) onDeleteMember(id);
+	const openAddScheduleModal = () => {
+		setScheduleModalMode("add");
+		setScheduleFormData({
+			title: "",
+			date: "",
+			location: ""
+		});
+		setIsScheduleModalOpen(true);
+	};
+	const openEditScheduleModal = (schedule) => {
+		setScheduleModalMode("edit");
+		setSelectedSchedule(schedule);
+		setScheduleFormData({
+			title: schedule.title,
+			date: schedule.date,
+			location: schedule.location || ""
+		});
+		setIsScheduleModalOpen(true);
+	};
+	const handleScheduleSubmit = (e) => {
+		e.preventDefault();
+		if (!scheduleFormData.title.trim() || !scheduleFormData.date) {
+			alert("제목과 날짜는 필수 입력 항목입니다.");
+			return;
+		}
+		if (scheduleModalMode === "add") onAddSchedule(scheduleFormData);
+		else if (scheduleModalMode === "edit" && selectedSchedule) onUpdateSchedule({
+			...selectedSchedule,
+			...scheduleFormData
+		});
+		setIsScheduleModalOpen(false);
 	};
 	if (!isAuthenticated) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "admin-auth-container glass animate-fade-in",
@@ -10852,7 +11003,7 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 					fontSize: "13px",
 					color: "var(--text-muted)"
 				},
-				children: "회원 등록 및 정보 수정이 가능합니다."
+				children: "친구 및 일정을 관리할 수 있습니다."
 			})] }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
 				onSubmit: handleLogin,
@@ -10922,10 +11073,50 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 							strokeLinejoin: "round",
 							d: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
 						})
-					}), "수정된 정보는 로컬 데이터 파일(members.json)에 실시간으로 영구 저장됩니다."]
+					}), "수정된 모든 정보는 수파베이스 DB에 실시간으로 반영됩니다."]
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				style: {
+					display: "grid",
+					gridTemplateColumns: "1fr 1fr",
+					gap: "8px",
+					background: "var(--background)",
+					padding: "4px",
+					borderRadius: "var(--radius-md)",
+					border: "1px solid var(--border-color)"
+				},
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					onClick: () => setSubTab("members"),
+					style: {
+						padding: "10px 0",
+						border: "none",
+						borderRadius: "var(--radius-sm)",
+						fontSize: "14px",
+						fontWeight: 700,
+						cursor: "pointer",
+						background: subTab === "members" ? "var(--primary)" : "transparent",
+						color: subTab === "members" ? "white" : "var(--text-muted)",
+						transition: "all 0.2s ease"
+					},
+					children: "친구 정보 관리"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					onClick: () => setSubTab("schedules"),
+					style: {
+						padding: "10px 0",
+						border: "none",
+						borderRadius: "var(--radius-sm)",
+						fontSize: "14px",
+						fontWeight: 700,
+						cursor: "pointer",
+						background: subTab === "schedules" ? "var(--primary)" : "transparent",
+						color: subTab === "schedules" ? "white" : "var(--text-muted)",
+						transition: "all 0.2s ease"
+					},
+					children: "모임 일정 관리"
+				})]
+			}),
+			subTab === "members" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "admin-controls",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 					className: "admin-list-header",
@@ -10936,7 +11127,7 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 					]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 					className: "btn-primary btn-interactive",
-					onClick: openAddModal,
+					onClick: openAddMemberModal,
 					style: {
 						width: "auto",
 						padding: "8px 14px",
@@ -10944,9 +11135,13 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 					},
 					children: "+ 친구 추가"
 				})]
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "members-list",
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					gap: "10px"
+				},
 				children: members.map((member) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "member-card",
 					style: { cursor: "default" },
@@ -10975,7 +11170,7 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 						className: "member-actions",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 							className: "action-btn edit-btn btn-interactive",
-							onClick: () => openEditModal(member),
+							onClick: () => openEditMemberModal(member),
 							"aria-label": "정보 수정",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
 								xmlns: "http://www.w3.org/2000/svg",
@@ -10995,7 +11190,9 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 							className: "action-btn delete-btn btn-interactive",
-							onClick: () => handleDelete(member.id, member.name),
+							onClick: () => {
+								if (window.confirm(`정말 ${member.name} 회원을 삭제하시겠습니까?`)) onDeleteMember(member.id);
+							},
 							"aria-label": "삭제",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
 								xmlns: "http://www.w3.org/2000/svg",
@@ -11016,16 +11213,121 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 						})]
 					})]
 				}, member.id))
-			}),
-			isModalOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			})] }),
+			subTab === "schedules" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "admin-controls",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+					className: "admin-list-header",
+					children: [
+						"전체 일정 목록 (",
+						schedules.length,
+						"개)"
+					]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					className: "btn-primary btn-interactive",
+					onClick: openAddScheduleModal,
+					style: {
+						width: "auto",
+						padding: "8px 14px",
+						borderRadius: "var(--radius-sm)"
+					},
+					children: "+ 모임 일정 추가"
+				})]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "members-list",
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					gap: "10px"
+				},
+				children: schedules.map((schedule) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "member-card",
+					style: { cursor: "default" },
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "member-info-wrapper",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "member-avatar",
+							style: {
+								background: "var(--primary-light)",
+								color: "var(--primary)"
+							},
+							children: "일"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "member-text",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "member-name-row",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "member-name",
+									style: { fontSize: "15px" },
+									children: schedule.title
+								})
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								className: "member-company",
+								children: [
+									"날짜: ",
+									schedule.date,
+									" | 장소: ",
+									schedule.location || "추후 공지"
+								]
+							})]
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "member-actions",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							className: "action-btn edit-btn btn-interactive",
+							onClick: () => openEditScheduleModal(schedule),
+							"aria-label": "일정 수정",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+								xmlns: "http://www.w3.org/2000/svg",
+								fill: "none",
+								viewBox: "0 0 24 24",
+								strokeWidth: 2,
+								stroke: "currentColor",
+								style: {
+									width: "16px",
+									height: "16px"
+								},
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+									strokeLinecap: "round",
+									strokeLinejoin: "round",
+									d: "M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.83 20.013a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+								})
+							})
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							className: "action-btn delete-btn btn-interactive",
+							onClick: () => {
+								if (window.confirm(`정말 '${schedule.title}' 일정을 삭제하시겠습니까?`)) onDeleteSchedule(schedule.id);
+							},
+							"aria-label": "삭제",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+								xmlns: "http://www.w3.org/2000/svg",
+								fill: "none",
+								viewBox: "0 0 24 24",
+								strokeWidth: 2,
+								stroke: "currentColor",
+								style: {
+									width: "16px",
+									height: "16px"
+								},
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+									strokeLinecap: "round",
+									strokeLinejoin: "round",
+									d: "M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+								})
+							})
+						})]
+					})]
+				}, schedule.id))
+			})] }),
+			isMemberModalOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "modal-backdrop animate-fade-in",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
-					onSubmit: handleFormSubmit,
+					onSubmit: handleMemberSubmit,
 					className: "modal-content",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 							className: "modal-title",
-							children: modalMode === "add" ? "새로운 친구 등록" : "회원 정보 수정"
+							children: memberModalMode === "add" ? "새로운 친구 등록" : "회원 정보 수정"
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "form-group",
@@ -11033,21 +11335,22 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 								type: "text",
 								className: "input-field",
 								required: true,
-								value: formData.name,
-								onChange: (e) => setFormData({
-									...formData,
+								value: memberFormData.name,
+								onChange: (e) => setMemberFormData({
+									...memberFormData,
 									name: e.target.value
 								})
 							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "form-group",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "직책 (예: 운영위원, 총무 등)" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "직책 (예: 회장, 운영위원, 총무 등)" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 								type: "text",
 								className: "input-field",
-								value: formData.role,
-								onChange: (e) => setFormData({
-									...formData,
+								placeholder: "공란 입력 시 일반회원",
+								value: memberFormData.role,
+								onChange: (e) => setMemberFormData({
+									...memberFormData,
 									role: e.target.value
 								})
 							})]
@@ -11057,9 +11360,9 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "소속 / 직업" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 								type: "text",
 								className: "input-field",
-								value: formData.company,
-								onChange: (e) => setFormData({
-									...formData,
+								value: memberFormData.company,
+								onChange: (e) => setMemberFormData({
+									...memberFormData,
 									company: e.target.value
 								})
 							})]
@@ -11071,9 +11374,9 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 								className: "input-field",
 								required: true,
 								placeholder: "010-0000-0000",
-								value: formData.phone,
-								onChange: (e) => setFormData({
-									...formData,
+								value: memberFormData.phone,
+								onChange: (e) => setMemberFormData({
+									...memberFormData,
 									phone: e.target.value
 								})
 							})]
@@ -11083,7 +11386,74 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember }) => {
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 								type: "button",
 								className: "btn-secondary",
-								onClick: () => setIsModalOpen(false),
+								onClick: () => setIsMemberModalOpen(false),
+								children: "취소"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "submit",
+								className: "btn-primary",
+								style: { width: "auto" },
+								children: "저장"
+							})]
+						})
+					]
+				})
+			}),
+			isScheduleModalOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "modal-backdrop animate-fade-in",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+					onSubmit: handleScheduleSubmit,
+					className: "modal-content",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							className: "modal-title",
+							children: scheduleModalMode === "add" ? "새 모임 일정 추가" : "모임 일정 수정"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "form-group",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "모임 제목 *" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								type: "text",
+								className: "input-field",
+								placeholder: "예: 3월 정기 모임, 임시 야유회",
+								required: true,
+								value: scheduleFormData.title,
+								onChange: (e) => setScheduleFormData({
+									...scheduleFormData,
+									title: e.target.value
+								})
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "form-group",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "모임 날짜 *" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								type: "date",
+								className: "input-field",
+								required: true,
+								value: scheduleFormData.date,
+								onChange: (e) => setScheduleFormData({
+									...scheduleFormData,
+									date: e.target.value
+								})
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "form-group",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "모임 장소" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								type: "text",
+								className: "input-field",
+								placeholder: "예: 백제갈비, 궁 식당",
+								value: scheduleFormData.location,
+								onChange: (e) => setScheduleFormData({
+									...scheduleFormData,
+									location: e.target.value
+								})
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "modal-buttons",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: "btn-secondary",
+								onClick: () => setIsScheduleModalOpen(false),
 								children: "취소"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 								type: "submit",
@@ -32340,6 +32710,7 @@ var isSupabaseConfigured = () => {
 function App() {
 	const [activeTab, setActiveTab] = (0, import_react.useState)("members");
 	const [members, setMembers] = (0, import_react.useState)([]);
+	const [schedules, setSchedules] = (0, import_react.useState)([]);
 	const [selectedMember, setSelectedMember] = (0, import_react.useState)(null);
 	const [isUsingDB, setIsUsingDB] = (0, import_react.useState)(false);
 	(0, import_react.useEffect)(() => {
@@ -32350,11 +32721,11 @@ function App() {
 					const { data, error } = await supabase.from("members").select("*").order("name", { ascending: true });
 					if (!error && data) setMembers(data);
 					else {
-						console.error("Supabase fetch failed, falling back to local data:", error);
+						console.error("Supabase fetch members failed:", error);
 						setMembers(members_default);
 					}
 				} catch (e) {
-					console.error("Supabase connect error, falling back to local data:", e);
+					console.error("Supabase connect error for members:", e);
 					setMembers(members_default);
 				}
 			};
@@ -32368,6 +32739,28 @@ function App() {
 				setMembers(members_default);
 			}
 			else setMembers(members_default);
+		}
+	}, []);
+	(0, import_react.useEffect)(() => {
+		if (isSupabaseConfigured()) {
+			const fetchSchedules = async () => {
+				try {
+					const { data, error } = await supabase.from("schedules").select("*").order("date", { ascending: true });
+					if (!error && data) setSchedules(data);
+					else console.error("Supabase fetch schedules failed:", error);
+				} catch (e) {
+					console.error("Supabase connect error for schedules:", e);
+				}
+			};
+			fetchSchedules();
+		} else {
+			const savedSchedules = localStorage.getItem("namwoohui_schedules");
+			if (savedSchedules) try {
+				setSchedules(JSON.parse(savedSchedules));
+			} catch (e) {
+				setSchedules([]);
+			}
+			else setSchedules([]);
 		}
 	}, []);
 	const handleAddMember = (newMemberData) => {
@@ -32420,18 +32813,72 @@ function App() {
 			localStorage.setItem("namwoohui_members", JSON.stringify(updated));
 		}
 	};
+	const handleAddSchedule = (newScheduleData) => {
+		if (isUsingDB) supabase.from("schedules").insert([newScheduleData]).select().then(({ data, error }) => {
+			if (!error && data && data.length > 0) setSchedules((prev) => [...prev, data[0]].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+			else {
+				console.error("DB Insert schedule failed:", error);
+				alert("일정 저장 실패: " + (error?.message || "알 수 없는 오류"));
+			}
+		});
+		else {
+			const newSchedule = {
+				id: schedules.length > 0 ? Math.max(...schedules.map((s) => s.id)) + 1 : 1,
+				...newScheduleData
+			};
+			const updated = [...schedules, newSchedule].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+			setSchedules(updated);
+			localStorage.setItem("namwoohui_schedules", JSON.stringify(updated));
+		}
+	};
+	const handleUpdateSchedule = (updatedSchedule) => {
+		if (isUsingDB) supabase.from("schedules").update({
+			title: updatedSchedule.title,
+			date: updatedSchedule.date,
+			location: updatedSchedule.location
+		}).eq("id", updatedSchedule.id).then(({ error }) => {
+			if (!error) setSchedules((prev) => prev.map((s) => s.id === updatedSchedule.id ? updatedSchedule : s).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+			else {
+				console.error("DB Update schedule failed:", error);
+				alert("일정 수정 실패: " + error.message);
+			}
+		});
+		else {
+			const updated = schedules.map((s) => s.id === updatedSchedule.id ? updatedSchedule : s).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+			setSchedules(updated);
+			localStorage.setItem("namwoohui_schedules", JSON.stringify(updated));
+		}
+	};
+	const handleDeleteSchedule = (id) => {
+		if (isUsingDB) supabase.from("schedules").delete().eq("id", id).then(({ error }) => {
+			if (!error) setSchedules((prev) => prev.filter((s) => s.id !== id));
+			else {
+				console.error("DB Delete schedule failed:", error);
+				alert("일정 삭제 실패: " + error.message);
+			}
+		});
+		else {
+			const updated = schedules.filter((s) => s.id !== id);
+			setSchedules(updated);
+			localStorage.setItem("namwoohui_schedules", JSON.stringify(updated));
+		}
+	};
 	const renderTabContent = () => {
 		switch (activeTab) {
 			case "members": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MembersTab, {
 				members,
 				onSelectMember: (member) => setSelectedMember(member)
 			});
-			case "schedule": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ScheduleTab, {});
+			case "schedule": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ScheduleTab, { schedules });
 			case "admin": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminTab, {
 				members,
 				onAddMember: handleAddMember,
 				onUpdateMember: handleUpdateMember,
-				onDeleteMember: handleDeleteMember
+				onDeleteMember: handleDeleteMember,
+				schedules,
+				onAddSchedule: handleAddSchedule,
+				onUpdateSchedule: handleUpdateSchedule,
+				onDeleteSchedule: handleDeleteSchedule
 			});
 			default: return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MembersTab, {
 				members,
