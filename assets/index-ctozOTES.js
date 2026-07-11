@@ -10278,6 +10278,24 @@ var MembersTab = ({ members, onSelectMember }) => {
 		"상조위원",
 		"감사"
 	];
+	const executives = (0, import_react.useMemo)(() => {
+		const findExec = (roleName) => {
+			return members.find((m) => m.role === roleName) || members.find((m) => m.role.includes(roleName));
+		};
+		return {
+			president: findExec("회장"),
+			secretary: findExec("총무"),
+			treasurer: findExec("재무")
+		};
+	}, [members]);
+	const getNickname = (name) => {
+		if (!name) return "?";
+		if (name.length <= 2) return name;
+		return name.substring(1);
+	};
+	const handleCopyAccount = (bankName, accountNumber) => {
+		navigator.clipboard.writeText(accountNumber).then(() => alert(`${bankName} 계좌번호(${accountNumber})가 복사되었습니다.`)).catch(() => alert("복사에 실패했습니다. 수동으로 복사해주세요."));
+	};
 	const filteredMembers = (0, import_react.useMemo)(() => {
 		return members.filter((member) => {
 			if (!(member.name.toLowerCase().includes(searchQuery.toLowerCase()) || member.company.toLowerCase().includes(searchQuery.toLowerCase()) || member.role.toLowerCase().includes(searchQuery.toLowerCase()) || member.phone.replace(/-/g, "").includes(searchQuery.replace(/-/g, "")))) return false;
@@ -10301,7 +10319,144 @@ var MembersTab = ({ members, onSelectMember }) => {
 		className: "animate-fade-in",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "account-section",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "account-header",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "account-title",
+							children: "남우회 공식 통장"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "account-subtitle",
+							children: "입금 시 성명을 적어주세요"
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "bank-card membership",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "bank-card-type",
+								children: "회비 통장"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "bank-card-name",
+								children: "국민은행"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "bank-card-number",
+								children: "000000-00-000000"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "bank-card-owner",
+								children: "예금주 남우회"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								className: "bank-copy-btn btn-interactive",
+								onClick: () => handleCopyAccount("국민은행", "000000-00-000000"),
+								children: "복사"
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "bank-card mutual-aid",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "bank-card-type",
+								children: "상조 통장"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "bank-card-name",
+								children: "농협은행"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "bank-card-number",
+								children: "000-0000-0000-00"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "bank-card-owner",
+								children: "예금주 남우회"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								className: "bank-copy-btn btn-interactive",
+								onClick: () => handleCopyAccount("농협은행", "000-0000-0000-00"),
+								children: "복사"
+							})
+						]
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "exec-section",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "exec-label",
+						children: "EXECUTIVE COMMITTEE"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "exec-title",
+						children: "2026 집행부"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "exec-grid",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "exec-card",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "exec-card-title",
+										children: "회장"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "exec-card-avatar",
+										children: getNickname(executives.president?.name || "미지정")
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "exec-card-name",
+										children: executives.president?.name || "미지정"
+									})
+								]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "exec-card",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "exec-card-title",
+										children: "총무"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "exec-card-avatar",
+										children: getNickname(executives.secretary?.name || "미지정")
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "exec-card-name",
+										children: executives.secretary?.name || "미지정"
+									})
+								]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "exec-card",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "exec-card-title",
+										children: "재무"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "exec-card-avatar",
+										children: getNickname(executives.treasurer?.name || "미지정")
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "exec-card-name",
+										children: executives.treasurer?.name || "미지정"
+									})
+								]
+							})
+						]
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "search-container",
+				style: { marginTop: "24px" },
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
 					xmlns: "http://www.w3.org/2000/svg",
 					fill: "none",
