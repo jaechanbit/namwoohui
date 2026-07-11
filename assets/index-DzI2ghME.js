@@ -11382,24 +11382,15 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 		className: "admin-auth-container glass animate-fade-in",
 		style: { borderRadius: "var(--radius-md)" },
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "admin-icon",
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
-					xmlns: "http://www.w3.org/2000/svg",
-					fill: "none",
-					viewBox: "0 0 24 24",
-					strokeWidth: 2,
-					stroke: "currentColor",
-					style: {
-						width: "32px",
-						height: "32px"
-					},
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-						strokeLinecap: "round",
-						strokeLinejoin: "round",
-						d: "M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-					})
-				})
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+				src: "/namwoohui/logo.png",
+				alt: "남우회 로고",
+				style: {
+					width: "80px",
+					height: "80px",
+					objectFit: "contain",
+					marginBottom: "8px"
+				}
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 				style: {
@@ -33837,7 +33828,25 @@ function App() {
 				className: "app-header glass",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h1", {
 					className: "app-title",
-					children: ["남우회 ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "NAMWOOHUI" })]
+					style: {
+						display: "flex",
+						alignItems: "center",
+						gap: "8px"
+					},
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+							src: "/namwoohui/logo.png",
+							alt: "남우회 로고",
+							style: {
+								height: "32px",
+								width: "auto",
+								objectFit: "contain",
+								borderRadius: "4px"
+							}
+						}),
+						"남우회 ",
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "NAMWOOHUI" })
+					]
 				}), isUsingDB && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					className: "db-sync-badge",
 					children: "실시간 DB 동기화"
