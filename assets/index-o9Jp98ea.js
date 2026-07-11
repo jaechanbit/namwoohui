@@ -10536,19 +10536,33 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 							children: member.name.charAt(0)
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "member-text",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "member-name-row",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "member-name",
-									children: member.name
-								}), member.role && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "member-role-badge",
-									children: member.role
-								})]
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "member-company",
-								children: member.company || "정보 없음"
-							})]
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "member-name-row",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "member-name",
+										children: member.name
+									}), member.role && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "member-role-badge",
+										children: member.role
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "member-company",
+									children: member.company || "정보 없음"
+								}),
+								member.phone && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "member-phone",
+									style: {
+										fontSize: "12px",
+										color: "var(--text-muted)",
+										marginTop: "2px",
+										fontFamily: "var(--font-eng)",
+										fontWeight: 500
+									},
+									children: member.phone
+								})
+							]
 						})]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "member-actions",
