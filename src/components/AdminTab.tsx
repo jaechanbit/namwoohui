@@ -48,7 +48,8 @@ const AdminTab: React.FC<AdminTabProps> = ({
     name: '',
     role: '',
     company: '',
-    phone: ''
+    phone: '',
+    photo: ''
   });
 
   // 일정 CRUD 모달 상태
@@ -103,7 +104,7 @@ const AdminTab: React.FC<AdminTabProps> = ({
   // 친구 모달 핸들러
   const openAddMemberModal = () => {
     setMemberModalMode('add');
-    setMemberFormData({ name: '', role: '', company: '', phone: '' });
+    setMemberFormData({ name: '', role: '', company: '', phone: '', photo: '' });
     setIsMemberModalOpen(true);
   };
 
@@ -114,9 +115,25 @@ const AdminTab: React.FC<AdminTabProps> = ({
       name: member.name,
       role: member.role,
       company: member.company,
-      phone: member.phone
+      phone: member.phone,
+      photo: member.photo || ''
     });
     setIsMemberModalOpen(true);
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 1 * 1024 * 1024) {
+        alert('이미지 크기는 1MB 이하여야 합니다.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMemberFormData((prev) => ({ ...prev, photo: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleMemberSubmit = (e: React.FormEvent) => {
@@ -599,6 +616,54 @@ const AdminTab: React.FC<AdminTabProps> = ({
                 value={memberFormData.phone}
                 onChange={(e) => setMemberFormData({ ...memberFormData, phone: e.target.value })}
               />
+            </div>
+
+            <div className="form-group" style={{ marginTop: '10px' }}>
+              <label>회원 사진</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
+                <div style={{
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '50%',
+                  background: 'var(--background)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  border: '1px solid var(--border-color)',
+                  flexShrink: 0
+                }}>
+                  {memberFormData.photo ? (
+                    <img src={memberFormData.photo} alt="미리보기" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style={{ width: '20px', height: '20px', color: 'var(--text-muted)' }}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                    </svg>
+                  )}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="photo-upload"
+                    style={{ display: 'none' }}
+                    onChange={handlePhotoChange}
+                  />
+                  <label htmlFor="photo-upload" className="btn-secondary btn-interactive" style={{ margin: 0, fontSize: '13px', padding: '6px 12px', cursor: 'pointer', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', display: 'inline-block' }}>
+                    사진 선택
+                  </label>
+                  {memberFormData.photo && (
+                    <button
+                      type="button"
+                      onClick={() => setMemberFormData({ ...memberFormData, photo: '' })}
+                      style={{ fontSize: '12px', background: 'transparent', border: 'none', color: 'hsl(0, 85%, 45%)', cursor: 'pointer', fontWeight: 500 }}
+                    >
+                      삭제
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="modal-buttons">

@@ -6,6 +6,7 @@ export interface Member {
   role: string;
   company: string;
   phone: string;
+  photo?: string;
 }
 
 export interface BankAccount {
@@ -190,8 +191,12 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           {/* 회장 카드 */}
           <div className="exec-card">
             <span className="exec-card-title">회장</span>
-            <div className="exec-card-avatar">
-              {getNickname(executives.president?.name || '미지정')}
+            <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {executives.president?.photo ? (
+                <img src={executives.president.photo} alt="회장" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                getNickname(executives.president?.name || '미지정')
+              )}
             </div>
             <span className="exec-card-name">
               {executives.president?.name || '미지정'}
@@ -201,8 +206,12 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           {/* 총무 카드 */}
           <div className="exec-card">
             <span className="exec-card-title">총무</span>
-            <div className="exec-card-avatar">
-              {getNickname(executives.secretary?.name || '미지정')}
+            <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {executives.secretary?.photo ? (
+                <img src={executives.secretary.photo} alt="총무" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                getNickname(executives.secretary?.name || '미지정')
+              )}
             </div>
             <span className="exec-card-name">
               {executives.secretary?.name || '미지정'}
@@ -212,8 +221,12 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           {/* 재무 카드 */}
           <div className="exec-card">
             <span className="exec-card-title">재무</span>
-            <div className="exec-card-avatar">
-              {getNickname(executives.treasurer?.name || '미지정')}
+            <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {executives.treasurer?.photo ? (
+                <img src={executives.treasurer.photo} alt="재무" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                getNickname(executives.treasurer?.name || '미지정')
+              )}
             </div>
             <span className="exec-card-name">
               {executives.treasurer?.name || '미지정'}
@@ -259,8 +272,12 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
               onClick={() => onSelectMember(member)}
             >
               <div className="member-info-wrapper">
-                <div className="member-avatar">
-                  {member.name.charAt(0)}
+                <div className="member-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {member.photo ? (
+                    <img src={member.photo} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    member.name.charAt(0)
+                  )}
                 </div>
                 <div className="member-text">
                   <div className="member-name-row">

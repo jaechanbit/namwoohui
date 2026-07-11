@@ -19,8 +19,12 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ member, onClose }) => {
         <div className="drawer-handle" />
         
         <div className="drawer-header">
-          <div className="member-avatar drawer-avatar">
-            {member.name.charAt(0)}
+          <div className="member-avatar drawer-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {member.photo ? (
+              <img src={member.photo} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              member.name.charAt(0)
+            )}
           </div>
           <button className="drawer-close btn-interactive" onClick={onClose} aria-label="닫기">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" style={{ width: '16px', height: '16px' }}>

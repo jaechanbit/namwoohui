@@ -167,7 +167,8 @@ function App() {
           name: updatedMember.name,
           role: updatedMember.role,
           company: updatedMember.company,
-          phone: updatedMember.phone
+          phone: updatedMember.phone,
+          photo: updatedMember.photo
         })
         .eq('id', updatedMember.id)
         .then(({ error }) => {
