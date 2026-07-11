@@ -466,7 +466,14 @@ function App() {
     <div className="app-container">
       {/* Header */}
       <header className="app-header glass">
-        <h1 className="app-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <h1 
+          className="app-title btn-interactive" 
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+          onClick={() => {
+            setActiveTab('members');
+            setSelectedMember(null);
+          }}
+        >
           <img src="/namwoohui/logo.png" alt="남우회 로고" style={{ height: '32px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }} />
           남우회 <span>NAMWOOHUI</span>
         </h1>
