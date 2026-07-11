@@ -33827,11 +33827,16 @@ function App() {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
 				className: "app-header glass",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h1", {
-					className: "app-title",
+					className: "app-title btn-interactive",
 					style: {
 						display: "flex",
 						alignItems: "center",
-						gap: "8px"
+						gap: "8px",
+						cursor: "pointer"
+					},
+					onClick: () => {
+						setActiveTab("members");
+						setSelectedMember(null);
 					},
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
