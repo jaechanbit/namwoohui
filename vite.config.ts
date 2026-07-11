@@ -5,6 +5,7 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/namwoohui/', // GitHub Pages 배포용 레포지토리 이름 경로 설정
   build: {
     minify: false // 윈도우 환경 빌드 안정성을 위해 미니파이 비활성화
   },
