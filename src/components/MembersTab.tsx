@@ -26,7 +26,6 @@ interface MembersTabProps {
 const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMember }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('전체');
-  const [isCalling, setIsCalling] = useState(false);
 
   const filters = ['전체', '회장단', '운영진', '상조위원', '감사'];
 
@@ -147,16 +146,6 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
     window.location.href = `${type}:${phone}`;
   };
 
-  const handleExecClick = (name: string, role: string, phone?: string) => {
-    if (phone && !isCalling) {
-      setIsCalling(true);
-      setTimeout(() => setIsCalling(false), 2000); // 2초간 중복 통화 락
-      if (window.confirm(`${role} '${name}' 님에게 전화를 거시겠습니까?`)) {
-        window.location.href = `tel:${phone}`;
-      }
-    }
-  };
-
   return (
     <div className="animate-fade-in">
       {/* 남우회 공식 통장 섹션 */}
@@ -202,11 +191,13 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           {/* 회장 카드 */}
           <div 
             className="exec-card president btn-interactive" 
-            style={{ cursor: executives.president?.phone ? 'pointer' : 'default' }}
+            style={{ cursor: executives.president ? 'pointer' : 'default' }}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              handleExecClick(executives.president?.name || '미지정', '회장', executives.president?.phone);
+              if (executives.president) {
+                onSelectMember(executives.president);
+              }
             }}
           >
             <div className="exec-badge-tag">회장</div>
@@ -225,11 +216,13 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           {/* 총무 카드 */}
           <div 
             className="exec-card secretary btn-interactive" 
-            style={{ cursor: executives.secretary?.phone ? 'pointer' : 'default' }}
+            style={{ cursor: executives.secretary ? 'pointer' : 'default' }}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              handleExecClick(executives.secretary?.name || '미지정', '총무', executives.secretary?.phone);
+              if (executives.secretary) {
+                onSelectMember(executives.secretary);
+              }
             }}
           >
             <div className="exec-badge-tag">총무</div>
@@ -248,11 +241,13 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           {/* 재무 카드 */}
           <div 
             className="exec-card treasurer btn-interactive" 
-            style={{ cursor: executives.treasurer?.phone ? 'pointer' : 'default' }}
+            style={{ cursor: executives.treasurer ? 'pointer' : 'default' }}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              handleExecClick(executives.treasurer?.name || '미지정', '재무', executives.treasurer?.phone);
+              if (executives.treasurer) {
+                onSelectMember(executives.treasurer);
+              }
             }}
           >
             <div className="exec-badge-tag">재무</div>
