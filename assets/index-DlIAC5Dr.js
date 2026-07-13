@@ -10325,7 +10325,9 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 	};
 	const filteredMembers = (0, import_react.useMemo)(() => {
 		return members.filter((member) => {
-			if (!(member.name.toLowerCase().includes(searchQuery.toLowerCase()) || member.company.toLowerCase().includes(searchQuery.toLowerCase()) || member.role.toLowerCase().includes(searchQuery.toLowerCase()) || member.phone.replace(/-/g, "").includes(searchQuery.replace(/-/g, "")))) return false;
+			const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) || member.company.toLowerCase().includes(searchQuery.toLowerCase()) || member.role.toLowerCase().includes(searchQuery.toLowerCase()) || member.phone.replace(/-/g, "").includes(searchQuery.replace(/-/g, ""));
+			if (searchQuery.trim() !== "") return matchesSearch;
+			if (!matchesSearch) return false;
 			if (activeFilter === "전체") return true;
 			if (activeFilter === "회장단") return member.role.includes("회장") && !member.role.includes("부회장");
 			if (activeFilter === "운영진") return member.role.includes("운영위원") || member.role.includes("총무") || member.role.includes("재무") || member.role.includes("부회장");
@@ -10577,6 +10579,11 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "filter-container",
+				style: {
+					opacity: searchQuery ? .4 : 1,
+					pointerEvents: searchQuery ? "none" : "auto",
+					transition: "all 0.2s ease"
+				},
 				children: filters.map((filter) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 					className: `filter-chip btn-interactive ${activeFilter === filter ? "active" : ""}`,
 					onClick: () => setActiveFilter(filter),
