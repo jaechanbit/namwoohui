@@ -10271,7 +10271,6 @@ var BottomNav = ({ activeTab, setActiveTab }) => {
 var MembersTab = ({ members, accounts, onSelectMember }) => {
 	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
 	const [activeFilter, setActiveFilter] = (0, import_react.useState)("전체");
-	const [isCalling, setIsCalling] = (0, import_react.useState)(false);
 	const filters = [
 		"전체",
 		"회장단",
@@ -10342,13 +10341,6 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 	const handleActionClick = (e, type, phone) => {
 		e.stopPropagation();
 		window.location.href = `${type}:${phone}`;
-	};
-	const handleExecClick = (name, role, phone) => {
-		if (phone && !isCalling) {
-			setIsCalling(true);
-			setTimeout(() => setIsCalling(false), 2e3);
-			if (window.confirm(`${role} '${name}' 님에게 전화를 거시겠습니까?`)) window.location.href = `tel:${phone}`;
-		}
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "animate-fade-in",
@@ -10436,11 +10428,11 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "exec-card president btn-interactive",
-								style: { cursor: executives.president?.phone ? "pointer" : "default" },
+								style: { cursor: executives.president ? "pointer" : "default" },
 								onClick: (e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									handleExecClick(executives.president?.name || "미지정", "회장", executives.president?.phone);
+									if (executives.president) onSelectMember(executives.president);
 								},
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -10467,11 +10459,11 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "exec-card secretary btn-interactive",
-								style: { cursor: executives.secretary?.phone ? "pointer" : "default" },
+								style: { cursor: executives.secretary ? "pointer" : "default" },
 								onClick: (e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									handleExecClick(executives.secretary?.name || "미지정", "총무", executives.secretary?.phone);
+									if (executives.secretary) onSelectMember(executives.secretary);
 								},
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -10498,11 +10490,11 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "exec-card treasurer btn-interactive",
-								style: { cursor: executives.treasurer?.phone ? "pointer" : "default" },
+								style: { cursor: executives.treasurer ? "pointer" : "default" },
 								onClick: (e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									handleExecClick(executives.treasurer?.name || "미지정", "재무", executives.treasurer?.phone);
+									if (executives.treasurer) onSelectMember(executives.treasurer);
 								},
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
