@@ -112,9 +112,14 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
         member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
         member.phone.replace(/-/g, '').includes(searchQuery.replace(/-/g, ''));
 
+      // 검색어가 입력되어 있는 상태일 때는 필터 칩 규칙을 무시하고 전체 목록에서 검색어 매치 결과만 반환
+      if (searchQuery.trim() !== '') {
+        return matchesSearch;
+      }
+
       if (!matchesSearch) return false;
 
-      // 2. Tab Filter Match
+      // 2. Tab Filter Match (검색어가 없을 때만 필터 적용)
       if (activeFilter === '전체') return true;
       if (activeFilter === '회장단') {
         // 부회장은 제외
@@ -293,7 +298,14 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
       </div>
 
       {/* Filter Chips */}
-      <div className="filter-container">
+      <div 
+        className="filter-container"
+        style={{ 
+          opacity: searchQuery ? 0.4 : 1, 
+          pointerEvents: searchQuery ? 'none' : 'auto',
+          transition: 'all 0.2s ease'
+        }}
+      >
         {filters.map((filter) => (
           <button
             key={filter}
