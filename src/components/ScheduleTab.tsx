@@ -127,79 +127,81 @@ const ScheduleTab: React.FC<ScheduleTabProps> = ({ schedules }) => {
         </div>
       </div>
 
-      {/* 장소 및 지도 연동 */}
-      <div className="info-card">
-        <h3 className="info-title">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: '18px', height: '18px' }}>
+      {/* 장소 및 지도 연동 (개선된 프리미엄 분할 레이아웃) */}
+      <div className="info-card location-info-card">
+        <h3 className="info-title" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', marginBottom: '16px' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor" style={{ width: '18px', height: '18px', color: 'var(--primary)' }}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z" />
           </svg>
-          모임 상세 장소
+          모임 상세 장소 안내
         </h3>
-        
-        {/* 회의 장소 (고정) */}
-        <div className="info-item">
-          <span className="info-label">1부 회의</span>
-          <span className="info-value" style={{ fontWeight: 700, color: 'var(--text-main)' }}>
-            {nextMeeting.meetingLocation}
-          </span>
-        </div>
-        <div className="map-btn-container" style={{ marginTop: '8px', marginBottom: '14px', gridTemplateColumns: '1fr 1fr' }}>
-          <a
-            href={`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent('남원중앙새마을금고 본점')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="map-link btn-interactive"
-            style={{ fontSize: '12px', padding: '6px' }}
-          >
-            회의 장소 네이버 지도
-          </a>
-          <a
-            href={`https://map.kakao.com/?q=${encodeURIComponent('남원중앙새마을금고 본점')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="map-link btn-interactive"
-            style={{ fontSize: '12px', padding: '6px' }}
-          >
-            회의 장소 카카오 맵
-          </a>
-        </div>
 
-        {/* 식사 장소 (동적) */}
-        <div className="info-item" style={{ borderBottom: 'none', paddingBottom: 0 }}>
-          <span className="info-label">2부 식사</span>
-          <span className="info-value" style={{ fontWeight: 700, color: nextMeeting.dinnerLocation === '추후 공지' ? 'var(--text-muted)' : 'var(--primary)' }}>
-            {nextMeeting.dinnerLocation}
-          </span>
-        </div>
-
-        {nextMeeting.dinnerLocation && nextMeeting.dinnerLocation !== '추후 공지' && (
-          <div className="map-btn-container" style={{ marginTop: '10px' }}>
+        {/* 1부 회의 세션 */}
+        <div className="location-box meeting-box">
+          <div className="location-box-header">
+            <span className="location-badge meeting">1부 회의</span>
+            <span className="location-name-text">{nextMeeting.meetingLocation}</span>
+          </div>
+          <div className="map-btn-grid">
             <a
-              href={`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent('남원 ' + nextMeeting.dinnerLocation)}`}
+              href={`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent('남원중앙새마을금고 본점')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="map-link btn-interactive"
-              style={{ fontSize: '12px', padding: '6px', background: 'var(--accent-light)', color: 'var(--accent)', border: '1px solid var(--accent)' }}
+              className="map-link-btn naver btn-interactive"
             >
-              식사 장소 네이버 지도
+              네이버 지도
             </a>
             <a
-              href={`https://map.kakao.com/?q=${encodeURIComponent('남원 ' + nextMeeting.dinnerLocation)}`}
+              href={`https://map.kakao.com/?q=${encodeURIComponent('남원중앙새마을금고 본점')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="map-link btn-interactive"
-              style={{ fontSize: '12px', padding: '6px', background: 'var(--accent-light)', color: 'var(--accent)', border: '1px solid var(--accent)' }}
+              className="map-link-btn kakao btn-interactive"
             >
-              식사 장소 카카오 맵
+              카카오 맵
             </a>
           </div>
-        )}
+        </div>
+
+        {/* 2부 식사 세션 */}
+        <div className="location-box dinner-box" style={{ marginTop: '16px' }}>
+          <div className="location-box-header">
+            <span className="location-badge dinner">2부 식사</span>
+            <span className={`location-name-text ${nextMeeting.dinnerLocation === '추후 공지' ? 'pending' : ''}`}>
+              {nextMeeting.dinnerLocation}
+            </span>
+          </div>
+          
+          {nextMeeting.dinnerLocation && nextMeeting.dinnerLocation !== '추후 공지' ? (
+            <div className="map-btn-grid">
+              <a
+                href={`https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent('남원 ' + nextMeeting.dinnerLocation)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="map-link-btn naver btn-interactive"
+              >
+                네이버 지도
+              </a>
+              <a
+                href={`https://map.kakao.com/?q=${encodeURIComponent('남원 ' + nextMeeting.dinnerLocation)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="map-link-btn kakao btn-interactive"
+              >
+                카카오 맵
+              </a>
+            </div>
+          ) : (
+            <div className="pending-location-msg">
+              식사 장소는 회의 종료 후 현장 결정되거나 추후 별도 안내됩니다.
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 등록된 다가올 모임 전체 리스트 */}
       <div className="info-card">
-        <h3 className="info-title">
+        <h3 className="info-title" style={{ marginBottom: '14px' }}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" style={{ width: '18px', height: '18px' }}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
           </svg>
@@ -211,23 +213,30 @@ const ScheduleTab: React.FC<ScheduleTabProps> = ({ schedules }) => {
             새로 등록된 특별 일정이 없습니다.<br/>(기본 정기 일정으로 작동 중)
           </p>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
-            {upcomingSchedules.map((schedule) => {
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {upcomingSchedules.map((schedule, index) => {
               const sDate = new Date(`${schedule.date}T19:00:00`);
               const dTime = sDate.getTime() - now.getTime();
               const dDays = Math.ceil(dTime / (1000 * 60 * 60 * 24));
+              const isLatest = index === 0; // 가장 다가올 최근 일정 여부
               
               return (
-                <div key={schedule.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', background: 'var(--background)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-main)' }}>{schedule.title}</div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      회의: 남원중앙새마을금고 본점 3층 | 식사: {schedule.location || '추후 공지'}
+                <div 
+                  key={schedule.id} 
+                  className={`upcoming-schedule-item ${isLatest ? 'highlighted' : ''}`}
+                >
+                  {isLatest && <span className="next-badge-icon">가장 가까운 모임</span>}
+                  <div className="schedule-item-inner">
+                    <div className="schedule-item-content">
+                      <div className="schedule-item-title">{schedule.title}</div>
+                      <div className="schedule-item-meta">
+                        날짜: {schedule.date} | 회의: 본점 3층 | 식사: {schedule.location || '추후 공지'}
+                      </div>
                     </div>
+                    <span className="schedule-item-dday">
+                      {dDays === 0 ? 'D-Day' : `D-${dDays}`}
+                    </span>
                   </div>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--primary)', background: 'var(--primary-light)', padding: '2px 8px', borderRadius: '10px' }}>
-                    {dDays === 0 ? 'D-Day' : `D-${dDays}`}
-                  </span>
                 </div>
               );
             })}
