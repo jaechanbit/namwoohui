@@ -10979,19 +10979,25 @@ var ScheduleTab = ({ schedules }) => {
 				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "info-card",
+				className: "info-card location-info-card",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
 						className: "info-title",
+						style: {
+							borderBottom: "1px solid var(--border-color)",
+							paddingBottom: "12px",
+							marginBottom: "16px"
+						},
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
 							xmlns: "http://www.w3.org/2000/svg",
 							fill: "none",
 							viewBox: "0 0 24 24",
-							strokeWidth: 2,
+							strokeWidth: 2.2,
 							stroke: "currentColor",
 							style: {
 								width: "18px",
-								height: "18px"
+								height: "18px",
+								color: "var(--primary)"
 							},
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
 								strokeLinecap: "round",
@@ -11002,98 +11008,66 @@ var ScheduleTab = ({ schedules }) => {
 								strokeLinejoin: "round",
 								d: "M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z"
 							})]
-						}), "모임 상세 장소"]
+						}), "모임 상세 장소 안내"]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "info-item",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-label",
-							children: "1부 회의"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-value",
-							style: {
-								fontWeight: 700,
-								color: "var(--text-main)"
-							},
-							children: nextMeeting.meetingLocation
+						className: "location-box meeting-box",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "location-box-header",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "location-badge meeting",
+								children: "1부 회의"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "location-name-text",
+								children: nextMeeting.meetingLocation
+							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "map-btn-grid",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+								href: `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent("남원중앙새마을금고 본점")}`,
+								target: "_blank",
+								rel: "noopener noreferrer",
+								className: "map-link-btn naver btn-interactive",
+								children: "네이버 지도"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+								href: `https://map.kakao.com/?q=${encodeURIComponent("남원중앙새마을금고 본점")}`,
+								target: "_blank",
+								rel: "noopener noreferrer",
+								className: "map-link-btn kakao btn-interactive",
+								children: "카카오 맵"
+							})]
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "map-btn-container",
-						style: {
-							marginTop: "8px",
-							marginBottom: "14px",
-							gridTemplateColumns: "1fr 1fr"
-						},
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent("남원중앙새마을금고 본점")}`,
-							target: "_blank",
-							rel: "noopener noreferrer",
-							className: "map-link btn-interactive",
-							style: {
-								fontSize: "12px",
-								padding: "6px"
-							},
-							children: "회의 장소 네이버 지도"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: `https://map.kakao.com/?q=${encodeURIComponent("남원중앙새마을금고 본점")}`,
-							target: "_blank",
-							rel: "noopener noreferrer",
-							className: "map-link btn-interactive",
-							style: {
-								fontSize: "12px",
-								padding: "6px"
-							},
-							children: "회의 장소 카카오 맵"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "info-item",
-						style: {
-							borderBottom: "none",
-							paddingBottom: 0
-						},
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-label",
-							children: "2부 식사"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "info-value",
-							style: {
-								fontWeight: 700,
-								color: nextMeeting.dinnerLocation === "추후 공지" ? "var(--text-muted)" : "var(--primary)"
-							},
-							children: nextMeeting.dinnerLocation
-						})]
-					}),
-					nextMeeting.dinnerLocation && nextMeeting.dinnerLocation !== "추후 공지" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "map-btn-container",
-						style: { marginTop: "10px" },
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent("남원 " + nextMeeting.dinnerLocation)}`,
-							target: "_blank",
-							rel: "noopener noreferrer",
-							className: "map-link btn-interactive",
-							style: {
-								fontSize: "12px",
-								padding: "6px",
-								background: "var(--accent-light)",
-								color: "var(--accent)",
-								border: "1px solid var(--accent)"
-							},
-							children: "식사 장소 네이버 지도"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: `https://map.kakao.com/?q=${encodeURIComponent("남원 " + nextMeeting.dinnerLocation)}`,
-							target: "_blank",
-							rel: "noopener noreferrer",
-							className: "map-link btn-interactive",
-							style: {
-								fontSize: "12px",
-								padding: "6px",
-								background: "var(--accent-light)",
-								color: "var(--accent)",
-								border: "1px solid var(--accent)"
-							},
-							children: "식사 장소 카카오 맵"
+						className: "location-box dinner-box",
+						style: { marginTop: "16px" },
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "location-box-header",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "location-badge dinner",
+								children: "2부 식사"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: `location-name-text ${nextMeeting.dinnerLocation === "추후 공지" ? "pending" : ""}`,
+								children: nextMeeting.dinnerLocation
+							})]
+						}), nextMeeting.dinnerLocation && nextMeeting.dinnerLocation !== "추후 공지" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "map-btn-grid",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+								href: `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent("남원 " + nextMeeting.dinnerLocation)}`,
+								target: "_blank",
+								rel: "noopener noreferrer",
+								className: "map-link-btn naver btn-interactive",
+								children: "네이버 지도"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+								href: `https://map.kakao.com/?q=${encodeURIComponent("남원 " + nextMeeting.dinnerLocation)}`,
+								target: "_blank",
+								rel: "noopener noreferrer",
+								className: "map-link-btn kakao btn-interactive",
+								children: "카카오 맵"
+							})]
+						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "pending-location-msg",
+							children: "식사 장소는 회의 종료 후 현장 결정되거나 추후 별도 안내됩니다."
 						})]
 					})
 				]
@@ -11102,6 +11076,7 @@ var ScheduleTab = ({ schedules }) => {
 				className: "info-card",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
 					className: "info-title",
+					style: { marginBottom: "14px" },
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
 							xmlns: "http://www.w3.org/2000/svg",
@@ -11139,46 +11114,37 @@ var ScheduleTab = ({ schedules }) => {
 					style: {
 						display: "flex",
 						flexDirection: "column",
-						gap: "12px",
-						marginTop: "8px"
+						gap: "12px"
 					},
-					children: upcomingSchedules.map((schedule) => {
+					children: upcomingSchedules.map((schedule, index) => {
 						const dTime = (/* @__PURE__ */ new Date(`${schedule.date}T19:00:00`)).getTime() - now.getTime();
 						const dDays = Math.ceil(dTime / (1e3 * 60 * 60 * 24));
+						const isLatest = index === 0;
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							style: {
-								display: "flex",
-								justifyContent: "space-between",
-								alignItems: "center",
-								padding: "10px 12px",
-								background: "var(--background)",
-								borderRadius: "var(--radius-sm)",
-								border: "1px solid var(--border-color)"
-							},
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								style: {
-									fontWeight: 700,
-									fontSize: "14px",
-									color: "var(--text-main)"
-								},
-								children: schedule.title
+							className: `upcoming-schedule-item ${isLatest ? "highlighted" : ""}`,
+							children: [isLatest && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "next-badge-icon",
+								children: "가장 가까운 모임"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								style: {
-									fontSize: "12px",
-									color: "var(--text-muted)",
-									marginTop: "2px"
-								},
-								children: ["회의: 남원중앙새마을금고 본점 3층 | 식사: ", schedule.location || "추후 공지"]
-							})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								style: {
-									fontSize: "12px",
-									fontWeight: 700,
-									color: "var(--primary)",
-									background: "var(--primary-light)",
-									padding: "2px 8px",
-									borderRadius: "10px"
-								},
-								children: dDays === 0 ? "D-Day" : `D-${dDays}`
+								className: "schedule-item-inner",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "schedule-item-content",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "schedule-item-title",
+										children: schedule.title
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "schedule-item-meta",
+										children: [
+											"날짜: ",
+											schedule.date,
+											" | 회의: 본점 3층 | 식사: ",
+											schedule.location || "추후 공지"
+										]
+									})]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "schedule-item-dday",
+									children: dDays === 0 ? "D-Day" : `D-${dDays}`
+								})]
 							})]
 						}, schedule.id);
 					})
