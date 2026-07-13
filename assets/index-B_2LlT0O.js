@@ -10435,7 +10435,7 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 						className: "exec-grid",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "exec-card btn-interactive",
+								className: "exec-card president btn-interactive",
 								style: { cursor: executives.president?.phone ? "pointer" : "default" },
 								onClick: (e) => {
 									e.preventDefault();
@@ -10443,19 +10443,12 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 									handleExecClick(executives.president?.name || "미지정", "회장", executives.president?.phone);
 								},
 								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "exec-card-title",
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "exec-badge-tag",
 										children: "회장"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "exec-card-avatar",
-										style: {
-											padding: 0,
-											overflow: "hidden",
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center"
-										},
 										children: executives.president?.photo ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 											src: executives.president.photo,
 											alt: "회장",
@@ -10473,7 +10466,7 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 								]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "exec-card btn-interactive",
+								className: "exec-card secretary btn-interactive",
 								style: { cursor: executives.secretary?.phone ? "pointer" : "default" },
 								onClick: (e) => {
 									e.preventDefault();
@@ -10481,19 +10474,12 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 									handleExecClick(executives.secretary?.name || "미지정", "총무", executives.secretary?.phone);
 								},
 								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "exec-card-title",
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "exec-badge-tag",
 										children: "총무"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "exec-card-avatar",
-										style: {
-											padding: 0,
-											overflow: "hidden",
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center"
-										},
 										children: executives.secretary?.photo ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 											src: executives.secretary.photo,
 											alt: "총무",
@@ -10511,7 +10497,7 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 								]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "exec-card btn-interactive",
+								className: "exec-card treasurer btn-interactive",
 								style: { cursor: executives.treasurer?.phone ? "pointer" : "default" },
 								onClick: (e) => {
 									e.preventDefault();
@@ -10519,19 +10505,12 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 									handleExecClick(executives.treasurer?.name || "미지정", "재무", executives.treasurer?.phone);
 								},
 								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "exec-card-title",
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "exec-badge-tag",
 										children: "재무"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "exec-card-avatar",
-										style: {
-											padding: 0,
-											overflow: "hidden",
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center"
-										},
 										children: executives.treasurer?.photo ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 											src: executives.treasurer.photo,
 											alt: "재무",
@@ -10554,26 +10533,55 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "search-container",
-				style: { marginTop: "24px" },
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
-					xmlns: "http://www.w3.org/2000/svg",
-					fill: "none",
-					viewBox: "0 0 24 24",
-					strokeWidth: 2,
-					stroke: "currentColor",
-					className: "search-icon",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-						strokeLinecap: "round",
-						strokeLinejoin: "round",
-						d: "M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z"
+				style: {
+					marginTop: "24px",
+					position: "relative"
+				},
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+						xmlns: "http://www.w3.org/2000/svg",
+						fill: "none",
+						viewBox: "0 0 24 24",
+						strokeWidth: 2,
+						stroke: "currentColor",
+						className: "search-icon",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							strokeLinecap: "round",
+							strokeLinejoin: "round",
+							d: "M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z"
+						})
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						type: "text",
+						className: "search-input",
+						placeholder: "이름, 직장, 연락처 검색...",
+						value: searchQuery,
+						onChange: (e) => setSearchQuery(e.target.value),
+						style: { paddingRight: searchQuery ? "40px" : "16px" }
+					}),
+					searchQuery && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: "search-clear-btn btn-interactive",
+						onClick: () => setSearchQuery(""),
+						"aria-label": "검색어 지우기",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+							xmlns: "http://www.w3.org/2000/svg",
+							fill: "none",
+							viewBox: "0 0 24 24",
+							strokeWidth: 2.5,
+							stroke: "currentColor",
+							style: {
+								width: "16px",
+								height: "16px"
+							},
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+								strokeLinecap: "round",
+								strokeLinejoin: "round",
+								d: "M6 18L18 6M6 6l12 12"
+							})
+						})
 					})
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-					type: "text",
-					className: "search-input",
-					placeholder: "이름, 직장, 연락처 검색...",
-					value: searchQuery,
-					onChange: (e) => setSearchQuery(e.target.value)
-				})]
+				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "filter-container",
