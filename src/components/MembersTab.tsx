@@ -201,7 +201,7 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
         <div className="exec-grid">
           {/* 회장 카드 */}
           <div 
-            className="exec-card btn-interactive" 
+            className="exec-card president btn-interactive" 
             style={{ cursor: executives.president?.phone ? 'pointer' : 'default' }}
             onClick={(e) => {
               e.preventDefault();
@@ -209,8 +209,8 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
               handleExecClick(executives.president?.name || '미지정', '회장', executives.president?.phone);
             }}
           >
-            <span className="exec-card-title">회장</span>
-            <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="exec-badge-tag">회장</div>
+            <div className="exec-card-avatar">
               {executives.president?.photo ? (
                 <img src={executives.president.photo} alt="회장" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
@@ -224,7 +224,7 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
 
           {/* 총무 카드 */}
           <div 
-            className="exec-card btn-interactive" 
+            className="exec-card secretary btn-interactive" 
             style={{ cursor: executives.secretary?.phone ? 'pointer' : 'default' }}
             onClick={(e) => {
               e.preventDefault();
@@ -232,8 +232,8 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
               handleExecClick(executives.secretary?.name || '미지정', '총무', executives.secretary?.phone);
             }}
           >
-            <span className="exec-card-title">총무</span>
-            <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="exec-badge-tag">총무</div>
+            <div className="exec-card-avatar">
               {executives.secretary?.photo ? (
                 <img src={executives.secretary.photo} alt="총무" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
@@ -247,7 +247,7 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
 
           {/* 재무 카드 */}
           <div 
-            className="exec-card btn-interactive" 
+            className="exec-card treasurer btn-interactive" 
             style={{ cursor: executives.treasurer?.phone ? 'pointer' : 'default' }}
             onClick={(e) => {
               e.preventDefault();
@@ -255,8 +255,8 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
               handleExecClick(executives.treasurer?.name || '미지정', '재무', executives.treasurer?.phone);
             }}
           >
-            <span className="exec-card-title">재무</span>
-            <div className="exec-card-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="exec-badge-tag">재무</div>
+            <div className="exec-card-avatar">
               {executives.treasurer?.photo ? (
                 <img src={executives.treasurer.photo} alt="재무" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
@@ -271,7 +271,7 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
       </div>
 
       {/* Search Input */}
-      <div className="search-container" style={{ marginTop: '24px' }}>
+      <div className="search-container" style={{ marginTop: '24px', position: 'relative' }}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="search-icon">
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z" />
         </svg>
@@ -281,7 +281,20 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           placeholder="이름, 직장, 연락처 검색..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ paddingRight: searchQuery ? '40px' : '16px' }}
         />
+        {searchQuery && (
+          <button
+            type="button"
+            className="search-clear-btn btn-interactive"
+            onClick={() => setSearchQuery('')}
+            aria-label="검색어 지우기"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" style={{ width: '16px', height: '16px' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* Filter Chips */}
