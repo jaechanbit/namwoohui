@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 
 export interface Member {
   id: number;
@@ -32,6 +33,13 @@ const MembersTab: React.FC<MembersTabProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('전체');
+  const [isCalling, setIsCalling] = useState(false);
+  const [execCallModal, setExecCallModal] = useState<{
+    isOpen: boolean;
+    name: string;
+    role: string;
+    phone: string;
+  }>({ isOpen: false, name: '', role: '', phone: '' });
 
   const filters = ['전체', '회장단', '운영진', '상조위원', '감사'];
 
@@ -157,6 +165,18 @@ const MembersTab: React.FC<MembersTabProps> = ({
     window.location.href = `${type}:${phone}`;
   };
 
+  const handleExecClick = (name: string, role: string, phone?: string) => {
+    if (phone && !isCalling) {
+      setIsCalling(true);
+      setTimeout(() => setIsCalling(false), 1000); // 1초간 중복 입력 제한
+      setExecCallModal({
+        isOpen: true,
+        name,
+        role,
+        phone
+      });
+    }
+  };
   return (
     <div className="animate-fade-in">
       {/* 남우회 공식 통장 섹션 */}
@@ -411,6 +431,47 @@ const MembersTab: React.FC<MembersTabProps> = ({
           </div>
         )}
       </div>
+
+      {/* 집행부 커스텀 전화 연결 팝업 모달 */}
+      {execCallModal.isOpen && createPortal(
+        <div className="modal-backdrop animate-fade-in" onClick={() => setExecCallModal({ ...execCallModal, isOpen: false })}>
+          <div 
+            className="modal-content animate-fade-in" 
+            style={{ maxWidth: '320px', textAlign: 'center', gap: '20px', padding: '24px 20px' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--primary)', background: 'var(--primary-light)', padding: '4px 12px', borderRadius: '12px' }}>
+                {execCallModal.role} 연락처
+              </span>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, marginTop: '10px', color: 'var(--text-main)' }}>
+                {execCallModal.name} 님
+              </h3>
+              <p style={{ fontSize: '20px', fontWeight: 700, color: 'var(--primary)', marginTop: '14px', fontFamily: 'var(--font-eng)', letterSpacing: '0.5px' }}>
+                {execCallModal.phone}
+              </p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+              <a 
+                href={`tel:${execCallModal.phone}`}
+                className="btn-primary btn-interactive"
+                style={{ textDecoration: 'none', display: 'block', textAlign: 'center', padding: '12px', borderRadius: 'var(--radius-sm)' }}
+                onClick={() => setExecCallModal({ ...execCallModal, isOpen: false })}
+              >
+                전화 걸기
+              </a>
+              <button 
+                className="btn-secondary btn-interactive" 
+                style={{ width: '100%', padding: '12px' }}
+                onClick={() => setExecCallModal({ ...execCallModal, isOpen: false })}
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };
