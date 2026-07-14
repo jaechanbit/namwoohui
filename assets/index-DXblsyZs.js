@@ -33894,6 +33894,86 @@ var initialAccounts = [{
 	account_number: "000-0000-0000-00",
 	owner: "남우회"
 }];
+var ErrorBoundary = class extends import_react.Component {
+	state = {
+		hasError: false,
+		error: null
+	};
+	static getDerivedStateFromError(error) {
+		return {
+			hasError: true,
+			error
+		};
+	}
+	componentDidCatch(error, errorInfo) {
+		console.error("Uncaught error:", error, errorInfo);
+	}
+	render() {
+		if (this.state.hasError) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			style: {
+				padding: "24px 20px",
+				background: "#fff5f5",
+				color: "#c53030",
+				fontFamily: "monospace",
+				minHeight: "100vh",
+				display: "flex",
+				flexDirection: "column",
+				gap: "14px",
+				boxSizing: "border-box"
+			},
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					style: {
+						fontSize: "18px",
+						fontWeight: 900,
+						marginBottom: "2px"
+					},
+					children: "⚠️ 런타임 에러 감지"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					style: {
+						fontSize: "13px",
+						fontWeight: 700,
+						lineHeight: 1.4
+					},
+					children: this.state.error?.toString()
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("pre", {
+					style: {
+						fontSize: "11px",
+						background: "#fff",
+						padding: "12px",
+						borderRadius: "8px",
+						border: "1px solid #feb2b2",
+						overflowX: "auto",
+						whiteSpace: "pre-wrap",
+						lineHeight: 1.5,
+						flex: 1
+					},
+					children: this.state.error?.stack
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					onClick: () => {
+						localStorage.clear();
+						window.location.reload();
+					},
+					style: {
+						padding: "14px",
+						background: "#c53030",
+						color: "white",
+						border: "none",
+						borderRadius: "8px",
+						fontWeight: 900,
+						cursor: "pointer",
+						fontSize: "14px"
+					},
+					children: "앱 초기화 및 새로고침"
+				})
+			]
+		});
+		return this.props.children;
+	}
+};
 function App() {
 	const [activeTab, setActiveTab] = (0, import_react.useState)("members");
 	const [members, setMembers] = (0, import_react.useState)([]);
@@ -34210,7 +34290,7 @@ function App() {
 			});
 		}
 	};
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorBoundary, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "app-container",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
@@ -34263,7 +34343,7 @@ function App() {
 				setActiveTab
 			})
 		]
-	});
+	}) });
 }
 //#endregion
 //#region src/main.tsx
