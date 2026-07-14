@@ -10324,7 +10324,7 @@ var MembersTab = ({ members, accounts, onSelectMember, onOpenRules }) => {
 		}).length;
 	};
 	const filteredMembers = (0, import_react.useMemo)(() => {
-		return members.filter((member) => {
+		const filtered = members.filter((member) => {
 			const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) || member.company.toLowerCase().includes(searchQuery.toLowerCase()) || member.role.toLowerCase().includes(searchQuery.toLowerCase()) || member.phone.replace(/-/g, "").includes(searchQuery.replace(/-/g, ""));
 			if (searchQuery.trim() !== "") return matchesSearch;
 			if (!matchesSearch) return false;
@@ -10335,6 +10335,16 @@ var MembersTab = ({ members, accounts, onSelectMember, onOpenRules }) => {
 			if (activeFilter === "감사") return member.role.includes("감사");
 			return true;
 		});
+		if (activeFilter === "회장단" && searchQuery.trim() === "") return [...filtered].sort((a, b) => {
+			if (a.role === "회장" && b.role !== "회장") return -1;
+			if (b.role === "회장" && a.role !== "회장") return 1;
+			const getPresidentNumber = (role) => {
+				const match = role.match(/(\d+)대/);
+				return match ? parseInt(match[1], 10) : 9999;
+			};
+			return getPresidentNumber(a.role) - getPresidentNumber(b.role);
+		});
+		return filtered;
 	}, [
 		members,
 		searchQuery,
