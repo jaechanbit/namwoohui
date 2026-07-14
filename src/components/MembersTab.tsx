@@ -160,30 +160,30 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
           <span className="account-subtitle">입금 시 성명을 적어주세요</span>
         </div>
 
-        <div className="bank-card membership">
-          <span className="bank-card-type">회비 통장</span>
-          <span className="bank-card-name">{mappedAccounts.membership.bank_name}</span>
-          <span className="bank-card-number">{mappedAccounts.membership.account_number}</span>
-          <span className="bank-card-owner">예금주 {mappedAccounts.membership.owner}</span>
-          <button 
-            className="bank-copy-btn btn-interactive" 
+        <div className="bank-cards-grid">
+          <div 
+            className="bank-card membership btn-interactive" 
+            style={{ cursor: 'pointer' }}
             onClick={() => handleCopyAccount(mappedAccounts.membership.bank_name, mappedAccounts.membership.account_number)}
           >
-            복사
-          </button>
-        </div>
+            <span className="bank-card-type">회비 통장</span>
+            <span className="bank-card-name">{mappedAccounts.membership.bank_name}</span>
+            <span className="bank-card-number">{mappedAccounts.membership.account_number}</span>
+            <span className="bank-card-owner">예금주 {mappedAccounts.membership.owner}</span>
+            <button className="bank-copy-btn">복사</button>
+          </div>
 
-        <div className="bank-card mutual-aid">
-          <span className="bank-card-type">상조 통장</span>
-          <span className="bank-card-name">{mappedAccounts.mutualAid.bank_name}</span>
-          <span className="bank-card-number">{mappedAccounts.mutualAid.account_number}</span>
-          <span className="bank-card-owner">예금주 {mappedAccounts.mutualAid.owner}</span>
-          <button 
-            className="bank-copy-btn btn-interactive" 
+          <div 
+            className="bank-card mutual-aid btn-interactive" 
+            style={{ cursor: 'pointer' }}
             onClick={() => handleCopyAccount(mappedAccounts.mutualAid.bank_name, mappedAccounts.mutualAid.account_number)}
           >
-            복사
-          </button>
+            <span className="bank-card-type">상조 통장</span>
+            <span className="bank-card-name">{mappedAccounts.mutualAid.bank_name}</span>
+            <span className="bank-card-number">{mappedAccounts.mutualAid.account_number}</span>
+            <span className="bank-card-owner">예금주 {mappedAccounts.mutualAid.owner}</span>
+            <button className="bank-copy-btn">복사</button>
+          </div>
         </div>
       </div>
 
