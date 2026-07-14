@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { Component, ErrorInfo, ReactNode, useState, useEffect } from 'react';
 import BottomNav from './components/BottomNav';
 import MembersTab, { type Member, type BankAccount } from './components/MembersTab';
 import MemberDetail from './components/MemberDetail';
@@ -19,6 +19,55 @@ const initialAccounts: BankAccount[] = [
   { id: 1, type: 'membership', bank_name: '국민은행', account_number: '000000-00-000000', owner: '남우회' },
   { id: 2, type: 'mutual_aid', bank_name: '농협은행', account_number: '000-0000-0000-00', owner: '남우회' }
 ];
+
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  public state: ErrorBoundaryState = {
+    hasError: false,
+    error: null
+  };
+
+  public static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("Uncaught error:", error, errorInfo);
+  }
+
+  public render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '24px 20px', background: '#fff5f5', color: '#c53030', fontFamily: 'monospace', minHeight: '100vh', display: 'flex', flexDirection: 'column', gap: '14px', boxSizing: 'border-box' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: 900, marginBottom: '2px' }}>⚠️ 런타임 에러 감지</h2>
+          <p style={{ fontSize: '13px', fontWeight: 700, lineHeight: 1.4 }}>{this.state.error?.toString()}</p>
+          <pre style={{ fontSize: '11px', background: '#fff', padding: '12px', borderRadius: '8px', border: '1px solid #feb2b2', overflowX: 'auto', whiteSpace: 'pre-wrap', lineHeight: 1.5, flex: 1 }}>
+            {this.state.error?.stack}
+          </pre>
+          <button 
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+            }} 
+            style={{ padding: '14px', background: '#c53030', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 900, cursor: 'pointer', fontSize: '14px' }}
+          >
+            앱 초기화 및 새로고침
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 function App() {
   const [activeTab, setActiveTab] = useState<string>('members');
@@ -467,7 +516,8 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <ErrorBoundary>
+      <div className="app-container">
       {/* Header */}
       <header className="app-header glass">
         <h1 
@@ -503,7 +553,8 @@ function App() {
 
       {/* Navigation */}
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }
 
