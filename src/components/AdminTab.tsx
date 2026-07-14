@@ -241,16 +241,6 @@ const AdminTab: React.FC<AdminTabProps> = ({
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {/* 안내 메시지 카드 */}
-      <div className="info-card" style={{ padding: '12px 16px', background: 'var(--primary-light)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}>
-        <p style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" style={{ width: '16px', height: '16px' }}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          수정된 모든 정보는 수파베이스 DB에 실시간으로 반영됩니다.
-        </p>
-      </div>
-
       {/* 서브 탭 스위처 */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', background: 'var(--background)', padding: '4px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
         <button
