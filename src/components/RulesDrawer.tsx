@@ -122,7 +122,8 @@ const RulesDrawer = ({ isOpen, onClose }: RulesDrawerProps) => {
                     borderRadius: 'var(--radius-md)',
                     overflow: 'hidden',
                     background: '#ffffff',
-                    boxShadow: 'var(--shadow-sm)'
+                    boxShadow: 'var(--shadow-sm)',
+                    flexShrink: 0
                   }}
                 >
                   <button
