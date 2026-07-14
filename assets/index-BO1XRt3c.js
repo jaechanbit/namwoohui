@@ -11052,7 +11052,6 @@ var rulesData = [
 var RulesDrawer = ({ isOpen, onClose }) => {
 	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
 	const [expandedChapters, setExpandedChapters] = (0, import_react.useState)([1]);
-	if (!isOpen) return null;
 	const toggleChapter = (id) => {
 		if (expandedChapters.includes(id)) setExpandedChapters(expandedChapters.filter((cId) => cId !== id));
 		else setExpandedChapters([...expandedChapters, id]);
@@ -11075,6 +11074,7 @@ var RulesDrawer = ({ isOpen, onClose }) => {
 		filteredRules,
 		expandedChapters
 	]);
+	if (!isOpen) return null;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		className: "drawer-backdrop animate-fade-in",
 		onClick: onClose
