@@ -7,7 +7,7 @@ interface RulesDrawerProps {
   onClose: () => void;
 }
 
-const RulesDrawer: React.FC<RulesDrawerProps> = ({ isOpen, onClose }) => {
+const RulesDrawer = ({ isOpen, onClose }: RulesDrawerProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedChapters, setExpandedChapters] = useState<number[]>([1]); // 기본적으로 1장 열어둠
 
