@@ -11,8 +11,6 @@ const RulesDrawer = ({ isOpen, onClose }: RulesDrawerProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedChapters, setExpandedChapters] = useState<number[]>([1]); // 기본적으로 1장 열어둠
 
-  if (!isOpen) return null;
-
   // 장 접기/펴기 토글
   const toggleChapter = (id: number) => {
     if (expandedChapters.includes(id)) {
@@ -51,6 +49,9 @@ const RulesDrawer = ({ isOpen, onClose }: RulesDrawerProps) => {
     }
     return expandedChapters;
   }, [searchQuery, filteredRules, expandedChapters]);
+
+  // 모든 훅이 정의된 후 조기 반환 실행 (React Hooks 룰 준수)
+  if (!isOpen) return null;
 
   return (
     <>
