@@ -1,6 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { rulesData } from '../data/rulesData';
-import type { RuleChapter } from '../data/rulesData';
 
 interface RulesDrawerProps {
   isOpen: boolean;

@@ -1,4 +1,5 @@
-import React, { Component, ErrorInfo, ReactNode, useState, useEffect } from 'react';
+import { Component, useState, useEffect } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import BottomNav from './components/BottomNav';
 import MembersTab, { type Member, type BankAccount } from './components/MembersTab';
 import MemberDetail from './components/MemberDetail';
