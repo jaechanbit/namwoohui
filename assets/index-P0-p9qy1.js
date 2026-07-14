@@ -11205,7 +11205,8 @@ var RulesDrawer = ({ isOpen, onClose }) => {
 							borderRadius: "var(--radius-md)",
 							overflow: "hidden",
 							background: "#ffffff",
-							boxShadow: "var(--shadow-sm)"
+							boxShadow: "var(--shadow-sm)",
+							flexShrink: 0
 						},
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 							onClick: () => toggleChapter(chapter.id),
