@@ -10230,23 +10230,6 @@ var BottomNav = ({ activeTab, setActiveTab }) => {
 					})
 				},
 				{
-					id: "rules",
-					label: "회칙 보기",
-					icon: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
-						xmlns: "http://www.w3.org/2000/svg",
-						fill: "none",
-						viewBox: "0 0 24 24",
-						strokeWidth: 2,
-						stroke: "currentColor",
-						className: "nav-icon",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							strokeLinecap: "round",
-							strokeLinejoin: "round",
-							d: "M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
-						})
-					})
-				},
-				{
 					id: "admin",
 					label: "회원 관리",
 					icon: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
@@ -11106,8 +11089,8 @@ var rulesData = [
 	}
 ];
 //#endregion
-//#region src/components/RulesTab.tsx
-var RulesTab = () => {
+//#region src/components/RulesDrawer.tsx
+var RulesDrawer = ({ isOpen, onClose }) => {
 	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
 	const [expandedChapters, setExpandedChapters] = (0, import_react.useState)([1]);
 	const toggleChapter = (id) => {
@@ -11132,43 +11115,67 @@ var RulesTab = () => {
 		filteredRules,
 		expandedChapters
 	]);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "tab-container animate-fade-in",
+	if (!isOpen) return null;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: "drawer-backdrop animate-fade-in",
+		onClick: onClose
+	}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "drawer-content",
 		style: {
-			display: "flex",
-			flexDirection: "column",
-			height: "100%",
-			paddingBottom: "20px"
+			maxHeight: "85vh",
+			height: "85vh"
 		},
 		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "drawer-handle" }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				style: { marginBottom: "16px" },
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+				className: "drawer-header",
+				style: { marginBottom: "8px" },
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+					className: "modal-title",
 					style: {
-						fontSize: "20px",
+						fontSize: "18px",
 						fontWeight: 900,
-						marginBottom: "4px",
+						marginBottom: "2px",
 						display: "flex",
 						alignItems: "center",
-						gap: "8px",
-						color: "var(--text-main)"
+						gap: "6px"
 					},
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						style: { fontSize: "22px" },
+						style: { fontSize: "18px" },
 						children: "📑"
-					}), " 남우회 회칙"]
+					}), " 남우회 회칙 안내"]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 					style: {
-						fontSize: "12px",
+						fontSize: "11px",
 						color: "var(--text-muted)",
 						fontWeight: 500
 					},
 					children: "조항을 터치하면 상세 내용이 펼쳐집니다."
+				})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					className: "drawer-close btn-interactive",
+					onClick: onClose,
+					"aria-label": "닫기",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+						xmlns: "http://www.w3.org/2000/svg",
+						fill: "none",
+						viewBox: "0 0 24 24",
+						strokeWidth: 2.5,
+						stroke: "currentColor",
+						style: {
+							width: "16px",
+							height: "16px"
+						},
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							strokeLinecap: "round",
+							strokeLinejoin: "round",
+							d: "M6 18L18 6M6 6l12 12"
+						})
+					})
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "search-container",
-				style: { marginBottom: "16px" },
+				style: { marginBottom: "14px" },
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
 						xmlns: "http://www.w3.org/2000/svg",
@@ -11217,12 +11224,12 @@ var RulesTab = () => {
 				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "drawer-body",
 				style: {
-					display: "flex",
-					flexDirection: "column",
-					gap: "12px",
 					overflowY: "auto",
-					flex: 1
+					flex: 1,
+					paddingBottom: "20px",
+					gap: "10px"
 				},
 				children: filteredRules.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "pending-location-msg",
@@ -11318,7 +11325,7 @@ var RulesTab = () => {
 				})
 			})
 		]
-	});
+	})] });
 };
 //#endregion
 //#region src/components/ScheduleTab.tsx
@@ -34048,6 +34055,7 @@ function App() {
 	const [schedules, setSchedules] = (0, import_react.useState)([]);
 	const [accounts, setAccounts] = (0, import_react.useState)([]);
 	const [selectedMember, setSelectedMember] = (0, import_react.useState)(null);
+	const [isRulesOpen, setIsRulesOpen] = (0, import_react.useState)(false);
 	const [isUsingDB, setIsUsingDB] = (0, import_react.useState)(false);
 	(0, import_react.useEffect)(() => {
 		if (isSupabaseConfigured()) {
@@ -34333,10 +34341,9 @@ function App() {
 				members,
 				accounts,
 				onSelectMember: (member) => setSelectedMember(member),
-				onOpenRules: () => setActiveTab("rules")
+				onOpenRules: () => setIsRulesOpen(true)
 			});
 			case "schedule": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ScheduleTab, { schedules });
-			case "rules": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RulesTab, {});
 			case "admin": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminTab, {
 				members,
 				onAddMember: handleAddMember,
@@ -34354,7 +34361,7 @@ function App() {
 				members,
 				accounts,
 				onSelectMember: (member) => setSelectedMember(member),
-				onOpenRules: () => setActiveTab("rules")
+				onOpenRules: () => setIsRulesOpen(true)
 			});
 		}
 	};
@@ -34401,6 +34408,10 @@ function App() {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MemberDetail, {
 				member: selectedMember,
 				onClose: () => setSelectedMember(null)
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(RulesDrawer, {
+				isOpen: isRulesOpen,
+				onClose: () => setIsRulesOpen(false)
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(BottomNav, {
 				activeTab,
