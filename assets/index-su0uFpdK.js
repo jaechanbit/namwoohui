@@ -11442,41 +11442,6 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 			gap: "16px"
 		},
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "info-card",
-				style: {
-					padding: "12px 16px",
-					background: "var(--primary-light)",
-					border: "1px solid var(--border-color)",
-					borderRadius: "var(--radius-md)"
-				},
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-					style: {
-						fontSize: "13px",
-						color: "var(--primary)",
-						fontWeight: 500,
-						display: "flex",
-						alignItems: "center",
-						gap: "6px"
-					},
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
-						xmlns: "http://www.w3.org/2000/svg",
-						fill: "none",
-						viewBox: "0 0 24 24",
-						strokeWidth: 2.5,
-						stroke: "currentColor",
-						style: {
-							width: "16px",
-							height: "16px"
-						},
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							strokeLinecap: "round",
-							strokeLinejoin: "round",
-							d: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-						})
-					}), "수정된 모든 정보는 수파베이스 DB에 실시간으로 반영됩니다."]
-				})
-			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				style: {
 					display: "grid",
