@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import BottomNav from './components/BottomNav';
 import MembersTab, { type Member, type BankAccount } from './components/MembersTab';
 import MemberDetail from './components/MemberDetail';
+import RulesDrawer from './components/RulesDrawer';
 import ScheduleTab, { type MeetingSchedule } from './components/ScheduleTab';
 import AdminTab from './components/AdminTab';
 import initialMembers from './data/members.json';
@@ -25,6 +26,7 @@ function App() {
   const [schedules, setSchedules] = useState<MeetingSchedule[]>([]);
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [isRulesOpen, setIsRulesOpen] = useState<boolean>(false);
   const [isUsingDB, setIsUsingDB] = useState<boolean>(false);
 
   // 1. 회원 목록 로드
@@ -431,6 +433,7 @@ function App() {
             members={members}
             accounts={accounts}
             onSelectMember={(member) => setSelectedMember(member)}
+            onOpenRules={() => setIsRulesOpen(true)}
           />
         );
       case 'schedule':
@@ -457,6 +460,7 @@ function App() {
             members={members}
             accounts={accounts}
             onSelectMember={(member) => setSelectedMember(member)}
+            onOpenRules={() => setIsRulesOpen(true)}
           />
         );
     }
@@ -489,6 +493,12 @@ function App() {
       <MemberDetail
         member={selectedMember}
         onClose={() => setSelectedMember(null)}
+      />
+
+      {/* Rules Popup Drawer */}
+      <RulesDrawer
+        isOpen={isRulesOpen}
+        onClose={() => setIsRulesOpen(false)}
       />
 
       {/* Navigation */}

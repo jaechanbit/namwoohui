@@ -21,9 +21,15 @@ interface MembersTabProps {
   members: Member[];
   accounts: BankAccount[];
   onSelectMember: (member: Member) => void;
+  onOpenRules: () => void;
 }
 
-const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMember }) => {
+const MembersTab: React.FC<MembersTabProps> = ({ 
+  members, 
+  accounts, 
+  onSelectMember,
+  onOpenRules,
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('전체');
 
@@ -156,7 +162,28 @@ const MembersTab: React.FC<MembersTabProps> = ({ members, accounts, onSelectMemb
       {/* 남우회 공식 통장 섹션 */}
       <div className="account-section">
         <div className="account-header">
-          <span className="account-title">남우회 공식 통장</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="account-title">남우회 공식 통장</span>
+            <button 
+              onClick={onOpenRules}
+              className="btn-interactive"
+              style={{
+                background: 'var(--primary-light)',
+                border: 'none',
+                color: 'var(--primary)',
+                fontSize: '11.5px',
+                fontWeight: 800,
+                padding: '3px 9px',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '3px'
+              }}
+            >
+              <span>📑</span> 회칙 보기
+            </button>
+          </div>
           <span className="account-subtitle">입금 시 성명을 적어주세요</span>
         </div>
 
