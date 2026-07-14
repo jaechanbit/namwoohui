@@ -852,17 +852,29 @@ body {
   color: var(--text-muted);
 }
 
+.bank-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
 .bank-card {
   border-radius: var(--radius-md);
-  padding: 16px 20px;
+  padding: 12px 10px;
   color: white;
-  margin-bottom: 12px;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.bank-card:active {
+  transform: scale(0.97);
+  opacity: 0.9;
 }
 
 .bank-card.membership {
@@ -874,48 +886,42 @@ body {
 }
 
 .bank-card-type {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
 .bank-card-name {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 800;
 }
 
 .bank-card-number {
-  font-size: 22px;
+  font-size: 13px;
   font-weight: 700;
   font-family: 'Outfit', sans-serif;
-  letter-spacing: 0.5px;
-  margin: 6px 0;
+  letter-spacing: -0.2px;
+  margin: 4px 0;
+  word-break: break-all;
 }
 
 .bank-card-owner {
-  font-size: 12px;
+  font-size: 10px;
   opacity: 0.7;
 }
 
 .bank-copy-btn {
   position: absolute;
-  top: 16px;
-  right: 20px;
+  top: 10px;
+  right: 8px;
   background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   color: white;
-  padding: 4px 12px;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
   font-weight: 700;
-  cursor: pointer;
-  backdrop-filter: blur(2px);
-  transition: all 0.2s ease;
-}
-
-.bank-copy-btn:active {
-  transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
 }
 
 /* 집행부 섹션 스타일 */

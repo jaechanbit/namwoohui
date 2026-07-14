@@ -10349,19 +10349,21 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "account-section",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "account-header",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "account-title",
-							children: "남우회 공식 통장"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "account-subtitle",
-							children: "입금 시 성명을 적어주세요"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "bank-card membership",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "account-header",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "account-title",
+						children: "남우회 공식 통장"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "account-subtitle",
+						children: "입금 시 성명을 적어주세요"
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "bank-cards-grid",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "bank-card membership btn-interactive",
+						style: { cursor: "pointer" },
+						onClick: () => handleCopyAccount(mappedAccounts.membership.bank_name, mappedAccounts.membership.account_number),
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 								className: "bank-card-type",
@@ -10380,14 +10382,14 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 								children: ["예금주 ", mappedAccounts.membership.owner]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-								className: "bank-copy-btn btn-interactive",
-								onClick: () => handleCopyAccount(mappedAccounts.membership.bank_name, mappedAccounts.membership.account_number),
+								className: "bank-copy-btn",
 								children: "복사"
 							})
 						]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "bank-card mutual-aid",
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "bank-card mutual-aid btn-interactive",
+						style: { cursor: "pointer" },
+						onClick: () => handleCopyAccount(mappedAccounts.mutualAid.bank_name, mappedAccounts.mutualAid.account_number),
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 								className: "bank-card-type",
@@ -10406,13 +10408,12 @@ var MembersTab = ({ members, accounts, onSelectMember }) => {
 								children: ["예금주 ", mappedAccounts.mutualAid.owner]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-								className: "bank-copy-btn btn-interactive",
-								onClick: () => handleCopyAccount(mappedAccounts.mutualAid.bank_name, mappedAccounts.mutualAid.account_number),
+								className: "bank-copy-btn",
 								children: "복사"
 							})
 						]
-					})
-				]
+					})]
+				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "exec-section",
