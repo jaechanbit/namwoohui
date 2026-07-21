@@ -10230,23 +10230,6 @@ var BottomNav = ({ activeTab, setActiveTab }) => {
 					})
 				},
 				{
-					id: "attendance",
-					label: "출석부",
-					icon: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
-						xmlns: "http://www.w3.org/2000/svg",
-						fill: "none",
-						viewBox: "0 0 24 24",
-						strokeWidth: 2,
-						stroke: "currentColor",
-						className: "nav-icon",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							strokeLinecap: "round",
-							strokeLinejoin: "round",
-							d: "M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.03 0 1.9.693 2.166 1.638m-7.377 0A48.536 48.536 0 0112 3m0 0c2.917 0 5.747.294 8.5.862m-21 1.402v12.338c0 1.135.845 2.098 1.976 2.192m3.899.22c.266.945 1.134 1.638 2.166 1.638h1.5c1.03 0 1.9-.693 2.166-1.638m-7.377-1.638a48.536 48.536 0 012.21-1.638M3 18.75h3.75a2.25 2.25 0 002.25-2.25v-10.5A2.25 2.25 0 006.75 3.75H3"
-						})
-					})
-				},
-				{
 					id: "admin",
 					label: "회원 관리",
 					icon: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
@@ -11742,11 +11725,6 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 		secretaryId: members.find((m) => m.role === "총무")?.id || 0,
 		treasurerId: members.find((m) => m.role === "재무")?.id || 0
 	});
-	const cleanPhone = memberFormData.phone.replace(/[^0-9]/g, "");
-	const isPhoneDuplicate = cleanPhone.length > 0 && members.some((m) => {
-		if (memberModalMode === "edit" && selectedMember && m.id === selectedMember.id) return false;
-		return m.phone.replace(/[^0-9]/g, "") === cleanPhone;
-	});
 	const handleLogin = (e) => {
 		e.preventDefault();
 		if (password === "1234") {
@@ -11798,10 +11776,6 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 		e.preventDefault();
 		if (!memberFormData.name.trim() || !memberFormData.phone.trim()) {
 			alert("이름과 전화번호는 필수 입력 항목입니다.");
-			return;
-		}
-		if (isPhoneDuplicate) {
-			alert("이미 등록된 전화번호입니다.");
 			return;
 		}
 		if (memberModalMode === "add") onAddMember(memberFormData);
@@ -12511,36 +12485,17 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "form-group",
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "전화번호 *" }),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-									type: "text",
-									className: `input-field ${isPhoneDuplicate ? "error" : ""}`,
-									required: true,
-									placeholder: "010-0000-0000",
-									value: memberFormData.phone,
-									onChange: (e) => {
-										const clean = e.target.value.replace(/[^0-9]/g, "");
-										let formatted = clean;
-										if (clean.length > 3 && clean.length <= 7) formatted = `${clean.slice(0, 3)}-${clean.slice(3)}`;
-										else if (clean.length > 7) formatted = `${clean.slice(0, 3)}-${clean.slice(3, 7)}-${clean.slice(7, 11)}`;
-										setMemberFormData({
-											...memberFormData,
-											phone: formatted
-										});
-									}
-								}),
-								isPhoneDuplicate && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "error-message",
-									style: {
-										color: "#ef4444",
-										fontSize: "12px",
-										marginTop: "4px",
-										display: "block"
-									},
-									children: "⚠️ 이미 등록된 전화번호입니다."
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "전화번호 *" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								type: "text",
+								className: "input-field",
+								required: true,
+								placeholder: "010-0000-0000",
+								value: memberFormData.phone,
+								onChange: (e) => setMemberFormData({
+									...memberFormData,
+									phone: e.target.value
 								})
-							]
+							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "form-group",
@@ -12652,12 +12607,7 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 								type: "submit",
 								className: "btn-primary",
-								style: {
-									width: "auto",
-									opacity: isPhoneDuplicate ? .6 : 1,
-									cursor: isPhoneDuplicate ? "not-allowed" : "pointer"
-								},
-								disabled: isPhoneDuplicate,
+								style: { width: "auto" },
 								children: "저장"
 							})]
 						})
@@ -12735,616 +12685,569 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 	});
 };
 //#endregion
-//#region src/components/AttendanceTab.tsx
-var AttendanceTab = ({ members, sessions, records, onAddSession, onUpdateRecord }) => {
-	const [searchTerm, setSearchTerm] = (0, import_react.useState)("");
-	const [filterType, setFilterType] = (0, import_react.useState)("all");
-	const [isModalOpen, setIsModalOpen] = (0, import_react.useState)(false);
-	const [newTitle, setNewTitle] = (0, import_react.useState)("");
-	const [newDate, setNewDate] = (0, import_react.useState)((/* @__PURE__ */ new Date()).toISOString().split("T")[0]);
-	const [newIsMutual, setNewIsMutual] = (0, import_react.useState)(false);
-	const recordsMap = (0, import_react.useMemo)(() => {
-		const map = /* @__PURE__ */ new Map();
-		records.forEach((r) => {
-			map.set(r.memberId, r.status);
-		});
-		return map;
-	}, [records]);
-	const filteredSessions = (0, import_react.useMemo)(() => {
-		return sessions.filter((s) => {
-			if (filterType === "regular") return !s.is_mutual_aid;
-			if (filterType === "mutual_aid") return s.is_mutual_aid;
-			return true;
-		});
-	}, [sessions, filterType]);
-	const filteredMembers = (0, import_react.useMemo)(() => {
-		return members.filter((m) => {
-			return m.name.toLowerCase().includes(searchTerm.toLowerCase());
-		}).sort((a, b) => a.id - b.id);
-	}, [members, searchTerm]);
-	const stats = (0, import_react.useMemo)(() => {
-		const totalMembers = members.length;
-		if (totalMembers === 0) return {
-			avgRate: 0,
-			totalAid: 0
-		};
-		const regularSessions = sessions.filter((s) => !s.is_mutual_aid);
-		const aidSessions = sessions.filter((s) => s.is_mutual_aid);
-		let totalRegularAttendanceCount = 0;
-		let totalRegularPossible = regularSessions.length * totalMembers;
-		records.forEach((r) => {
-			regularSessions.forEach((s) => {
-				if (r.status[s.id] === "○") totalRegularAttendanceCount++;
-			});
-		});
-		const avgRate = totalRegularPossible > 0 ? Math.round(totalRegularAttendanceCount / totalRegularPossible * 100) : 0;
-		let totalAidCount = 0;
-		records.forEach((r) => {
-			aidSessions.forEach((s) => {
-				const val = r.status[s.id];
-				if (val === "○" || val === "상주") totalAidCount++;
-			});
-		});
-		return {
-			avgRate,
-			totalAid: totalAidCount
-		};
-	}, [
-		members,
-		sessions,
-		records
-	]);
-	const handleCellClick = (memberId, sessionId) => {
-		const currentStatus = (recordsMap.get(memberId) || {})[sessionId] || "";
-		let nextStatus = "";
-		if (currentStatus === "") nextStatus = "○";
-		else if (currentStatus === "○") nextStatus = "상주";
-		else if (currentStatus === "상주") nextStatus = "X";
-		else if (currentStatus === "X") nextStatus = "유보";
-		else nextStatus = "";
-		onUpdateRecord(memberId, sessionId, nextStatus);
-	};
-	const handleAddSessionSubmit = (e) => {
-		e.preventDefault();
-		if (!newTitle.trim()) {
-			alert("항목 제목을 입력해주세요.");
-			return;
-		}
-		onAddSession(newTitle, newDate, newIsMutual);
-		setNewTitle("");
-		setIsModalOpen(false);
-	};
-	const getCellStyles = (status) => {
-		switch (status) {
-			case "○": return {
-				backgroundColor: "rgba(15, 76, 58, 0.08)",
-				color: "var(--primary)",
-				fontWeight: "900",
-				cursor: "pointer"
-			};
-			case "상주": return {
-				backgroundColor: "rgba(184, 134, 11, 0.08)",
-				color: "var(--accent)",
-				fontWeight: "800",
-				fontSize: "11px",
-				cursor: "pointer"
-			};
-			case "X": return {
-				backgroundColor: "rgba(239, 68, 68, 0.08)",
-				color: "var(--danger)",
-				fontWeight: "800",
-				cursor: "pointer"
-			};
-			case "유보": return {
-				backgroundColor: "#fffbeb",
-				color: "#d97706",
-				fontWeight: "800",
-				fontSize: "11px",
-				cursor: "pointer"
-			};
-			default: return { cursor: "pointer" };
-		}
-	};
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "attendance-tab",
-		style: {
-			display: "flex",
-			flexDirection: "column",
-			gap: "16px"
-		},
-		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "attendance-stats",
-				style: {
-					display: "grid",
-					gridTemplateColumns: "repeat(3, 1fr)",
-					gap: "10px"
-				},
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "info-card glass",
-						style: {
-							padding: "12px 10px",
-							textAlign: "center",
-							borderRadius: "12px"
-						},
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							style: {
-								fontSize: "10px",
-								color: "var(--text-muted)",
-								fontWeight: 700,
-								marginBottom: "4px"
-							},
-							children: "전체 회원"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							style: {
-								fontSize: "18px",
-								fontWeight: 900,
-								color: "var(--primary)"
-							},
-							children: [members.length, "명"]
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "info-card glass",
-						style: {
-							padding: "12px 10px",
-							textAlign: "center",
-							borderRadius: "12px"
-						},
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							style: {
-								fontSize: "10px",
-								color: "var(--text-muted)",
-								fontWeight: 700,
-								marginBottom: "4px"
-							},
-							children: "평균 출석률"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							style: {
-								fontSize: "18px",
-								fontWeight: 900,
-								color: "var(--accent)"
-							},
-							children: [stats.avgRate, "%"]
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "info-card glass",
-						style: {
-							padding: "12px 10px",
-							textAlign: "center",
-							borderRadius: "12px"
-						},
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							style: {
-								fontSize: "10px",
-								color: "var(--text-muted)",
-								fontWeight: 700,
-								marginBottom: "4px"
-							},
-							children: "상조 참여"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							style: {
-								fontSize: "18px",
-								fontWeight: 900,
-								color: "#2563eb"
-							},
-							children: [stats.totalAid, "건"]
-						})]
-					})
-				]
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "attendance-controls",
-				style: {
-					display: "flex",
-					flexDirection: "column",
-					gap: "10px"
-				},
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					style: {
-						display: "flex",
-						gap: "8px"
-					},
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-						type: "text",
-						placeholder: "이름으로 검색...",
-						value: searchTerm,
-						onChange: (e) => setSearchTerm(e.target.value),
-						style: {
-							flex: 1,
-							padding: "10px 14px",
-							borderRadius: "8px",
-							border: "1px solid var(--border-color)",
-							fontSize: "13px",
-							outline: "none",
-							backgroundColor: "#fff"
-						}
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-						onClick: () => setIsModalOpen(true),
-						className: "btn-interactive",
-						style: {
-							padding: "0 16px",
-							backgroundColor: "var(--primary)",
-							color: "white",
-							border: "none",
-							borderRadius: "8px",
-							fontSize: "13px",
-							fontWeight: 800,
-							cursor: "pointer",
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center"
-						},
-						children: "항목 추가"
-					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					style: {
-						display: "flex",
-						gap: "6px"
-					},
-					children: [
-						"all",
-						"regular",
-						"mutual_aid"
-					].map((type) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setFilterType(type),
-						className: "btn-interactive",
-						style: {
-							flex: 1,
-							padding: "8px",
-							borderRadius: "6px",
-							border: "1px solid var(--border-color)",
-							fontSize: "11px",
-							fontWeight: 700,
-							cursor: "pointer",
-							backgroundColor: filterType === type ? "var(--primary)" : "rgba(255,255,255,0.8)",
-							color: filterType === type ? "white" : "var(--text-main)"
-						},
-						children: [
-							type === "all" && "전체 보기",
-							type === "regular" && "정기모임",
-							type === "mutual_aid" && "상조"
-						]
-					}, type))
-				})]
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "info-card glass",
-				style: {
-					padding: "0",
-					borderRadius: "16px",
-					overflow: "hidden",
-					border: "1px solid var(--border-color)"
-				},
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "table-scroll-container",
-					style: {
-						overflowX: "auto",
-						WebkitOverflowScrolling: "touch"
-					},
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", {
-						style: {
-							width: "100%",
-							borderCollapse: "collapse",
-							fontSize: "12px",
-							textAlign: "center",
-							minWidth: "380px"
-						},
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", {
-							style: {
-								backgroundColor: "var(--primary-light)",
-								borderBottom: "1px solid var(--border-color)"
-							},
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
-									style: {
-										padding: "12px 6px",
-										fontWeight: 800,
-										width: "40px",
-										color: "var(--primary-dark)"
-									},
-									children: "번호"
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
-									style: {
-										padding: "12px 8px",
-										fontWeight: 800,
-										width: "70px",
-										color: "var(--primary-dark)",
-										textAlign: "left",
-										position: "sticky",
-										left: 0,
-										backgroundColor: "var(--primary-light)",
-										zIndex: 1
-									},
-									children: "이름"
-								}),
-								filteredSessions.map((session) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("th", {
-									style: {
-										padding: "12px 6px",
-										fontWeight: 800,
-										color: session.is_mutual_aid ? "var(--accent)" : "var(--primary)",
-										minWidth: "60px"
-									},
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: session.title }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										style: {
-											fontSize: "9px",
-											opacity: .6,
-											fontWeight: 500
-										},
-										children: session.date.substring(5)
-									})]
-								}, session.id))
-							]
-						}) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { children: [filteredMembers.map((member) => {
-							const memberStatus = recordsMap.get(member.id) || {};
-							return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", {
-								style: {
-									borderBottom: "1px solid rgba(15, 76, 58, 0.04)",
-									transition: "background-color 0.2s"
-								},
-								className: "table-row-hover",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
-										style: {
-											padding: "10px 4px",
-											color: "var(--text-muted)",
-											fontWeight: 500
-										},
-										children: member.id
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
-										style: {
-											padding: "10px 8px",
-											fontWeight: 700,
-											textAlign: "left",
-											position: "sticky",
-											left: 0,
-											backgroundColor: "#fff",
-											zIndex: 1,
-											boxShadow: "2px 0 5px rgba(0,0,0,0.02)"
-										},
-										children: member.name
-									}),
-									filteredSessions.map((session) => {
-										const status = memberStatus[session.id] || "";
-										return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
-											onClick: () => handleCellClick(member.id, session.id),
-											style: {
-												padding: "10px 4px",
-												transition: "all 0.1s",
-												...getCellStyles(status)
-											},
-											className: "btn-interactive",
-											children: status || "-"
-										}, session.id);
-									})
-								]
-							}, member.id);
-						}), filteredMembers.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tr", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
-							colSpan: filteredSessions.length + 2,
-							style: {
-								padding: "24px",
-								color: "var(--text-muted)"
-							},
-							children: "일치하는 회원이 없습니다."
-						}) })] })]
-					})
-				})
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				style: {
-					fontSize: "10px",
-					color: "var(--text-muted)",
-					textAlign: "center",
-					marginTop: "4px"
-				},
-				children: [
-					"💡 셀을 터치하면 [ ",
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "○" }),
-					" ➔ ",
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "상주" }),
-					" ➔ ",
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "X" }),
-					" ➔ ",
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "유보" }),
-					" ➔ ",
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "공란(-)" }),
-					" ] 순으로 변경됩니다."
-				]
-			}),
-			isModalOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				style: {
-					position: "fixed",
-					top: 0,
-					left: 0,
-					width: "100%",
-					height: "100%",
-					backgroundColor: "rgba(0,0,0,0.4)",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					zIndex: 999,
-					padding: "20px"
-				},
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "info-card glass",
-					style: {
-						width: "100%",
-						maxWidth: "340px",
-						padding: "24px",
-						borderRadius: "16px",
-						backgroundColor: "white",
-						boxShadow: "var(--shadow-lg)"
-					},
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-						style: {
-							fontSize: "16px",
-							fontWeight: 900,
-							marginBottom: "16px",
-							color: "var(--primary)"
-						},
-						children: "새 출석 항목 추가"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
-						onSubmit: handleAddSessionSubmit,
-						style: {
-							display: "flex",
-							flexDirection: "column",
-							gap: "14px"
-						},
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								style: {
-									display: "flex",
-									flexDirection: "column",
-									gap: "4px"
-								},
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
-									style: {
-										fontSize: "11px",
-										fontWeight: 700,
-										color: "var(--text-muted)"
-									},
-									children: "구분"
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									style: {
-										display: "flex",
-										gap: "10px"
-									},
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-										style: {
-											display: "flex",
-											alignItems: "center",
-											gap: "6px",
-											fontSize: "13px",
-											cursor: "pointer"
-										},
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-											type: "radio",
-											name: "session_type",
-											checked: !newIsMutual,
-											onChange: () => setNewIsMutual(false),
-											style: { accentColor: "var(--primary)" }
-										}), "정기모임"]
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-										style: {
-											display: "flex",
-											alignItems: "center",
-											gap: "6px",
-											fontSize: "13px",
-											cursor: "pointer"
-										},
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-											type: "radio",
-											name: "session_type",
-											checked: newIsMutual,
-											onChange: () => setNewIsMutual(true),
-											style: { accentColor: "var(--primary)" }
-										}), "상조"]
-									})]
-								})]
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								style: {
-									display: "flex",
-									flexDirection: "column",
-									gap: "4px"
-								},
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
-									style: {
-										fontSize: "11px",
-										fontWeight: 700,
-										color: "var(--text-muted)"
-									},
-									children: "항목 제목"
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-									type: "text",
-									value: newTitle,
-									onChange: (e) => setNewTitle(e.target.value),
-									placeholder: "예: 9월 정기모임, 상조(김동부)",
-									style: {
-										padding: "10px",
-										borderRadius: "8px",
-										border: "1px solid var(--border-color)",
-										fontSize: "13px",
-										outline: "none"
-									}
-								})]
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								style: {
-									display: "flex",
-									flexDirection: "column",
-									gap: "4px"
-								},
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
-									style: {
-										fontSize: "11px",
-										fontWeight: 700,
-										color: "var(--text-muted)"
-									},
-									children: "일자"
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-									type: "date",
-									value: newDate,
-									onChange: (e) => setNewDate(e.target.value),
-									style: {
-										padding: "10px",
-										borderRadius: "8px",
-										border: "1px solid var(--border-color)",
-										fontSize: "13px",
-										outline: "none"
-									}
-								})]
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								style: {
-									display: "flex",
-									gap: "8px",
-									marginTop: "8px"
-								},
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-									type: "button",
-									onClick: () => setIsModalOpen(false),
-									style: {
-										flex: 1,
-										padding: "10px",
-										border: "1px solid var(--border-color)",
-										backgroundColor: "#fff",
-										borderRadius: "8px",
-										fontSize: "13px",
-										fontWeight: 700,
-										cursor: "pointer"
-									},
-									children: "취소"
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-									type: "submit",
-									style: {
-										flex: 1,
-										padding: "10px",
-										backgroundColor: "var(--primary)",
-										color: "white",
-										border: "none",
-										borderRadius: "8px",
-										fontSize: "13px",
-										fontWeight: 800,
-										cursor: "pointer"
-									},
-									children: "추가하기"
-								})]
-							})
-						]
-					})]
-				})
-			})
-		]
-	});
-};
-//#endregion
 //#region src/data/members.json
-var members_default = /*#__PURE__*/ JSON.parse("[{\"id\":1,\"name\":\"강규현\",\"role\":\"3대 회장\",\"company\":\"백제에너지지지하수\",\"phone\":\"010-9432-5566\"},{\"id\":2,\"name\":\"곽민준\",\"role\":\"\",\"company\":\"남원경찰서\",\"phone\":\"010-5540-5820\"},{\"id\":3,\"name\":\"권천택\",\"role\":\"운영위원\",\"company\":\"(주)한국음료\",\"phone\":\"010-6778-1985\"},{\"id\":4,\"name\":\"김정민\",\"role\":\"\",\"company\":\"운봉고물상\",\"phone\":\"010-6775-3445\"},{\"id\":5,\"name\":\"김관호\",\"role\":\"11대 회장\",\"company\":\"이안당금방\",\"phone\":\"010-8641-9718\"},{\"id\":6,\"name\":\"김기영\",\"role\":\"\",\"company\":\"국립민속국악원\",\"phone\":\"010-2652-3159\"},{\"id\":7,\"name\":\"강영권\",\"role\":\"총무\",\"company\":\"현대자동차\",\"phone\":\"010-4652-2358\"},{\"id\":8,\"name\":\"곽봉춘\",\"role\":\"6대 회장\",\"company\":\"서남크레인, 스카이\",\"phone\":\"010-3676-8402\"},{\"id\":9,\"name\":\"기승만\",\"role\":\"7대 회장\",\"company\":\"(유)우리산업\",\"phone\":\"010-6232-7342\"},{\"id\":10,\"name\":\"김정수\",\"role\":\"\",\"company\":\"남원에스원\",\"phone\":\"010-2031-1687\"},{\"id\":11,\"name\":\"김규성\",\"role\":\"상조위원장\",\"company\":\"민물수산(건강원)\",\"phone\":\"010-5016-7377\"},{\"id\":12,\"name\":\"김길영\",\"role\":\"\",\"company\":\"남영공예\",\"phone\":\"010-5626-0827\"},{\"id\":13,\"name\":\"김신\",\"role\":\"\",\"company\":\"남원시청\",\"phone\":\"010-4157-1529\"},{\"id\":14,\"name\":\"김완식\",\"role\":\"\",\"company\":\"삼성시스템에어컨\",\"phone\":\"010-8833-7437\"},{\"id\":15,\"name\":\"김용무\",\"role\":\"재무\",\"company\":\"금강창호\",\"phone\":\"010-5669-0692\"},{\"id\":16,\"name\":\"김정우\",\"role\":\"\",\"company\":\"지엘건설\",\"phone\":\"010-5534-4253\"},{\"id\":17,\"name\":\"김종섭\",\"role\":\"\",\"company\":\"남원건설\",\"phone\":\"010-5604-4204\"},{\"id\":18,\"name\":\"김태\",\"role\":\"상조위원\",\"company\":\"예작미용실\",\"phone\":\"010-4784-6830\"},{\"id\":19,\"name\":\"김영민\",\"role\":\"\",\"company\":\"송림농원\",\"phone\":\"010-3656-8163\"},{\"id\":20,\"name\":\"김용광\",\"role\":\"\",\"company\":\"남원의료원\",\"phone\":\"010-9641-9998\"},{\"id\":21,\"name\":\"김용화\",\"role\":\"\",\"company\":\"익산전업사\",\"phone\":\"010-5920-1007\"},{\"id\":22,\"name\":\"김점철\",\"role\":\"\",\"company\":\"솔마루목조건축\",\"phone\":\"010-3223-0397\"},{\"id\":23,\"name\":\"김철현\",\"role\":\"\",\"company\":\"남원우체국\",\"phone\":\"010-4659-5020\"},{\"id\":24,\"name\":\"김현수\",\"role\":\"부회장\",\"company\":\"산동우체국\",\"phone\":\"010-9026-7321\"},{\"id\":25,\"name\":\"김형찬\",\"role\":\"\",\"company\":\"신화스카이\",\"phone\":\"010-5368-1677\"},{\"id\":26,\"name\":\"김환석\",\"role\":\"\",\"company\":\"공예/중기\",\"phone\":\"010-9477-2062\"},{\"id\":27,\"name\":\"노경진\",\"role\":\"운영위원\",\"company\":\"개별화물\",\"phone\":\"010-2656-7791\"},{\"id\":28,\"name\":\"박기태\",\"role\":\"운영위원\",\"company\":\"로얄전기\",\"phone\":\"010-8669-2449\"},{\"id\":29,\"name\":\"박부열\",\"role\":\"\",\"company\":\"시너지월와이드/디톡스\",\"phone\":\"010-3683-0768\"},{\"id\":30,\"name\":\"박성봉\",\"role\":\"\",\"company\":\"우성이엔씨\",\"phone\":\"010-4161-3387\"},{\"id\":31,\"name\":\"박승민\",\"role\":\"\",\"company\":\"남원볼트\",\"phone\":\"010-6284-0949\"},{\"id\":32,\"name\":\"박현주\",\"role\":\"운영위원\",\"company\":\"연합중기\",\"phone\":\"010-3683-4907\"},{\"id\":33,\"name\":\"방성열\",\"role\":\"\",\"company\":\"515번청과\",\"phone\":\"010-3683-8383\"},{\"id\":34,\"name\":\"방정원\",\"role\":\"\",\"company\":\"황소밧데리\",\"phone\":\"010-3652-8722\"},{\"id\":35,\"name\":\"변길주\",\"role\":\"\",\"company\":\"거점스포츠센터/이화어린이집\",\"phone\":\"010-8621-4890\"},{\"id\":36,\"name\":\"서재석\",\"role\":\"1대 회장\",\"company\":\"꽃내음화원/서재석공인중개사\",\"phone\":\"010-9454-0900\"},{\"id\":37,\"name\":\"박철규\",\"role\":\"\",\"company\":\"OK부동산\",\"phone\":\"010-6668-3477\"},{\"id\":38,\"name\":\"박흥주\",\"role\":\"\",\"company\":\"SKT SN\",\"phone\":\"010-2089-4243\"},{\"id\":39,\"name\":\"방세혁\",\"role\":\"\",\"company\":\"행복설비\",\"phone\":\"010-6479-8459\"},{\"id\":40,\"name\":\"백광엽\",\"role\":\"8대 회장\",\"company\":\"종로떡전문점\",\"phone\":\"010-6732-1426\"},{\"id\":41,\"name\":\"변완석\",\"role\":\"\",\"company\":\"굴삭기\",\"phone\":\"010-3672-8211\"},{\"id\":42,\"name\":\"손성기\",\"role\":\"\",\"company\":\"자동차세상\",\"phone\":\"010-8626-1239\"},{\"id\":43,\"name\":\"신동기\",\"role\":\"4대 회장\",\"company\":\"휴먼시스템\",\"phone\":\"010-9679-2222\"},{\"id\":44,\"name\":\"신용호\",\"role\":\"상조위원\",\"company\":\"덕과건설중기\",\"phone\":\"010-8645-2243\"},{\"id\":45,\"name\":\"안재성\",\"role\":\"\",\"company\":\"(주)금정레미콘\",\"phone\":\"010-3679-2489\"},{\"id\":46,\"name\":\"양문용\",\"role\":\"\",\"company\":\"(유)영림프라임샤시\",\"phone\":\"010-3653-1809\"},{\"id\":47,\"name\":\"오준석\",\"role\":\"\",\"company\":\"(주)대건\",\"phone\":\"010-8720-7311\"},{\"id\":48,\"name\":\"오현우\",\"role\":\"\",\"company\":\"자유전자\",\"phone\":\"010-6350-3366\"},{\"id\":49,\"name\":\"신성일\",\"role\":\"\",\"company\":\"풍성한주간보호센터\",\"phone\":\"010-7392-3272\"},{\"id\":50,\"name\":\"안순식\",\"role\":\"\",\"company\":\"(유)유선기업\",\"phone\":\"010-8950-8363\"},{\"id\":51,\"name\":\"안재찬\",\"role\":\"2대 회장\",\"company\":\"비트컴퓨터학원\",\"phone\":\"010-5112-6706\"},{\"id\":52,\"name\":\"오용선\",\"role\":\"감사\",\"company\":\"대중가스\",\"phone\":\"010-3655-3749\"},{\"id\":53,\"name\":\"오충권\",\"role\":\"운영위원\",\"company\":\"창진자동차유리\",\"phone\":\"010-7141-7588\"},{\"id\":54,\"name\":\"우동명\",\"role\":\"\",\"company\":\"농업\",\"phone\":\"010-3689-7860\"},{\"id\":55,\"name\":\"우석봉\",\"role\":\"\",\"company\":\"대백크레인, 스카이\",\"phone\":\"010-3682-8506\"},{\"id\":56,\"name\":\"유영진\",\"role\":\"\",\"company\":\"남원시청\",\"phone\":\"010-5633-7881\"},{\"id\":57,\"name\":\"이상묵\",\"role\":\"운영위원\",\"company\":\"가보테크\",\"phone\":\"010-3993-2372\"},{\"id\":58,\"name\":\"이성옥\",\"role\":\"\",\"company\":\"(유)남원종합농기계\",\"phone\":\"010-5823-7000\"},{\"id\":59,\"name\":\"이정식\",\"role\":\"운영위원\",\"company\":\"산아래영농법인\",\"phone\":\"010-9446-7517\"},{\"id\":60,\"name\":\"장호법\",\"role\":\"운영위원\",\"company\":\"휴먼시스템\",\"phone\":\"010-7146-7938\"},{\"id\":61,\"name\":\"우진용\",\"role\":\"\",\"company\":\"현대자동차\",\"phone\":\"010-4654-1010\"},{\"id\":62,\"name\":\"이삼록\",\"role\":\"\",\"company\":\"동양유리건축/스카이\",\"phone\":\"010-3659-6204\"},{\"id\":63,\"name\":\"이선영\",\"role\":\"부회장\",\"company\":\"365할인마트\",\"phone\":\"010-3658-7350\"},{\"id\":64,\"name\":\"이우팔\",\"role\":\"감사\",\"company\":\"(주)금정레미콘\",\"phone\":\"010-2304-2586\"},{\"id\":65,\"name\":\"이평수\",\"role\":\"\",\"company\":\"농업\",\"phone\":\"010-8627-3715\"},{\"id\":66,\"name\":\"정봉환\",\"role\":\"\",\"company\":\"종합인슈판넬\",\"phone\":\"010-2608-0620\"},{\"id\":67,\"name\":\"정영구\",\"role\":\"회장\",\"company\":\"제일컴퓨터학원\",\"phone\":\"010-7176-8844\"},{\"id\":68,\"name\":\"정영성\",\"role\":\"운영위원\",\"company\":\"두배마니/로컬푸드수산코너\",\"phone\":\"010-3651-3577\"},{\"id\":69,\"name\":\"조규현\",\"role\":\"\",\"company\":\"부림종합개발/한일건기\",\"phone\":\"010-3652-5758\"},{\"id\":70,\"name\":\"조영환\",\"role\":\"\",\"company\":\"남원농협\",\"phone\":\"010-8604-9401\"},{\"id\":71,\"name\":\"최선호\",\"role\":\"\",\"company\":\"정관식세무회계사무소\",\"phone\":\"010-9453-5222\"},{\"id\":72,\"name\":\"한성동\",\"role\":\"상조위원\",\"company\":\"서남사무기(서남OA)\",\"phone\":\"010-8642-0380\"},{\"id\":73,\"name\":\"황인\",\"role\":\"\",\"company\":\"남원원예농협\",\"phone\":\"010-3083-8149\"},{\"id\":74,\"name\":\"정영권\",\"role\":\"10대 회장\",\"company\":\"보배아카데미학원\",\"phone\":\"010-5485-2873\"},{\"id\":75,\"name\":\"정용욱\",\"role\":\"5대 회장\",\"company\":\"목포중앙병원\",\"phone\":\"010-7302-5348\"},{\"id\":76,\"name\":\"조민영\",\"role\":\"운영위원\",\"company\":\"어사장\",\"phone\":\"010-4015-2372\"},{\"id\":77,\"name\":\"조중근\",\"role\":\"\",\"company\":\"대호카라반(전국총판)\",\"phone\":\"010-9822-2222\"},{\"id\":78,\"name\":\"추학봉\",\"role\":\"\",\"company\":\"자영업\",\"phone\":\"010-3659-7491\"},{\"id\":79,\"name\":\"한재석\",\"role\":\"\",\"company\":\"남원현대카서비스\",\"phone\":\"010-6866-8060\"},{\"id\":80,\"name\":\"황창수\",\"role\":\"상조위원\",\"company\":\"진보건설기계\",\"phone\":\"010-3672-0266\"},{\"id\":81,\"name\":\"김경만\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":82,\"name\":\"김경수\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":83,\"name\":\"김형근\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":84,\"name\":\"김환옥\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":85,\"name\":\"노지훈\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":86,\"name\":\"라광수\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":87,\"name\":\"박병인\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":88,\"name\":\"박상일\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":89,\"name\":\"박승현\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"}]");
+var members_default = [
+	{
+		"id": 1,
+		"name": "강규현",
+		"role": "3대 회장",
+		"company": "백제에너지지지하수",
+		"phone": "010-9432-5566"
+	},
+	{
+		"id": 2,
+		"name": "곽민준",
+		"role": "",
+		"company": "남원경찰서",
+		"phone": "010-5540-5820"
+	},
+	{
+		"id": 3,
+		"name": "권천택",
+		"role": "운영위원",
+		"company": "(주)한국음료",
+		"phone": "010-6778-1985"
+	},
+	{
+		"id": 4,
+		"name": "김정민",
+		"role": "",
+		"company": "운봉고물상",
+		"phone": "010-6775-3445"
+	},
+	{
+		"id": 5,
+		"name": "김관호",
+		"role": "11대 회장",
+		"company": "이안당금방",
+		"phone": "010-8641-9718"
+	},
+	{
+		"id": 6,
+		"name": "김기영",
+		"role": "",
+		"company": "국립민속국악원",
+		"phone": "010-2652-3159"
+	},
+	{
+		"id": 7,
+		"name": "강영권",
+		"role": "총무",
+		"company": "현대자동차",
+		"phone": "010-4652-2358"
+	},
+	{
+		"id": 8,
+		"name": "곽봉준",
+		"role": "6대 회장",
+		"company": "서남크레인, 스카이",
+		"phone": "010-3676-8402"
+	},
+	{
+		"id": 9,
+		"name": "기승민",
+		"role": "7대 회장",
+		"company": "(유)우리산업",
+		"phone": "010-6232-7342"
+	},
+	{
+		"id": 10,
+		"name": "김정수",
+		"role": "",
+		"company": "남원에스원",
+		"phone": "010-2031-1687"
+	},
+	{
+		"id": 11,
+		"name": "김규성",
+		"role": "상조위원장",
+		"company": "민물수산(건강원)",
+		"phone": "010-5016-7377"
+	},
+	{
+		"id": 12,
+		"name": "김길영",
+		"role": "",
+		"company": "남영공예",
+		"phone": "010-5626-0827"
+	},
+	{
+		"id": 13,
+		"name": "김신",
+		"role": "",
+		"company": "남원시청",
+		"phone": "010-4157-1529"
+	},
+	{
+		"id": 14,
+		"name": "김완식",
+		"role": "",
+		"company": "삼성시스템에어컨",
+		"phone": "010-8833-7437"
+	},
+	{
+		"id": 15,
+		"name": "김용무",
+		"role": "재무",
+		"company": "금강창호",
+		"phone": "010-5669-0692"
+	},
+	{
+		"id": 16,
+		"name": "김정우",
+		"role": "",
+		"company": "지엘건설",
+		"phone": "010-5534-4253"
+	},
+	{
+		"id": 17,
+		"name": "김종섭",
+		"role": "",
+		"company": "남원건설",
+		"phone": "010-5604-4204"
+	},
+	{
+		"id": 18,
+		"name": "김태",
+		"role": "상조위원",
+		"company": "예작미용실",
+		"phone": "010-4784-6830"
+	},
+	{
+		"id": 19,
+		"name": "김영민",
+		"role": "",
+		"company": "송림농원",
+		"phone": "010-3656-8163"
+	},
+	{
+		"id": 20,
+		"name": "김용광",
+		"role": "",
+		"company": "남원의료원",
+		"phone": "010-9641-9998"
+	},
+	{
+		"id": 21,
+		"name": "김용화",
+		"role": "",
+		"company": "익산전업사",
+		"phone": "010-5920-1007"
+	},
+	{
+		"id": 22,
+		"name": "김점철",
+		"role": "",
+		"company": "솔마루목조건축",
+		"phone": "010-3223-0397"
+	},
+	{
+		"id": 23,
+		"name": "김철현",
+		"role": "",
+		"company": "남원우체국",
+		"phone": "010-4659-5020"
+	},
+	{
+		"id": 24,
+		"name": "김현수",
+		"role": "부회장",
+		"company": "산동우체국",
+		"phone": "010-9026-7321"
+	},
+	{
+		"id": 25,
+		"name": "김형찬",
+		"role": "",
+		"company": "신화스카이",
+		"phone": "010-5368-1677"
+	},
+	{
+		"id": 26,
+		"name": "김환욱",
+		"role": "",
+		"company": "공예/중기",
+		"phone": "010-9477-2062"
+	},
+	{
+		"id": 27,
+		"name": "노경진",
+		"role": "운영위원",
+		"company": "개별화물",
+		"phone": "010-2656-7791"
+	},
+	{
+		"id": 28,
+		"name": "박기태",
+		"role": "운영위원",
+		"company": "로얄전기",
+		"phone": "010-8669-2449"
+	},
+	{
+		"id": 29,
+		"name": "박무열",
+		"role": "",
+		"company": "시너지월와이드/디톡스",
+		"phone": "010-3683-0768"
+	},
+	{
+		"id": 30,
+		"name": "박성동",
+		"role": "",
+		"company": "우성이엔씨",
+		"phone": "010-4161-3387"
+	},
+	{
+		"id": 31,
+		"name": "박승민",
+		"role": "",
+		"company": "남원볼트",
+		"phone": "010-6284-0949"
+	},
+	{
+		"id": 32,
+		"name": "박현주",
+		"role": "운영위원",
+		"company": "연합중기",
+		"phone": "010-3683-4907"
+	},
+	{
+		"id": 33,
+		"name": "방성일",
+		"role": "",
+		"company": "515번청과",
+		"phone": "010-3683-8383"
+	},
+	{
+		"id": 34,
+		"name": "방정원",
+		"role": "",
+		"company": "황소밧데리",
+		"phone": "010-3652-8722"
+	},
+	{
+		"id": 35,
+		"name": "변길주",
+		"role": "",
+		"company": "거점스포츠센터/이화어린이집",
+		"phone": "010-8621-4890"
+	},
+	{
+		"id": 36,
+		"name": "서재석",
+		"role": "1대 회장",
+		"company": "꽃내음화원/서재석공인중개사",
+		"phone": "010-9454-0900"
+	},
+	{
+		"id": 37,
+		"name": "박철규",
+		"role": "",
+		"company": "OK부동산",
+		"phone": "010-6668-3477"
+	},
+	{
+		"id": 38,
+		"name": "박흥주",
+		"role": "",
+		"company": "SKT SN",
+		"phone": "010-2089-4243"
+	},
+	{
+		"id": 39,
+		"name": "방세혁",
+		"role": "",
+		"company": "행복설비",
+		"phone": "010-6479-8459"
+	},
+	{
+		"id": 40,
+		"name": "백광엽",
+		"role": "8대 회장",
+		"company": "종로떡전문점",
+		"phone": "010-6732-1426"
+	},
+	{
+		"id": 41,
+		"name": "변완석",
+		"role": "",
+		"company": "굴삭기",
+		"phone": "010-3672-8211"
+	},
+	{
+		"id": 42,
+		"name": "손성기",
+		"role": "",
+		"company": "자동차세상",
+		"phone": "010-8626-1239"
+	},
+	{
+		"id": 43,
+		"name": "신동기",
+		"role": "4대 회장",
+		"company": "휴먼시스템",
+		"phone": "010-9679-2222"
+	},
+	{
+		"id": 44,
+		"name": "신용호",
+		"role": "상조위원",
+		"company": "덕과건설중기",
+		"phone": "010-8645-2243"
+	},
+	{
+		"id": 45,
+		"name": "안재성",
+		"role": "",
+		"company": "(주)금정레미콘",
+		"phone": "010-3679-2489"
+	},
+	{
+		"id": 46,
+		"name": "양문용",
+		"role": "",
+		"company": "(유)영림프라임샤시",
+		"phone": "010-3653-1809"
+	},
+	{
+		"id": 47,
+		"name": "오준석",
+		"role": "",
+		"company": "(주)대건",
+		"phone": "010-8720-7311"
+	},
+	{
+		"id": 48,
+		"name": "오현우",
+		"role": "",
+		"company": "자유전자",
+		"phone": "010-6350-3366"
+	},
+	{
+		"id": 49,
+		"name": "신성일",
+		"role": "",
+		"company": "풍성한주간보호센터",
+		"phone": "010-7392-3272"
+	},
+	{
+		"id": 50,
+		"name": "안순식",
+		"role": "",
+		"company": "(유)유선기업",
+		"phone": "010-8950-8363"
+	},
+	{
+		"id": 51,
+		"name": "안재찬",
+		"role": "2대 회장",
+		"company": "비트컴퓨터학원",
+		"phone": "010-5112-6706"
+	},
+	{
+		"id": 52,
+		"name": "오용선",
+		"role": "감사",
+		"company": "대중가스",
+		"phone": "010-3655-3749"
+	},
+	{
+		"id": 53,
+		"name": "오충권",
+		"role": "운영위원",
+		"company": "창진자동차유리",
+		"phone": "010-7141-7588"
+	},
+	{
+		"id": 54,
+		"name": "우동명",
+		"role": "",
+		"company": "농업",
+		"phone": "010-3689-7860"
+	},
+	{
+		"id": 55,
+		"name": "우석동",
+		"role": "",
+		"company": "대백크레인, 스카이",
+		"phone": "010-3682-8506"
+	},
+	{
+		"id": 56,
+		"name": "유영진",
+		"role": "",
+		"company": "남원시청",
+		"phone": "010-5633-7881"
+	},
+	{
+		"id": 57,
+		"name": "이상목",
+		"role": "운영위원",
+		"company": "가보테크",
+		"phone": "010-3993-2372"
+	},
+	{
+		"id": 58,
+		"name": "이성옥",
+		"role": "",
+		"company": "(유)남원종합농기계",
+		"phone": "010-5823-7000"
+	},
+	{
+		"id": 59,
+		"name": "이정석",
+		"role": "운영위원",
+		"company": "산아래영농법인",
+		"phone": "010-9446-7517"
+	},
+	{
+		"id": 60,
+		"name": "장호범",
+		"role": "운영위원",
+		"company": "휴먼시스템",
+		"phone": "010-7146-7938"
+	},
+	{
+		"id": 61,
+		"name": "우진용",
+		"role": "",
+		"company": "현대자동차",
+		"phone": "010-4654-1010"
+	},
+	{
+		"id": 62,
+		"name": "이삼록",
+		"role": "",
+		"company": "동양유리건축/스카이",
+		"phone": "010-3659-6204"
+	},
+	{
+		"id": 63,
+		"name": "이선영",
+		"role": "부회장",
+		"company": "365할인마트",
+		"phone": "010-3658-7350"
+	},
+	{
+		"id": 64,
+		"name": "이우팔",
+		"role": "감사",
+		"company": "(주)금정레미콘",
+		"phone": "010-2304-2586"
+	},
+	{
+		"id": 65,
+		"name": "이평수",
+		"role": "",
+		"company": "농업",
+		"phone": "010-8627-3715"
+	},
+	{
+		"id": 66,
+		"name": "정동환",
+		"role": "",
+		"company": "종합인슈판넬",
+		"phone": "010-2608-0620"
+	},
+	{
+		"id": 67,
+		"name": "정영구",
+		"role": "회장",
+		"company": "제일컴퓨터학원",
+		"phone": "010-7176-8844"
+	},
+	{
+		"id": 68,
+		"name": "정영성",
+		"role": "운영위원",
+		"company": "두배마니/로컬푸드수산코너",
+		"phone": "010-3651-3577"
+	},
+	{
+		"id": 69,
+		"name": "조규현",
+		"role": "",
+		"company": "부림종합개발/한일건기",
+		"phone": "010-3652-5758"
+	},
+	{
+		"id": 70,
+		"name": "조영환",
+		"role": "",
+		"company": "남원농협",
+		"phone": "010-8604-9401"
+	},
+	{
+		"id": 71,
+		"name": "최선호",
+		"role": "",
+		"company": "정관식세무회계사무소",
+		"phone": "010-9453-5222"
+	},
+	{
+		"id": 72,
+		"name": "한성동",
+		"role": "상조위원",
+		"company": "서남사무기(서남OA)",
+		"phone": "010-8642-0380"
+	},
+	{
+		"id": 73,
+		"name": "황인",
+		"role": "",
+		"company": "남원원예농협",
+		"phone": "010-3083-8149"
+	},
+	{
+		"id": 74,
+		"name": "정영권",
+		"role": "10대 회장",
+		"company": "보배아카데미학원",
+		"phone": "010-5485-2873"
+	},
+	{
+		"id": 75,
+		"name": "정용욱",
+		"role": "5대 회장",
+		"company": "목포중앙병원",
+		"phone": "010-7302-5348"
+	},
+	{
+		"id": 76,
+		"name": "조민영",
+		"role": "운영위원",
+		"company": "어사장",
+		"phone": "010-4015-2372"
+	},
+	{
+		"id": 77,
+		"name": "조중근",
+		"role": "",
+		"company": "대호카라반(전국총판)",
+		"phone": "010-9822-2222"
+	},
+	{
+		"id": 78,
+		"name": "주학동",
+		"role": "",
+		"company": "자영업",
+		"phone": "010-3659-7491"
+	},
+	{
+		"id": 79,
+		"name": "한재석",
+		"role": "",
+		"company": "남원현대카서비스",
+		"phone": "010-6866-8060"
+	},
+	{
+		"id": 80,
+		"name": "황창수",
+		"role": "상조위원",
+		"company": "진보건설기계",
+		"phone": "010-3672-0266"
+	}
+];
 //#endregion
 //#region node_modules/tslib/tslib.es6.mjs
 function __rest(s, e) {
@@ -34016,801 +33919,6 @@ function shouldShowDeprecationWarning() {
 if (shouldShowDeprecationWarning()) console.warn("⚠️  Node.js 20 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 22 or later. For more information, visit: https://github.com/orgs/supabase/discussions/45715");
 var supabase = createClient("https://wxrcvkjxmlflpwhilnvf.supabase.co", "sb_publishable_T5iyn7H-yw43C1W_DBi0BQ_28niP4vs");
 //#endregion
-//#region src/data/attendanceData.ts
-var initialSessions = [
-	{
-		"id": "2026-03-regular",
-		"title": "3월 정기모임",
-		"date": "2026-03-15",
-		"is_mutual_aid": false
-	},
-	{
-		"id": "2026-03-aid",
-		"title": "3월 상조",
-		"date": "2026-03-20",
-		"is_mutual_aid": true
-	},
-	{
-		"id": "2026-06-regular",
-		"title": "6월 정기모임",
-		"date": "2026-06-15",
-		"is_mutual_aid": false
-	},
-	{
-		"id": "2026-06-aid",
-		"title": "6월 상조",
-		"date": "2026-06-20",
-		"is_mutual_aid": true
-	}
-];
-var initialRecords = [
-	{
-		"memberId": 1,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 7,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 2,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 8,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 3,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 9,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 81,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 82,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 5,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 11,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 6,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 12,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 13,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "상주",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 19,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 14,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 20,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 15,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 21,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 22,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 16,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 17,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 23,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 18,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 24,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 83,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 25,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 26,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 84,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 27,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 85,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 86,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 28,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 87,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 29,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 88,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 30,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 31,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 37,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 89,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 32,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 33,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 39,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 34,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 40,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 35,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 41,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 36,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 42,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 43,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 49,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 44,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 50,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 45,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 51,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 46,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 52,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 47,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 53,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 48,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 54,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 55,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 61,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 56,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 62,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 57,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 63,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 58,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 64,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 59,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 65,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 60,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 66,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 67,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 74,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 68,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 75,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 69,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 76,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 70,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 77,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 78,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 72,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 79,
-		"status": {
-			"2026-03-regular": "○",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": "○"
-		}
-	},
-	{
-		"memberId": 73,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "",
-			"2026-06-aid": ""
-		}
-	},
-	{
-		"memberId": 80,
-		"status": {
-			"2026-03-regular": "",
-			"2026-03-aid": "○",
-			"2026-06-regular": "○",
-			"2026-06-aid": "○"
-		}
-	}
-];
-//#endregion
 //#region src/App.tsx
 var isSupabaseConfigured = () => {
 	return true;
@@ -34913,8 +34021,6 @@ function App() {
 	const [members, setMembers] = (0, import_react.useState)([]);
 	const [schedules, setSchedules] = (0, import_react.useState)([]);
 	const [accounts, setAccounts] = (0, import_react.useState)([]);
-	const [attendanceSessions, setAttendanceSessions] = (0, import_react.useState)([]);
-	const [attendanceRecords, setAttendanceRecords] = (0, import_react.useState)([]);
 	const [selectedMember, setSelectedMember] = (0, import_react.useState)(null);
 	const [isRulesOpen, setIsRulesOpen] = (0, import_react.useState)(false);
 	const [isUsingDB, setIsUsingDB] = (0, import_react.useState)(false);
@@ -35005,59 +34111,6 @@ function App() {
 			else setAccounts(initialAccounts);
 		}
 	}, []);
-	(0, import_react.useEffect)(() => {
-		if (isSupabaseConfigured()) {
-			const fetchAttendance = async () => {
-				try {
-					const { data: dbSessions, error: sessionError } = await supabase.from("attendance_sessions").select("*").order("date", { ascending: true });
-					const { data: dbRecords, error: recordError } = await supabase.from("attendance_records").select("*");
-					if (!sessionError && !recordError && dbSessions && dbRecords) {
-						const formattedRecordsMap = {};
-						members.forEach((m) => {
-							formattedRecordsMap[m.id] = {};
-						});
-						dbRecords.forEach((r) => {
-							const mId = r.member_id;
-							const sId = r.session_id;
-							const statusVal = r.status;
-							if (!formattedRecordsMap[mId]) formattedRecordsMap[mId] = {};
-							formattedRecordsMap[mId][sId] = statusVal;
-						});
-						const formattedRecordsList = Object.keys(formattedRecordsMap).map((key) => ({
-							memberId: parseInt(key),
-							status: formattedRecordsMap[parseInt(key)]
-						}));
-						setAttendanceSessions(dbSessions);
-						setAttendanceRecords(formattedRecordsList);
-					} else {
-						console.warn("Supabase fetch attendance failed or empty, fallback to local");
-						loadLocalAttendance();
-					}
-				} catch (e) {
-					console.error("Supabase connect error for attendance:", e);
-					loadLocalAttendance();
-				}
-			};
-			if (members.length > 0) fetchAttendance();
-		} else loadLocalAttendance();
-		function loadLocalAttendance() {
-			const savedSessions = localStorage.getItem("namwoohui_attendance_sessions");
-			const savedRecords = localStorage.getItem("namwoohui_attendance_records");
-			if (savedSessions && savedRecords) try {
-				setAttendanceSessions(JSON.parse(savedSessions));
-				setAttendanceRecords(JSON.parse(savedRecords));
-			} catch (e) {
-				setAttendanceSessions(initialSessions);
-				setAttendanceRecords(initialRecords);
-			}
-			else {
-				setAttendanceSessions(initialSessions);
-				setAttendanceRecords(initialRecords);
-				localStorage.setItem("namwoohui_attendance_sessions", JSON.stringify(initialSessions));
-				localStorage.setItem("namwoohui_attendance_records", JSON.stringify(initialRecords));
-			}
-		}
-	}, [isUsingDB, members.length]);
 	const handleAddMember = (newMemberData) => {
 		if (isUsingDB) supabase.from("members").insert([newMemberData]).select().then(({ data, error }) => {
 			if (!error && data && data.length > 0) setMembers((prev) => [data[0], ...prev]);
@@ -35249,81 +34302,6 @@ function App() {
 			alert(`데모용 ${role} 임명이 로컬에 기록되었습니다.`);
 		}
 	};
-	const handleAddAttendanceSession = (title, date, isMutualAid) => {
-		const newSessionId = `session-${Date.now()}`;
-		const newSession = {
-			id: newSessionId,
-			title,
-			date,
-			is_mutual_aid: isMutualAid
-		};
-		const updatedSessions = [...attendanceSessions, newSession].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-		const updatedRecords = attendanceRecords.map((rec) => ({
-			...rec,
-			status: {
-				...rec.status,
-				[newSessionId]: ""
-			}
-		}));
-		if (isUsingDB) supabase.from("attendance_sessions").insert([newSession]).then(({ error: sessErr }) => {
-			if (sessErr) {
-				console.error("DB session insert failed:", sessErr);
-				alert("출석 항목 DB 저장 실패: " + sessErr.message);
-				return;
-			}
-			const recordInserts = members.map((m) => ({
-				member_id: m.id,
-				session_id: newSessionId,
-				status: ""
-			}));
-			supabase.from("attendance_records").insert(recordInserts).then(({ error: recErr }) => {
-				if (!recErr) {
-					setAttendanceSessions(updatedSessions);
-					setAttendanceRecords(updatedRecords);
-				} else {
-					console.error("DB attendance records insert failed:", recErr);
-					alert("출석 레코드 초기화 DB 저장 실패: " + recErr.message);
-				}
-			});
-		});
-		else {
-			setAttendanceSessions(updatedSessions);
-			setAttendanceRecords(updatedRecords);
-			localStorage.setItem("namwoohui_attendance_sessions", JSON.stringify(updatedSessions));
-			localStorage.setItem("namwoohui_attendance_records", JSON.stringify(updatedRecords));
-		}
-	};
-	const handleUpdateAttendanceRecord = (memberId, sessionId, status) => {
-		const updatedRecords = attendanceRecords.map((rec) => {
-			if (rec.memberId === memberId) return {
-				...rec,
-				status: {
-					...rec.status,
-					[sessionId]: status
-				}
-			};
-			return rec;
-		});
-		if (!attendanceRecords.some((rec) => rec.memberId === memberId)) updatedRecords.push({
-			memberId,
-			status: { [sessionId]: status }
-		});
-		if (isUsingDB) supabase.from("attendance_records").upsert({
-			member_id: memberId,
-			session_id: sessionId,
-			status
-		}, { onConflict: "member_id,session_id" }).then(({ error }) => {
-			if (!error) setAttendanceRecords(updatedRecords);
-			else {
-				console.error("DB attendance upsert failed:", error);
-				setAttendanceRecords(updatedRecords);
-			}
-		});
-		else {
-			setAttendanceRecords(updatedRecords);
-			localStorage.setItem("namwoohui_attendance_records", JSON.stringify(updatedRecords));
-		}
-	};
 	const renderTabContent = () => {
 		switch (activeTab) {
 			case "members": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MembersTab, {
@@ -35333,13 +34311,6 @@ function App() {
 				onOpenRules: () => setIsRulesOpen(true)
 			});
 			case "schedule": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ScheduleTab, { schedules });
-			case "attendance": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AttendanceTab, {
-				members,
-				sessions: attendanceSessions,
-				records: attendanceRecords,
-				onAddSession: handleAddAttendanceSession,
-				onUpdateRecord: handleUpdateAttendanceRecord
-			});
 			case "admin": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminTab, {
 				members,
 				onAddMember: handleAddMember,
