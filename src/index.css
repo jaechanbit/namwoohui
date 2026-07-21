@@ -44,6 +44,12 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 body {
   font-family: var(--font-kor);
   background-color: var(--background);
@@ -59,6 +65,8 @@ body {
 .app-container {
   width: 100%;
   max-width: 480px; /* 스마트폰 전용 뷰포트 고정 */
+  flex-grow: 1;     /* flex 컨텍스트에서 공간을 다 차지하도록 강제 */
+  flex-shrink: 0;   /* flex 컨텍스트에서 가로 폭 수축 방지 */
   background-color: var(--background);
   min-height: 100vh;
   display: flex;
@@ -128,6 +136,7 @@ body {
 
 /* Main Content Wrapper */
 .app-content {
+  width: 100%;
   flex: 1;
   padding: 16px 20px;
   overflow-y: auto;
@@ -868,6 +877,7 @@ body {
    ⚙️ ADMIN CONTROLS & AUTH (Standard Formats)
    ========================================================================== */
 .admin-auth-container {
+  width: 100%;
   background-color: var(--surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
@@ -904,6 +914,15 @@ body {
   border-color: var(--primary);
   background-color: white;
   box-shadow: 0 0 0 3px rgba(15, 76, 58, 0.06);
+}
+
+.input-field.error {
+  border-color: #ef4444;
+}
+
+.input-field.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
 .btn-primary {
