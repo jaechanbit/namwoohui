@@ -6,10 +6,8 @@ import MemberDetail from './components/MemberDetail';
 import RulesDrawer from './components/RulesDrawer';
 import ScheduleTab, { type MeetingSchedule } from './components/ScheduleTab';
 import AdminTab from './components/AdminTab';
-import AttendanceTab from './components/AttendanceTab';
 import initialMembers from './data/members.json';
 import { supabase } from './supabaseClient';
-import { initialSessions, initialRecords, type AttendanceSession, type AttendanceRecord } from './data/attendanceData';
 
 const isSupabaseConfigured = () => {
   const url = import.meta.env.VITE_SUPABASE_URL;
@@ -77,8 +75,6 @@ function App() {
   const [members, setMembers] = useState<Member[]>([]);
   const [schedules, setSchedules] = useState<MeetingSchedule[]>([]);
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
-  const [attendanceSessions, setAttendanceSessions] = useState<AttendanceSession[]>([]);
-  const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isRulesOpen, setIsRulesOpen] = useState<boolean>(false);
   const [isUsingDB, setIsUsingDB] = useState<boolean>(false);
@@ -200,85 +196,6 @@ function App() {
       }
     }
   }, []);
-
-  // 3-1. 출석 정보 로드 (세션 & 레코드)
-  useEffect(() => {
-    if (isSupabaseConfigured()) {
-      const fetchAttendance = async () => {
-        try {
-          // 1) 세션 로드
-          const { data: dbSessions, error: sessionError } = await supabase
-            .from('attendance_sessions')
-            .select('*')
-            .order('date', { ascending: true });
-          
-          // 2) 레코드 로드
-          const { data: dbRecords, error: recordError } = await supabase
-            .from('attendance_records')
-            .select('*');
-
-          if (!sessionError && !recordError && dbSessions && dbRecords) {
-            // DB 형식을 클라이언트 Record 형식으로 포맷 변환
-            const formattedRecordsMap: { [memberId: number]: { [sessionId: string]: string } } = {};
-            
-            members.forEach(m => {
-              formattedRecordsMap[m.id] = {};
-            });
-
-            dbRecords.forEach((r: any) => {
-              const mId = r.member_id;
-              const sId = r.session_id;
-              const statusVal = r.status;
-              if (!formattedRecordsMap[mId]) {
-                formattedRecordsMap[mId] = {};
-              }
-              formattedRecordsMap[mId][sId] = statusVal;
-            });
-
-            const formattedRecordsList: AttendanceRecord[] = Object.keys(formattedRecordsMap).map(key => ({
-              memberId: parseInt(key),
-              status: formattedRecordsMap[parseInt(key)]
-            }));
-
-            setAttendanceSessions(dbSessions as AttendanceSession[]);
-            setAttendanceRecords(formattedRecordsList);
-          } else {
-            console.warn('Supabase fetch attendance failed or empty, fallback to local');
-            loadLocalAttendance();
-          }
-        } catch (e) {
-          console.error('Supabase connect error for attendance:', e);
-          loadLocalAttendance();
-        }
-      };
-      
-      if (members.length > 0) {
-        fetchAttendance();
-      }
-    } else {
-      loadLocalAttendance();
-    }
-
-    function loadLocalAttendance() {
-      const savedSessions = localStorage.getItem('namwoohui_attendance_sessions');
-      const savedRecords = localStorage.getItem('namwoohui_attendance_records');
-      
-      if (savedSessions && savedRecords) {
-        try {
-          setAttendanceSessions(JSON.parse(savedSessions));
-          setAttendanceRecords(JSON.parse(savedRecords));
-        } catch (e) {
-          setAttendanceSessions(initialSessions);
-          setAttendanceRecords(initialRecords);
-        }
-      } else {
-        setAttendanceSessions(initialSessions);
-        setAttendanceRecords(initialRecords);
-        localStorage.setItem('namwoohui_attendance_sessions', JSON.stringify(initialSessions));
-        localStorage.setItem('namwoohui_attendance_records', JSON.stringify(initialRecords));
-      }
-    }
-  }, [isUsingDB, members.length]);
 
   // 4. 친구 CRUD 핸들러
   const handleAddMember = (newMemberData: Omit<Member, 'id'>) => {
@@ -557,109 +474,6 @@ function App() {
     }
   };
 
-  // 8. 출석부 관련 CRUD 핸들러
-  const handleAddAttendanceSession = (title: string, date: string, isMutualAid: boolean) => {
-    const newSessionId = `session-${Date.now()}`;
-    const newSession: AttendanceSession = {
-      id: newSessionId,
-      title,
-      date,
-      is_mutual_aid: isMutualAid
-    };
-
-    const updatedSessions = [...attendanceSessions, newSession].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
-
-    const updatedRecords = attendanceRecords.map(rec => ({
-      ...rec,
-      status: {
-        ...rec.status,
-        [newSessionId]: ''
-      }
-    }));
-
-    if (isUsingDB) {
-      supabase
-        .from('attendance_sessions')
-        .insert([newSession])
-        .then(({ error: sessErr }) => {
-          if (sessErr) {
-            console.error('DB session insert failed:', sessErr);
-            alert('출석 항목 DB 저장 실패: ' + sessErr.message);
-            return;
-          }
-
-          const recordInserts = members.map(m => ({
-            member_id: m.id,
-            session_id: newSessionId,
-            status: ''
-          }));
-
-          supabase
-            .from('attendance_records')
-            .insert(recordInserts)
-            .then(({ error: recErr }) => {
-              if (!recErr) {
-                setAttendanceSessions(updatedSessions);
-                setAttendanceRecords(updatedRecords);
-              } else {
-                console.error('DB attendance records insert failed:', recErr);
-                alert('출석 레코드 초기화 DB 저장 실패: ' + recErr.message);
-              }
-            });
-        });
-    } else {
-      setAttendanceSessions(updatedSessions);
-      setAttendanceRecords(updatedRecords);
-      localStorage.setItem('namwoohui_attendance_sessions', JSON.stringify(updatedSessions));
-      localStorage.setItem('namwoohui_attendance_records', JSON.stringify(updatedRecords));
-    }
-  };
-
-  const handleUpdateAttendanceRecord = (memberId: number, sessionId: string, status: string) => {
-    const updatedRecords = attendanceRecords.map(rec => {
-      if (rec.memberId === memberId) {
-        return {
-          ...rec,
-          status: {
-            ...rec.status,
-            [sessionId]: status
-          }
-        };
-      }
-      return rec;
-    });
-
-    const hasRecord = attendanceRecords.some(rec => rec.memberId === memberId);
-    if (!hasRecord) {
-      updatedRecords.push({
-        memberId,
-        status: { [sessionId]: status }
-      });
-    }
-
-    if (isUsingDB) {
-      supabase
-        .from('attendance_records')
-        .upsert(
-          { member_id: memberId, session_id: sessionId, status: status },
-          { onConflict: 'member_id,session_id' }
-        )
-        .then(({ error }) => {
-          if (!error) {
-            setAttendanceRecords(updatedRecords);
-          } else {
-            console.error('DB attendance upsert failed:', error);
-            setAttendanceRecords(updatedRecords);
-          }
-        });
-    } else {
-      setAttendanceRecords(updatedRecords);
-      localStorage.setItem('namwoohui_attendance_records', JSON.stringify(updatedRecords));
-    }
-  };
-
   // 현재 활성화된 탭 컨텐츠 렌더링
   const renderTabContent = () => {
     switch (activeTab) {
@@ -674,16 +488,6 @@ function App() {
         );
       case 'schedule':
         return <ScheduleTab schedules={schedules} />;
-      case 'attendance':
-        return (
-          <AttendanceTab
-            members={members}
-            sessions={attendanceSessions}
-            records={attendanceRecords}
-            onAddSession={handleAddAttendanceSession}
-            onUpdateRecord={handleUpdateAttendanceRecord}
-          />
-        );
       case 'admin':
         return (
           <AdminTab
