@@ -12908,6 +12908,45 @@ const MembersTab = ({
     ] }) })
   ] });
 };
+const compressImage$1 = (file, maxWidth, maxHeight, quality) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      var _a;
+      const img = new Image();
+      img.src = (_a = event.target) == null ? void 0 : _a.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round(height * maxWidth / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round(width * maxHeight / height);
+            height = maxHeight;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas context failed"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
 const MemberDetail = ({ member, onClose, onUpdateMember }) => {
   const fileInputRef = reactExports.useRef(null);
   if (!member) return null;
@@ -12933,20 +12972,16 @@ const MemberDetail = ({ member, onClose, onUpdateMember }) => {
       e.target.value = "";
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      var _a2;
-      const base64Data = (_a2 = event.target) == null ? void 0 : _a2.result;
+    compressImage$1(file, 300, 300, 0.7).then((compressedBase64) => {
       onUpdateMember({
         ...member,
-        photo: base64Data
+        photo: compressedBase64
       });
       alert("프로필 이미지가 성공적으로 변경되었습니다.");
-    };
-    reader.onerror = () => {
-      alert("이미지 파일을 읽는 데 실패했습니다.");
-    };
-    reader.readAsDataURL(file);
+    }).catch((err) => {
+      console.error("Image compression failed:", err);
+      alert("이미지 처리 중 실패했습니다.");
+    });
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "drawer-backdrop animate-fade-in", onClick: onClose }),
@@ -13601,6 +13636,45 @@ const ScheduleTab = ({ schedules }) => {
   ] });
 };
 var reactDomExports = requireReactDom();
+const compressImage = (file, maxWidth, maxHeight, quality) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      var _a;
+      const img = new Image();
+      img.src = (_a = event.target) == null ? void 0 : _a.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round(height * maxWidth / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round(width * maxHeight / height);
+            height = maxHeight;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas context failed"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
 const AdminTab = ({
   members,
   onAddMember,
@@ -13708,15 +13782,16 @@ const AdminTab = ({
     var _a2;
     const file = (_a2 = e.target.files) == null ? void 0 : _a2[0];
     if (file) {
-      if (file.size > 1 * 1024 * 1024) {
-        alert("이미지 크기는 1MB 이하여야 합니다.");
+      if (file.size > 10 * 1024 * 1024) {
+        alert("이미지 크기는 10MB 이하여야 합니다.");
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setMemberFormData((prev) => ({ ...prev, photo: reader.result }));
-      };
-      reader.readAsDataURL(file);
+      compressImage(file, 300, 300, 0.7).then((compressedBase64) => {
+        setMemberFormData((prev) => ({ ...prev, photo: compressedBase64 }));
+      }).catch((err) => {
+        console.error("Image compression error:", err);
+        alert("이미지 압축 처리 중 실패했습니다.");
+      });
     }
   };
   const handleMemberSubmit = (e) => {
