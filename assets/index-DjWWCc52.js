@@ -14401,12 +14401,6 @@ const AttendanceTab = ({
     };
   }, [members, sessions, records]);
   const handleCellClick = (memberId, sessionId) => {
-    if (!isAdmin) {
-      setAuthPassword("");
-      setAuthError("");
-      setShowAuthModal(true);
-      return;
-    }
     const currentStatus = (recordsMap.get(memberId) || {})[sessionId] || "";
     let nextStatus = "";
     if (currentStatus === "present") {
