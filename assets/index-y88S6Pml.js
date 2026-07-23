@@ -12769,7 +12769,7 @@ var STATUS_DETAILS = {
 		fontWeight: "500"
 	}
 };
-var AttendanceTab = ({ members, sessions, records, onAddSession, onUpdateRecord, isAdmin, setIsAdmin }) => {
+var AttendanceTab = ({ members, sessions, records, onAddSession, onUpdateRecord, onDeleteSession, isAdmin, setIsAdmin }) => {
 	const [searchTerm, setSearchTerm] = (0, import_react.useState)("");
 	const [filterType, setFilterType] = (0, import_react.useState)("all");
 	const [isModalOpen, setIsModalOpen] = (0, import_react.useState)(false);
@@ -13159,16 +13159,45 @@ var AttendanceTab = ({ members, sessions, records, onAddSession, onUpdateRecord,
 										padding: "12px 6px",
 										fontWeight: 800,
 										color: session.is_mutual_aid ? "var(--accent)" : "var(--primary)",
-										minWidth: "60px"
+										minWidth: "70px",
+										position: "relative"
 									},
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: session.title }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										style: {
-											fontSize: "9px",
-											opacity: .6,
-											fontWeight: 500
-										},
-										children: session.date.substring(5)
-									})]
+									children: [
+										isAdmin && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+											onClick: () => onDeleteSession(session.id),
+											title: "항목 삭제",
+											style: {
+												position: "absolute",
+												top: "2px",
+												right: "2px",
+												background: "rgba(239, 68, 68, 0.1)",
+												border: "none",
+												color: "#ef4444",
+												borderRadius: "50%",
+												width: "12px",
+												height: "12px",
+												fontSize: "8px",
+												cursor: "pointer",
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "center",
+												padding: 0
+											},
+											children: "✕"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											style: { marginTop: isAdmin ? "4px" : "0" },
+											children: session.title
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											style: {
+												fontSize: "9px",
+												opacity: .6,
+												fontWeight: 500
+											},
+											children: session.date.substring(5)
+										})
+									]
 								}, session.id))
 							]
 						}) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { children: [filteredMembers.map((member, index) => {
@@ -13774,7 +13803,9 @@ var FunctionsClient = class {
 	* @category Edge Functions
 	*
 	* @remarks
-	* - Requires an Authorization header.
+	* - The API key is sent in the `apikey` header. The `Authorization` header is reserved
+	*   for the signed-in user's JWT (or a custom auth token) — when there is no session, a
+	*   new-format API key (`sb_publishable_…` / `sb_secret_…`) is not sent as a Bearer token.
 	* - Invoke params generally match the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) spec.
 	* - When you pass in a body to your function, we automatically attach the Content-Type header for `Blob`, `ArrayBuffer`, `File`, `FormData` and `String`. If it doesn't match any of these types we assume the payload is `json`, serialize it and attach the `Content-Type` header as `application/json`. You can override this behavior by passing in a `Content-Type` header of your own.
 	* - Responses are automatically parsed as `json`, `blob` and `form-data` depending on the `Content-Type` header sent by your function. Responses are parsed as `text` by default.
@@ -17888,7 +17919,7 @@ var WebSocketFactory = class {
 };
 //#endregion
 //#region node_modules/@supabase/realtime-js/dist/module/lib/constants.js
-var DEFAULT_VERSION = `realtime-js/2.110.2`;
+var DEFAULT_VERSION = `realtime-js/2.110.7`;
 var VSN_1_0_0 = "1.0.0";
 var VSN_2_0_0 = "2.0.0";
 var DEFAULT_VSN$1 = VSN_2_0_0;
@@ -17959,12 +17990,13 @@ var Serializer = class {
 	}
 	_encodeUserBroadcastPush(message, encodingType, encodedPayload) {
 		var _a, _b;
-		const topic = message.topic;
-		const ref = (_a = message.ref) !== null && _a !== void 0 ? _a : "";
-		const joinRef = (_b = message.join_ref) !== null && _b !== void 0 ? _b : "";
-		const userEvent = message.payload.event;
+		const encoder = new TextEncoder();
+		const topic = encoder.encode(message.topic);
+		const ref = encoder.encode((_a = message.ref) !== null && _a !== void 0 ? _a : "");
+		const joinRef = encoder.encode((_b = message.join_ref) !== null && _b !== void 0 ? _b : "");
+		const userEvent = encoder.encode(message.payload.event);
 		const rest = this.allowedMetadataKeys ? this._pick(message.payload, this.allowedMetadataKeys) : {};
-		const metadata = Object.keys(rest).length === 0 ? "" : JSON.stringify(rest);
+		const metadata = encoder.encode(Object.keys(rest).length === 0 ? "" : JSON.stringify(rest));
 		if (joinRef.length > 255) throw new Error(`joinRef length ${joinRef.length} exceeds maximum of 255`);
 		if (ref.length > 255) throw new Error(`ref length ${ref.length} exceeds maximum of 255`);
 		if (topic.length > 255) throw new Error(`topic length ${topic.length} exceeds maximum of 255`);
@@ -17972,7 +18004,8 @@ var Serializer = class {
 		if (metadata.length > 255) throw new Error(`metadata length ${metadata.length} exceeds maximum of 255`);
 		const metaLength = this.USER_BROADCAST_PUSH_META_LENGTH + joinRef.length + ref.length + topic.length + userEvent.length + metadata.length;
 		const header = new ArrayBuffer(this.HEADER_LENGTH + metaLength);
-		let view = new DataView(header);
+		const view = new DataView(header);
+		const bytes = new Uint8Array(header);
 		let offset = 0;
 		view.setUint8(offset++, this.KINDS.userBroadcastPush);
 		view.setUint8(offset++, joinRef.length);
@@ -17981,11 +18014,16 @@ var Serializer = class {
 		view.setUint8(offset++, userEvent.length);
 		view.setUint8(offset++, metadata.length);
 		view.setUint8(offset++, encodingType);
-		Array.from(joinRef, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(ref, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(topic, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(userEvent, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(metadata, (char) => view.setUint8(offset++, char.charCodeAt(0)));
+		bytes.set(joinRef, offset);
+		offset += joinRef.length;
+		bytes.set(ref, offset);
+		offset += ref.length;
+		bytes.set(topic, offset);
+		offset += topic.length;
+		bytes.set(userEvent, offset);
+		offset += userEvent.length;
+		bytes.set(metadata, offset);
+		offset += metadata.length;
 		var combined = new Uint8Array(header.byteLength + encodedPayload.byteLength);
 		combined.set(new Uint8Array(header), 0);
 		combined.set(new Uint8Array(encodedPayload), header.byteLength);
@@ -18254,6 +18292,7 @@ var global$1 = globalSelf || phxWindow || globalThis;
 var DEFAULT_VSN = "2.0.0";
 var DEFAULT_TIMEOUT = 1e4;
 var WS_CLOSE_NORMAL = 1e3;
+var MAX_LONGPOLL_BATCH_SIZE = 100;
 var SOCKET_STATES = (
 /** @type {const} */
 {
@@ -18899,17 +18938,20 @@ var LongPoll = class {
 			}, 0);
 		}
 	}
-	batchSend(messages) {
+	batchSend(messages, offset = 0) {
 		this.awaitingBatchAck = true;
-		this.ajax("POST", { "Content-Type": "application/x-ndjson" }, messages.join("\n"), () => this.onerror("timeout"), (resp) => {
-			this.awaitingBatchAck = false;
+		const next = offset + MAX_LONGPOLL_BATCH_SIZE;
+		const batch = messages.slice(offset, next);
+		this.ajax("POST", { "Content-Type": "application/x-ndjson" }, batch.join("\n"), () => this.onerror("timeout"), (resp) => {
 			if (!resp || resp.status !== 200) {
+				this.awaitingBatchAck = false;
 				this.onerror(resp && resp.status);
 				this.closeAndRetry(1011, "internal server error", false);
-			} else if (this.batchBuffer.length > 0) {
+			} else if (next < messages.length) this.batchSend(messages, next);
+			else if (this.batchBuffer.length > 0) {
 				this.batchSend(this.batchBuffer);
 				this.batchBuffer = [];
-			}
+			} else this.awaitingBatchAck = false;
 		});
 	}
 	close(code, reason, wasClean) {
@@ -18954,7 +18996,7 @@ var Presence = class _Presence {
 			state: "presence_state",
 			diff: "presence_diff"
 		};
-		this.state = {};
+		this.state = /* @__PURE__ */ Object.create(null);
 		this.pendingDiffs = [];
 		this.channel = channel;
 		this.joinRef = null;
@@ -19028,9 +19070,10 @@ var Presence = class _Presence {
 	* @returns {Record<string, PresenceState>}
 	*/
 	static syncState(currentState, newState, onJoin, onLeave) {
-		let state = this.clone(currentState);
-		let joins = {};
-		let leaves = {};
+		let state = this.toNullProtoObj(this.clone(currentState));
+		newState = this.toNullProtoObj(newState);
+		let joins = /* @__PURE__ */ Object.create(null);
+		let leaves = /* @__PURE__ */ Object.create(null);
 		this.map(state, (key, presence) => {
 			if (!newState[key]) leaves[key] = presence;
 		});
@@ -19071,6 +19114,7 @@ var Presence = class _Presence {
 	* @returns {Record<string, PresenceState>}
 	*/
 	static syncDiff(state, diff, onJoin, onLeave) {
+		state = this.toNullProtoObj(state);
 		let { joins, leaves } = this.clone(diff);
 		if (!onJoin) onJoin = function() {};
 		if (!onLeave) onLeave = function() {};
@@ -19120,6 +19164,14 @@ var Presence = class _Presence {
 	*/
 	static map(obj, func) {
 		return Object.getOwnPropertyNames(obj).map((key) => func(key, obj[key]));
+	}
+	static toNullProtoObj(obj) {
+		if (Object.getPrototypeOf(obj) === null) return obj;
+		let cleaned = /* @__PURE__ */ Object.create(null);
+		Object.getOwnPropertyNames(obj).forEach((key) => {
+			cleaned[key] = obj[key];
+		});
+		return cleaned;
 	}
 	/**
 	* @template T
@@ -19179,23 +19231,40 @@ var serializer_default = {
 	/** @private */
 	binaryEncode(message) {
 		let { join_ref, ref, event, topic, payload } = message;
-		let metaLength = this.META_LENGTH + join_ref.length + ref.length + topic.length + event.length;
+		let encoder = new TextEncoder();
+		let joinRefBytes = encoder.encode(join_ref);
+		let refBytes = encoder.encode(ref);
+		let topicBytes = encoder.encode(topic);
+		let eventBytes = encoder.encode(event);
+		this.assertFieldSize(joinRefBytes.byteLength, "join_ref");
+		this.assertFieldSize(refBytes.byteLength, "ref");
+		this.assertFieldSize(topicBytes.byteLength, "topic");
+		this.assertFieldSize(eventBytes.byteLength, "event");
+		let metaLength = this.META_LENGTH + joinRefBytes.byteLength + refBytes.byteLength + topicBytes.byteLength + eventBytes.byteLength;
 		let header = new ArrayBuffer(this.HEADER_LENGTH + metaLength);
+		let headerBytes = new Uint8Array(header);
 		let view = new DataView(header);
 		let offset = 0;
 		view.setUint8(offset++, this.KINDS.push);
-		view.setUint8(offset++, join_ref.length);
-		view.setUint8(offset++, ref.length);
-		view.setUint8(offset++, topic.length);
-		view.setUint8(offset++, event.length);
-		Array.from(join_ref, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(ref, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(topic, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(event, (char) => view.setUint8(offset++, char.charCodeAt(0)));
+		view.setUint8(offset++, joinRefBytes.byteLength);
+		view.setUint8(offset++, refBytes.byteLength);
+		view.setUint8(offset++, topicBytes.byteLength);
+		view.setUint8(offset++, eventBytes.byteLength);
+		headerBytes.set(joinRefBytes, offset);
+		offset += joinRefBytes.byteLength;
+		headerBytes.set(refBytes, offset);
+		offset += refBytes.byteLength;
+		headerBytes.set(topicBytes, offset);
+		offset += topicBytes.byteLength;
+		headerBytes.set(eventBytes, offset);
+		offset += eventBytes.byteLength;
 		var combined = new Uint8Array(header.byteLength + payload.byteLength);
-		combined.set(new Uint8Array(header), 0);
+		combined.set(headerBytes, 0);
 		combined.set(new Uint8Array(payload), header.byteLength);
 		return combined.buffer;
+	},
+	assertFieldSize(size, name) {
+		if (size > 255) throw new Error(`unable to convert ${name} to binary: must be less than or equal to 255 bytes, but is ${size} bytes`);
 	},
 	/**
 	* @private
@@ -19395,7 +19464,7 @@ var Socket = class {
 				this.connect();
 			});
 		}, this.reconnectAfterMs);
-		this.authToken = opts.authToken;
+		this.authToken = opts.authToken && closure(opts.authToken);
 	}
 	/**
 	* Returns the LongPoll transport reference
@@ -19584,7 +19653,7 @@ var Socket = class {
 		this.connectClock++;
 		this.closeWasClean = false;
 		let protocols = void 0;
-		if (this.authToken) protocols = ["phoenix", `${AUTH_TOKEN_PREFIX}${btoa(this.authToken).replace(/=/g, "")}`];
+		if (this.authToken) protocols = ["phoenix", `${AUTH_TOKEN_PREFIX}${btoa(this.authToken()).replace(/=/g, "")}`];
 		this.conn = new this.transport(this.endPointURL(), protocols);
 		this.conn.binaryType = this.binaryType;
 		this.conn.timeout = this.longpollerTimeout;
@@ -20480,6 +20549,11 @@ var RealtimeChannel = class RealtimeChannel {
 	* Sends the supplied payload to the presence tracker so other subscribers can see that this
 	* client is online. Use `untrack` to stop broadcasting presence for the same key.
 	*
+	* Tracking makes this client visible to other subscribers immediately, regardless of this
+	* channel's `config.presence.enabled` setting or whether it has a `presence` listener — that
+	* flag only affects whether *this* client receives presence updates from others (and, on
+	* RLS-protected channels, whether it's authorized to do so).
+	*
 	* @category Realtime
 	*/
 	async track(payload, opts = {}) {
@@ -20487,7 +20561,7 @@ var RealtimeChannel = class RealtimeChannel {
 			type: "presence",
 			event: "track",
 			payload
-		}, opts.timeout || this.timeout);
+		}, opts);
 	}
 	/**
 	* Removes the current presence state for this client.
@@ -23647,7 +23721,7 @@ var StorageFileApi = class extends BaseApiClient {
 		return query;
 	}
 };
-var DEFAULT_HEADERS$1 = { "X-Client-Info": `storage-js/2.110.2` };
+var DEFAULT_HEADERS$1 = { "X-Client-Info": `storage-js/2.110.7` };
 var StorageBucketApi = class extends BaseApiClient {
 	constructor(url, headers = {}, fetch$1, opts) {
 		const baseUrl = new URL(url);
@@ -25127,7 +25201,7 @@ var StorageClient = class extends StorageBucketApi {
 };
 //#endregion
 //#region node_modules/@supabase/auth-js/dist/module/lib/version.js
-var version$1 = "2.110.2";
+var version$1 = "2.110.7";
 //#endregion
 //#region node_modules/@supabase/auth-js/dist/module/lib/constants.js
 /** Current session will be checked for refresh at this interval. */
@@ -32113,7 +32187,6 @@ var GoTrueClient = class GoTrueClient {
 	async _saveSession(session) {
 		this._debug("#_saveSession()", session);
 		this.suppressGetSessionWarning = true;
-		await removeItemAsync(this.storage, `${this.storageKey}-code-verifier`);
 		const sessionToProcess = Object.assign({}, session);
 		const userIsProxy = sessionToProcess.user && sessionToProcess.user.__isUserNotAvailableProxy === true;
 		if (this.userStorage) {
@@ -33416,7 +33489,7 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 };
 //#endregion
 //#region node_modules/@supabase/supabase-js/dist/index.mjs
-var version = "2.110.2";
+var version = "2.110.7";
 var JS_ENV = "";
 var JS_RUNTIME_VERSION;
 if (typeof Deno !== "undefined") {
@@ -33428,7 +33501,8 @@ else if (typeof navigator !== "undefined" && navigator.product === "ReactNative"
 else {
 	var _process$version;
 	JS_ENV = "node";
-	JS_RUNTIME_VERSION = typeof process !== "undefined" ? (_process$version = process.version) === null || _process$version === void 0 ? void 0 : _process$version.replace(/^v/, "") : void 0;
+	const _process = globalThis["process"];
+	JS_RUNTIME_VERSION = _process === null || _process === void 0 || (_process$version = _process["version"]) === null || _process$version === void 0 ? void 0 : _process$version.replace(/^v/, "");
 }
 var _runtimeMeta = [`runtime=${JS_ENV}`];
 if (JS_RUNTIME_VERSION) _runtimeMeta.push(`runtime-version=${JS_RUNTIME_VERSION}`);
@@ -33704,18 +33778,43 @@ var resolveFetch = (customFetch) => {
 var resolveHeadersConstructor = () => {
 	return Headers;
 };
-var fetchWithAuth = (supabaseKey, supabaseUrl, getAccessToken, customFetch, tracePropagationOptions) => {
+/**
+* New-format Supabase API keys (`sb_publishable_…` / `sb_secret_…`) are not JWTs and
+* must never be sent as a Bearer token — they belong only in the `apikey` header.
+* All other keys (legacy JWT keys, `sb_temp_…` temporary keys, unrecognized `sb_`
+* subtypes) keep the Bearer fallback.
+*/
+var isNewApiKey = (key) => key.startsWith("sb_publishable_") || key.startsWith("sb_secret_");
+var TEMP_KEY_PREFIX = "sb_temp_";
+var warnedKeySubtypes = /* @__PURE__ */ new Set();
+/**
+* Warn (once per subtype) when an `sb_` key isn't a subtype this SDK version recognizes.
+* Never throws — the server, not the SDK, decides key validity. The key value is never
+* included in the message.
+*/
+var checkApiKeyFormat = (key) => {
+	var _key$match$, _key$match;
+	if (!key.startsWith("sb_") || isNewApiKey(key) || key.startsWith(TEMP_KEY_PREFIX)) return;
+	const subtype = (_key$match$ = (_key$match = key.match(/^sb_[a-zA-Z0-9]+_/)) === null || _key$match === void 0 ? void 0 : _key$match[0]) !== null && _key$match$ !== void 0 ? _key$match$ : "unknown";
+	if (warnedKeySubtypes.has(subtype)) return;
+	warnedKeySubtypes.add(subtype);
+	console.warn("@supabase/supabase-js: Unrecognized Supabase API key format. The client will proceed and send this key as-is; if you see authentication errors you may need to upgrade @supabase/supabase-js to a version that recognizes this key type.");
+};
+var fetchWithAuth = (supabaseKey, supabaseUrl, getAccessToken, customFetch, tracePropagationOptions, options) => {
 	const fetch$1 = resolveFetch(customFetch);
 	const HeadersConstructor = resolveHeadersConstructor();
 	const traceEnabled = (tracePropagationOptions === null || tracePropagationOptions === void 0 ? void 0 : tracePropagationOptions.enabled) === true;
 	const respectSampling = (tracePropagationOptions === null || tracePropagationOptions === void 0 ? void 0 : tracePropagationOptions.respectSamplingDecision) !== false;
 	const traceTargets = traceEnabled ? getDefaultPropagationTargets(supabaseUrl) : null;
+	const allowKeyAsBearer = !((options === null || options === void 0 ? void 0 : options.omitApiKeyAsBearer) && isNewApiKey(supabaseKey));
 	return async (input, init) => {
-		var _await$getAccessToken;
-		const accessToken = (_await$getAccessToken = await getAccessToken()) !== null && _await$getAccessToken !== void 0 ? _await$getAccessToken : supabaseKey;
+		const realToken = await getAccessToken();
 		let headers = new HeadersConstructor(init === null || init === void 0 ? void 0 : init.headers);
 		if (!headers.has("apikey")) headers.set("apikey", supabaseKey);
-		if (!headers.has("Authorization")) headers.set("Authorization", `Bearer ${accessToken}`);
+		if (!headers.has("Authorization")) {
+			const bearer = realToken !== null && realToken !== void 0 ? realToken : allowKeyAsBearer ? supabaseKey : null;
+			if (bearer) headers.set("Authorization", `Bearer ${bearer}`);
+		}
 		if (traceTargets) {
 			const traceHeaders = await getTraceHeaders(input, traceTargets, respectSampling);
 			if (traceHeaders) {
@@ -33863,9 +33962,9 @@ var SupabaseClient = class {
 	* ```
 	*
 	* @exampleDescription Custom fetch implementation
-	* `supabase-js` uses the [`cross-fetch`](https://www.npmjs.com/package/cross-fetch) library to make HTTP requests,
+	* `supabase-js` uses the runtime's global `fetch` to make HTTP requests,
 	* but an alternative `fetch` implementation can be provided as an option.
-	* This is most useful in environments where `cross-fetch` is not compatible (for instance Cloudflare Workers).
+	* This is useful in environments where the global `fetch` is unavailable or where you want to customize request behavior.
 	*
 	* @example Custom fetch implementation
 	* ```js
@@ -34011,6 +34110,7 @@ var SupabaseClient = class {
 		this.supabaseKey = supabaseKey;
 		const baseUrl = validateSupabaseUrl(supabaseUrl);
 		if (!supabaseKey) throw new Error("supabaseKey is required.");
+		checkApiKeyFormat(supabaseKey);
 		this.realtimeUrl = new URL("realtime/v1", baseUrl);
 		this.realtimeUrl.protocol = this.realtimeUrl.protocol.replace("http", "ws");
 		this.authUrl = new URL("auth/v1", baseUrl);
@@ -34037,7 +34137,8 @@ var SupabaseClient = class {
 				throw new Error(`@supabase/supabase-js: Supabase Client is configured with the accessToken option, accessing supabase.auth.${String(prop)} is not possible`);
 			} });
 		}
-		this.fetch = fetchWithAuth(supabaseKey, supabaseUrl, this._getAccessToken.bind(this), settings.global.fetch, settings.tracePropagation);
+		this.fetch = fetchWithAuth(supabaseKey, supabaseUrl, this._getSessionToken.bind(this), settings.global.fetch, settings.tracePropagation);
+		this.functionsFetch = fetchWithAuth(supabaseKey, supabaseUrl, this._getSessionToken.bind(this), settings.global.fetch, settings.tracePropagation, { omitApiKeyAsBearer: true });
 		this.realtime = this._initRealtimeClient(_objectSpread2({
 			headers: this.headers,
 			accessToken: this._getAccessToken.bind(this),
@@ -34060,7 +34161,7 @@ var SupabaseClient = class {
 	get functions() {
 		return new FunctionsClient(this.functionsUrl.href, {
 			headers: this.headers,
-			customFetch: this.fetch
+			customFetch: this.functionsFetch
 		});
 	}
 	/**
@@ -34170,12 +34271,22 @@ var SupabaseClient = class {
 	removeAllChannels() {
 		return this.realtime.removeAllChannels();
 	}
-	async _getAccessToken() {
+	/**
+	* The raw session token — the custom `accessToken` result or the signed-in user's JWT —
+	* or `null` when there is no session. Unlike {@link _getAccessToken} it does not fall back
+	* to `supabaseKey`, so callers can distinguish "no session" from "has session".
+	*/
+	async _getSessionToken() {
 		var _this = this;
 		var _data$session$access_, _data$session;
 		if (_this.accessToken) return await _this.accessToken();
 		const { data } = await _this.auth.getSession();
-		return (_data$session$access_ = (_data$session = data.session) === null || _data$session === void 0 ? void 0 : _data$session.access_token) !== null && _data$session$access_ !== void 0 ? _data$session$access_ : _this.supabaseKey;
+		return (_data$session$access_ = (_data$session = data.session) === null || _data$session === void 0 ? void 0 : _data$session.access_token) !== null && _data$session$access_ !== void 0 ? _data$session$access_ : null;
+	}
+	async _getAccessToken() {
+		var _this2 = this;
+		var _await$this$_getSessi;
+		return (_await$this$_getSessi = await _this2._getSessionToken()) !== null && _await$this$_getSessi !== void 0 ? _await$this$_getSessi : _this2.supabaseKey;
 	}
 	_initSupabaseAuthClient({ autoRefreshToken, persistSession, detectSessionInUrl, storage, userStorage, storageKey, flowType, lock, debug, throwOnError, experimental, lockAcquireTimeout, skipAutoInitialize }, headers, fetch$1) {
 		const authHeaders = {
@@ -34211,7 +34322,7 @@ var SupabaseClient = class {
 		});
 	}
 	_handleTokenChanged(event, source, token) {
-		if ((event === "TOKEN_REFRESHED" || event === "SIGNED_IN") && this.changedAccessToken !== token) {
+		if ((event === "TOKEN_REFRESHED" || event === "SIGNED_IN" || event === "INITIAL_SESSION") && this.changedAccessToken !== token) {
 			this.changedAccessToken = token;
 			this.realtime.setAuth(token);
 		} else if (event === "SIGNED_OUT") {
@@ -35557,6 +35668,35 @@ function App() {
 			localStorage.setItem("namwoohui_attendance_records", JSON.stringify(updatedRecords));
 		}
 	};
+	const handleDeleteAttendanceSession = (sessionId) => {
+		const session = attendanceSessions.find((s) => s.id === sessionId);
+		if (!session) return;
+		if (!window.confirm(`'${session.title}' 항목을 삭제하시겠습니까? 관련 출석 기록도 함께 삭제됩니다.`)) return;
+		const updatedSessions = attendanceSessions.filter((s) => s.id !== sessionId);
+		const updatedRecords = attendanceRecords.map((rec) => {
+			const nextStatus = { ...rec.status };
+			delete nextStatus[sessionId];
+			return {
+				...rec,
+				status: nextStatus
+			};
+		});
+		if (isUsingDB) supabase.from("attendance_sessions").delete().eq("id", sessionId).then(({ error }) => {
+			if (!error) {
+				setAttendanceSessions(updatedSessions);
+				setAttendanceRecords(updatedRecords);
+			} else {
+				console.error("DB session delete failed:", error);
+				alert("출석 항목 DB 삭제 실패: " + error.message);
+			}
+		});
+		else {
+			setAttendanceSessions(updatedSessions);
+			setAttendanceRecords(updatedRecords);
+			localStorage.setItem("namwoohui_attendance_sessions", JSON.stringify(updatedSessions));
+			localStorage.setItem("namwoohui_attendance_records", JSON.stringify(updatedRecords));
+		}
+	};
 	const renderTabContent = () => {
 		switch (activeTab) {
 			case "members": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MembersTab, {
@@ -35572,6 +35712,7 @@ function App() {
 				records: attendanceRecords,
 				onAddSession: handleAddAttendanceSession,
 				onUpdateRecord: handleUpdateAttendanceRecord,
+				onDeleteSession: handleDeleteAttendanceSession,
 				isAdmin,
 				setIsAdmin
 			});
