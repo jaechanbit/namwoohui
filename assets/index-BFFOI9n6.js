@@ -14401,6 +14401,9 @@ const AttendanceTab = ({
     };
   }, [members, sessions, records]);
   const handleCellClick = (memberId, sessionId) => {
+    if (!isAdmin) {
+      return;
+    }
     const currentStatus = (recordsMap.get(memberId) || {})[sessionId] || "";
     let nextStatus = "";
     if (currentStatus === "present") {
@@ -14449,7 +14452,7 @@ const AttendanceTab = ({
       color: detail.color,
       fontWeight: detail.fontWeight,
       fontSize: detail.fontSize || "inherit",
-      cursor: "pointer"
+      cursor: isAdmin ? "pointer" : "default"
     };
   };
   const getCellLabel = (status) => {
@@ -14753,7 +14756,7 @@ const AttendanceTab = ({
                                     transition: "all 0.1s",
                                     ...getCellStyles(status)
                                   },
-                                  className: "btn-interactive",
+                                  className: isAdmin ? "btn-interactive" : "",
                                   children: getCellLabel(status)
                                 },
                                 session.id
