@@ -8,6 +8,7 @@ interface AttendanceTabProps {
   records: AttendanceRecord[];
   onAddSession: (title: string, date: string, isMutualAid: boolean) => void;
   onUpdateRecord: (memberId: number, sessionId: string, status: string) => void;
+  onDeleteSession: (sessionId: string) => void;
   isAdmin: boolean;
   setIsAdmin: (val: boolean) => void;
 }
@@ -34,6 +35,7 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
   records,
   onAddSession,
   onUpdateRecord,
+  onDeleteSession,
   isAdmin,
   setIsAdmin
 }) => {
@@ -349,10 +351,36 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
                       padding: '12px 6px', 
                       fontWeight: 800, 
                       color: session.is_mutual_aid ? 'var(--accent)' : 'var(--primary)',
-                      minWidth: '60px'
+                      minWidth: '70px',
+                      position: 'relative'
                     }}
                   >
-                    <div>{session.title}</div>
+                    {isAdmin && (
+                      <button
+                        onClick={() => onDeleteSession(session.id)}
+                        title="항목 삭제"
+                        style={{
+                          position: 'absolute',
+                          top: '2px',
+                          right: '2px',
+                          background: 'rgba(239, 68, 68, 0.1)',
+                          border: 'none',
+                          color: '#ef4444',
+                          borderRadius: '50%',
+                          width: '12px',
+                          height: '12px',
+                          fontSize: '8px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 0
+                        }}
+                      >
+                        ✕
+                      </button>
+                    )}
+                    <div style={{ marginTop: isAdmin ? '4px' : '0' }}>{session.title}</div>
                     <div style={{ fontSize: '9px', opacity: 0.6, fontWeight: 500 }}>{session.date.substring(5)}</div>
                   </th>
                 ))}

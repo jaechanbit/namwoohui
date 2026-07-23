@@ -661,6 +661,43 @@ function App() {
     }
   };
 
+  const handleDeleteAttendanceSession = (sessionId: string) => {
+    const session = attendanceSessions.find(s => s.id === sessionId);
+    if (!session) return;
+
+    if (!window.confirm(`'${session.title}' 항목을 삭제하시겠습니까? 관련 출석 기록도 함께 삭제됩니다.`)) {
+      return;
+    }
+
+    const updatedSessions = attendanceSessions.filter(s => s.id !== sessionId);
+    const updatedRecords = attendanceRecords.map(rec => {
+      const nextStatus = { ...rec.status };
+      delete nextStatus[sessionId];
+      return { ...rec, status: nextStatus };
+    });
+
+    if (isUsingDB) {
+      supabase
+        .from('attendance_sessions')
+        .delete()
+        .eq('id', sessionId)
+        .then(({ error }) => {
+          if (!error) {
+            setAttendanceSessions(updatedSessions);
+            setAttendanceRecords(updatedRecords);
+          } else {
+            console.error('DB session delete failed:', error);
+            alert('출석 항목 DB 삭제 실패: ' + error.message);
+          }
+        });
+    } else {
+      setAttendanceSessions(updatedSessions);
+      setAttendanceRecords(updatedRecords);
+      localStorage.setItem('namwoohui_attendance_sessions', JSON.stringify(updatedSessions));
+      localStorage.setItem('namwoohui_attendance_records', JSON.stringify(updatedRecords));
+    }
+  };
+
   // 현재 활성화된 탭 컨텐츠 렌더링
   const renderTabContent = () => {
     switch (activeTab) {
@@ -683,6 +720,7 @@ function App() {
             records={attendanceRecords}
             onAddSession={handleAddAttendanceSession}
             onUpdateRecord={handleUpdateAttendanceRecord}
+            onDeleteSession={handleDeleteAttendanceSession}
             isAdmin={isAdmin}
             setIsAdmin={setIsAdmin}
           />
