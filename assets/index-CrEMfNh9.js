@@ -13605,7 +13605,7 @@ var AttendanceTab = ({ members, sessions, records, onAddSession, onUpdateRecord,
 };
 //#endregion
 //#region src/data/members.json
-var members_default = /*#__PURE__*/ JSON.parse("[{\"id\":1,\"name\":\"강규현\",\"role\":\"3대 회장\",\"company\":\"백제에너지지지하수\",\"phone\":\"010-9432-5566\"},{\"id\":2,\"name\":\"곽민준\",\"role\":\"\",\"company\":\"남원경찰서\",\"phone\":\"010-5540-5820\"},{\"id\":3,\"name\":\"권천택\",\"role\":\"운영위원\",\"company\":\"(주)한국음료\",\"phone\":\"010-6778-1985\"},{\"id\":5,\"name\":\"김관호\",\"role\":\"11대 회장\",\"company\":\"이안당금방\",\"phone\":\"010-8641-9718\"},{\"id\":6,\"name\":\"김기영\",\"role\":\"\",\"company\":\"국립민속국악원\",\"phone\":\"010-2652-3159\"},{\"id\":7,\"name\":\"강영권\",\"role\":\"총무\",\"company\":\"현대자동차\",\"phone\":\"010-4652-2358\"},{\"id\":8,\"name\":\"곽봉춘\",\"role\":\"6대 회장\",\"company\":\"서남크레인, 스카이\",\"phone\":\"010-3676-8402\"},{\"id\":9,\"name\":\"기승만\",\"role\":\"7대 회장\",\"company\":\"(유)우리산업\",\"phone\":\"010-6232-7342\"},{\"id\":11,\"name\":\"김규성\",\"role\":\"상조위원장\",\"company\":\"민물수산(건강원)\",\"phone\":\"010-5016-7377\"},{\"id\":12,\"name\":\"김길영\",\"role\":\"\",\"company\":\"남영공예\",\"phone\":\"010-5626-0827\"},{\"id\":13,\"name\":\"김신\",\"role\":\"\",\"company\":\"남원시청\",\"phone\":\"010-4157-1529\"},{\"id\":14,\"name\":\"김완식\",\"role\":\"\",\"company\":\"삼성시스템에어컨\",\"phone\":\"010-8833-7437\"},{\"id\":15,\"name\":\"김용무\",\"role\":\"재무\",\"company\":\"금강창호\",\"phone\":\"010-5669-0692\"},{\"id\":16,\"name\":\"김정우\",\"role\":\"\",\"company\":\"지엘건설\",\"phone\":\"010-5534-4253\"},{\"id\":17,\"name\":\"김종섭\",\"role\":\"\",\"company\":\"남원건설\",\"phone\":\"010-5604-4204\"},{\"id\":18,\"name\":\"김태\",\"role\":\"상조위원\",\"company\":\"예작미용실\",\"phone\":\"010-4784-6830\"},{\"id\":19,\"name\":\"김영민\",\"role\":\"\",\"company\":\"송림농원\",\"phone\":\"010-3656-8163\"},{\"id\":20,\"name\":\"김용광\",\"role\":\"\",\"company\":\"남원의료원\",\"phone\":\"010-9641-9998\"},{\"id\":21,\"name\":\"김용화\",\"role\":\"\",\"company\":\"익산전업사\",\"phone\":\"010-5920-1007\"},{\"id\":22,\"name\":\"김점철\",\"role\":\"\",\"company\":\"솔마루목조건축\",\"phone\":\"010-3223-0397\"},{\"id\":23,\"name\":\"김철현\",\"role\":\"\",\"company\":\"남원우체국\",\"phone\":\"010-4659-5020\"},{\"id\":24,\"name\":\"김현수\",\"role\":\"부회장\",\"company\":\"산동우체국\",\"phone\":\"010-9026-7321\"},{\"id\":25,\"name\":\"김형찬\",\"role\":\"\",\"company\":\"신화스카이\",\"phone\":\"010-5368-1677\"},{\"id\":26,\"name\":\"김환석\",\"role\":\"\",\"company\":\"공예/중기\",\"phone\":\"010-9477-2062\"},{\"id\":27,\"name\":\"노경진\",\"role\":\"운영위원\",\"company\":\"개별화물\",\"phone\":\"010-2656-7791\"},{\"id\":28,\"name\":\"박기태\",\"role\":\"운영위원\",\"company\":\"로얄전기\",\"phone\":\"010-8669-2449\"},{\"id\":29,\"name\":\"박부열\",\"role\":\"\",\"company\":\"시너지월와이드/디톡스\",\"phone\":\"010-3683-0768\"},{\"id\":30,\"name\":\"박성봉\",\"role\":\"\",\"company\":\"우성이엔씨\",\"phone\":\"010-4161-3387\"},{\"id\":31,\"name\":\"박승민\",\"role\":\"\",\"company\":\"남원볼트\",\"phone\":\"010-6284-0949\"},{\"id\":32,\"name\":\"박현주\",\"role\":\"운영위원\",\"company\":\"연합중기\",\"phone\":\"010-3683-4907\"},{\"id\":33,\"name\":\"방성열\",\"role\":\"\",\"company\":\"515번청과\",\"phone\":\"010-3683-8383\"},{\"id\":34,\"name\":\"방정원\",\"role\":\"\",\"company\":\"황소밧데리\",\"phone\":\"010-3652-8722\"},{\"id\":35,\"name\":\"변길주\",\"role\":\"\",\"company\":\"거점스포츠센터/이화어린이집\",\"phone\":\"010-8621-4890\"},{\"id\":36,\"name\":\"서재석\",\"role\":\"1대 회장\",\"company\":\"꽃내음화원/서재석공인중개사\",\"phone\":\"010-9454-0900\"},{\"id\":37,\"name\":\"박철규\",\"role\":\"\",\"company\":\"OK부동산\",\"phone\":\"010-6668-3477\"},{\"id\":39,\"name\":\"방세혁\",\"role\":\"\",\"company\":\"행복설비\",\"phone\":\"010-6479-8459\"},{\"id\":40,\"name\":\"백광엽\",\"role\":\"8대 회장\",\"company\":\"종로떡전문점\",\"phone\":\"010-6732-1426\"},{\"id\":41,\"name\":\"변완석\",\"role\":\"\",\"company\":\"굴삭기\",\"phone\":\"010-3672-8211\"},{\"id\":42,\"name\":\"손성기\",\"role\":\"\",\"company\":\"자동차세상\",\"phone\":\"010-8626-1239\"},{\"id\":43,\"name\":\"신동기\",\"role\":\"4대 회장\",\"company\":\"휴먼시스템\",\"phone\":\"010-9679-2222\"},{\"id\":44,\"name\":\"신용호\",\"role\":\"상조위원\",\"company\":\"덕과건설중기\",\"phone\":\"010-8645-2243\"},{\"id\":45,\"name\":\"안재성\",\"role\":\"\",\"company\":\"(주)금정레미콘\",\"phone\":\"010-3679-2489\"},{\"id\":46,\"name\":\"양문용\",\"role\":\"\",\"company\":\"(유)영림프라임샤시\",\"phone\":\"010-3653-1809\"},{\"id\":47,\"name\":\"오준석\",\"role\":\"\",\"company\":\"(주)대건\",\"phone\":\"010-8720-7311\"},{\"id\":48,\"name\":\"오현우\",\"role\":\"\",\"company\":\"자유전자\",\"phone\":\"010-6350-3366\"},{\"id\":49,\"name\":\"신성일\",\"role\":\"\",\"company\":\"풍성한주간보호센터\",\"phone\":\"010-7392-3272\"},{\"id\":50,\"name\":\"안순식\",\"role\":\"\",\"company\":\"(유)유선기업\",\"phone\":\"010-8950-8363\"},{\"id\":51,\"name\":\"안재찬\",\"role\":\"2대 회장\",\"company\":\"비트컴퓨터학원\",\"phone\":\"010-5112-6706\"},{\"id\":52,\"name\":\"오용선\",\"role\":\"감사\",\"company\":\"대중가스\",\"phone\":\"010-3655-3749\"},{\"id\":53,\"name\":\"오충권\",\"role\":\"운영위원\",\"company\":\"창진자동차유리\",\"phone\":\"010-7141-7588\"},{\"id\":54,\"name\":\"우동명\",\"role\":\"\",\"company\":\"농업\",\"phone\":\"010-3689-7860\"},{\"id\":55,\"name\":\"우석봉\",\"role\":\"\",\"company\":\"대백크레인, 스카이\",\"phone\":\"010-3682-8506\"},{\"id\":56,\"name\":\"유영진\",\"role\":\"\",\"company\":\"남원시청\",\"phone\":\"010-5633-7881\"},{\"id\":57,\"name\":\"이상묵\",\"role\":\"운영위원\",\"company\":\"가보테크\",\"phone\":\"010-3993-2372\"},{\"id\":58,\"name\":\"이성옥\",\"role\":\"\",\"company\":\"(유)남원종합농기계\",\"phone\":\"010-5823-7000\"},{\"id\":59,\"name\":\"이정식\",\"role\":\"운영위원\",\"company\":\"산아래영농법인\",\"phone\":\"010-9446-7517\"},{\"id\":60,\"name\":\"장호법\",\"role\":\"운영위원\",\"company\":\"휴먼시스템\",\"phone\":\"010-7146-7938\"},{\"id\":61,\"name\":\"우진용\",\"role\":\"\",\"company\":\"현대자동차\",\"phone\":\"010-4654-1010\"},{\"id\":62,\"name\":\"이삼록\",\"role\":\"\",\"company\":\"동양유리건축/스카이\",\"phone\":\"010-3659-6204\"},{\"id\":63,\"name\":\"이선영\",\"role\":\"부회장\",\"company\":\"365할인마트\",\"phone\":\"010-3658-7350\"},{\"id\":64,\"name\":\"이우팔\",\"role\":\"감사\",\"company\":\"(주)금정레미콘\",\"phone\":\"010-2304-2586\"},{\"id\":65,\"name\":\"이평수\",\"role\":\"\",\"company\":\"농업\",\"phone\":\"010-8627-3715\"},{\"id\":66,\"name\":\"정봉환\",\"role\":\"\",\"company\":\"종합인슈판넬\",\"phone\":\"010-2608-0620\"},{\"id\":67,\"name\":\"정영구\",\"role\":\"회장\",\"company\":\"제일컴퓨터학원\",\"phone\":\"010-7176-8844\"},{\"id\":68,\"name\":\"정영성\",\"role\":\"운영위원\",\"company\":\"두배마니/로컬푸드수산코너\",\"phone\":\"010-3651-3577\"},{\"id\":69,\"name\":\"조규현\",\"role\":\"\",\"company\":\"부림종합개발/한일건기\",\"phone\":\"010-3652-5758\"},{\"id\":70,\"name\":\"조영환\",\"role\":\"\",\"company\":\"남원농협\",\"phone\":\"010-8604-9401\"},{\"id\":72,\"name\":\"한성동\",\"role\":\"상조위원\",\"company\":\"서남사무기(서남OA)\",\"phone\":\"010-8642-0380\"},{\"id\":73,\"name\":\"황인\",\"role\":\"\",\"company\":\"남원원예농협\",\"phone\":\"010-3083-8149\"},{\"id\":74,\"name\":\"정영권\",\"role\":\"10대 회장\",\"company\":\"보배아카데미학원\",\"phone\":\"010-5485-2873\"},{\"id\":75,\"name\":\"정용욱\",\"role\":\"5대 회장\",\"company\":\"목포중앙병원\",\"phone\":\"010-7302-5348\"},{\"id\":76,\"name\":\"조민영\",\"role\":\"운영위원\",\"company\":\"어사장\",\"phone\":\"010-4015-2372\"},{\"id\":77,\"name\":\"조중근\",\"role\":\"\",\"company\":\"대호카라반(전국총판)\",\"phone\":\"010-9822-2222\"},{\"id\":78,\"name\":\"추학봉\",\"role\":\"\",\"company\":\"자영업\",\"phone\":\"010-3659-7491\"},{\"id\":79,\"name\":\"한재석\",\"role\":\"\",\"company\":\"남원현대카서비스\",\"phone\":\"010-6866-8060\"},{\"id\":80,\"name\":\"황창수\",\"role\":\"상조위원\",\"company\":\"진보건설기계\",\"phone\":\"010-3672-0266\"},{\"id\":81,\"name\":\"김경만\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":82,\"name\":\"김경수\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":83,\"name\":\"김형근\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":84,\"name\":\"김환옥\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":85,\"name\":\"노지훈\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":86,\"name\":\"라광수\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":87,\"name\":\"박병인\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":88,\"name\":\"박상일\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":89,\"name\":\"박승현\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"}]");
+var members_default = /*#__PURE__*/ JSON.parse("[{\"id\":1,\"name\":\"강규현\",\"role\":\"3대 회장\",\"company\":\"백제에너지지지하수\",\"phone\":\"010-9432-5566\"},{\"id\":2,\"name\":\"곽민준\",\"role\":\"\",\"company\":\"남원경찰서\",\"phone\":\"010-5540-5820\"},{\"id\":3,\"name\":\"권천택\",\"role\":\"운영위원\",\"company\":\"(주)한국음료\",\"phone\":\"010-6778-1985\"},{\"id\":5,\"name\":\"김관호\",\"role\":\"11대 회장\",\"company\":\"이안당금방\",\"phone\":\"010-8641-9718\"},{\"id\":6,\"name\":\"김기영\",\"role\":\"\",\"company\":\"국립민속국악원\",\"phone\":\"010-2652-3159\"},{\"id\":7,\"name\":\"강영권\",\"role\":\"총무\",\"company\":\"현대자동차\",\"phone\":\"010-4652-2358\"},{\"id\":8,\"name\":\"곽봉준\",\"role\":\"6대 회장\",\"company\":\"서남크레인, 스카이\",\"phone\":\"010-3676-8402\"},{\"id\":9,\"name\":\"기승민\",\"role\":\"7대 회장\",\"company\":\"(유)우리산업\",\"phone\":\"010-6232-7342\"},{\"id\":11,\"name\":\"김규성\",\"role\":\"상조위원장\",\"company\":\"민물수산(건강원)\",\"phone\":\"010-5016-7377\"},{\"id\":12,\"name\":\"김길영\",\"role\":\"\",\"company\":\"남영공예\",\"phone\":\"010-5626-0827\"},{\"id\":13,\"name\":\"김신\",\"role\":\"\",\"company\":\"남원시청\",\"phone\":\"010-4157-1529\"},{\"id\":14,\"name\":\"김완식\",\"role\":\"\",\"company\":\"삼성시스템에어컨\",\"phone\":\"010-8833-7437\"},{\"id\":15,\"name\":\"김용무\",\"role\":\"재무\",\"company\":\"금강창호\",\"phone\":\"010-5669-0692\"},{\"id\":16,\"name\":\"김정우\",\"role\":\"\",\"company\":\"지엘건설\",\"phone\":\"010-5534-4253\"},{\"id\":17,\"name\":\"김종섭\",\"role\":\"\",\"company\":\"남원건설\",\"phone\":\"010-5604-4204\"},{\"id\":18,\"name\":\"김태\",\"role\":\"상조위원\",\"company\":\"예작미용실\",\"phone\":\"010-4784-6830\"},{\"id\":19,\"name\":\"김영민\",\"role\":\"\",\"company\":\"송림농원\",\"phone\":\"010-3656-8163\"},{\"id\":20,\"name\":\"김용광\",\"role\":\"\",\"company\":\"남원의료원\",\"phone\":\"010-9641-9998\"},{\"id\":21,\"name\":\"김용화\",\"role\":\"\",\"company\":\"익산전업사\",\"phone\":\"010-5920-1007\"},{\"id\":22,\"name\":\"김점철\",\"role\":\"\",\"company\":\"솔마루목조건축\",\"phone\":\"010-3223-0397\"},{\"id\":23,\"name\":\"김철현\",\"role\":\"\",\"company\":\"남원우체국\",\"phone\":\"010-4659-5020\"},{\"id\":24,\"name\":\"김현수\",\"role\":\"부회장\",\"company\":\"산동우체국\",\"phone\":\"010-9026-7321\"},{\"id\":25,\"name\":\"김형찬\",\"role\":\"\",\"company\":\"신화스카이\",\"phone\":\"010-5368-1677\"},{\"id\":26,\"name\":\"김환욱\",\"role\":\"\",\"company\":\"공예/중기\",\"phone\":\"010-9477-2062\"},{\"id\":27,\"name\":\"노경진\",\"role\":\"운영위원\",\"company\":\"개별화물\",\"phone\":\"010-2656-7791\"},{\"id\":28,\"name\":\"박기태\",\"role\":\"운영위원\",\"company\":\"로얄전기\",\"phone\":\"010-8669-2449\"},{\"id\":29,\"name\":\"박무열\",\"role\":\"\",\"company\":\"시너지월와이드/디톡스\",\"phone\":\"010-3683-0768\"},{\"id\":30,\"name\":\"박성동\",\"role\":\"\",\"company\":\"우성이엔씨\",\"phone\":\"010-4161-3387\"},{\"id\":31,\"name\":\"박승민\",\"role\":\"\",\"company\":\"남원볼트\",\"phone\":\"010-6284-0949\"},{\"id\":32,\"name\":\"박현주\",\"role\":\"운영위원\",\"company\":\"연합중기\",\"phone\":\"010-3683-4907\"},{\"id\":33,\"name\":\"방성일\",\"role\":\"\",\"company\":\"515번청과\",\"phone\":\"010-3683-8383\"},{\"id\":34,\"name\":\"방정원\",\"role\":\"\",\"company\":\"황소밧데리\",\"phone\":\"010-3652-8722\"},{\"id\":35,\"name\":\"변길주\",\"role\":\"\",\"company\":\"거점스포츠센터/이화어린이집\",\"phone\":\"010-8621-4890\"},{\"id\":36,\"name\":\"서재석\",\"role\":\"1대 회장\",\"company\":\"꽃내음화원/서재석공인중개사\",\"phone\":\"010-9454-0900\"},{\"id\":37,\"name\":\"박철규\",\"role\":\"\",\"company\":\"OK부동산\",\"phone\":\"010-6668-3477\"},{\"id\":39,\"name\":\"방세혁\",\"role\":\"\",\"company\":\"행복설비\",\"phone\":\"010-6479-8459\"},{\"id\":40,\"name\":\"백광엽\",\"role\":\"8대 회장\",\"company\":\"종로떡전문점\",\"phone\":\"010-6732-1426\"},{\"id\":41,\"name\":\"변완석\",\"role\":\"\",\"company\":\"굴삭기\",\"phone\":\"010-3672-8211\"},{\"id\":42,\"name\":\"손성기\",\"role\":\"\",\"company\":\"자동차세상\",\"phone\":\"010-8626-1239\"},{\"id\":43,\"name\":\"신동기\",\"role\":\"4대 회장\",\"company\":\"휴먼시스템\",\"phone\":\"010-9679-2222\"},{\"id\":44,\"name\":\"신용호\",\"role\":\"상조위원\",\"company\":\"덕과건설중기\",\"phone\":\"010-8645-2243\"},{\"id\":45,\"name\":\"안재성\",\"role\":\"\",\"company\":\"(주)금정레미콘\",\"phone\":\"010-3679-2489\"},{\"id\":46,\"name\":\"양문용\",\"role\":\"\",\"company\":\"(유)영림프라임샤시\",\"phone\":\"010-3653-1809\"},{\"id\":47,\"name\":\"오준석\",\"role\":\"\",\"company\":\"(주)대건\",\"phone\":\"010-8720-7311\"},{\"id\":48,\"name\":\"오현우\",\"role\":\"\",\"company\":\"자유전자\",\"phone\":\"010-6350-3366\"},{\"id\":49,\"name\":\"신성일\",\"role\":\"\",\"company\":\"풍성한주간보호센터\",\"phone\":\"010-7392-3272\"},{\"id\":50,\"name\":\"안순식\",\"role\":\"\",\"company\":\"(유)유선기업\",\"phone\":\"010-8950-8363\"},{\"id\":51,\"name\":\"안재찬\",\"role\":\"2대 회장\",\"company\":\"비트컴퓨터학원\",\"phone\":\"010-5112-6706\"},{\"id\":52,\"name\":\"오용선\",\"role\":\"감사\",\"company\":\"대중가스\",\"phone\":\"010-3655-3749\"},{\"id\":53,\"name\":\"오충권\",\"role\":\"운영위원\",\"company\":\"창진자동차유리\",\"phone\":\"010-7141-7588\"},{\"id\":54,\"name\":\"우동명\",\"role\":\"\",\"company\":\"농업\",\"phone\":\"010-3689-7860\"},{\"id\":55,\"name\":\"우석동\",\"role\":\"\",\"company\":\"대백크레인, 스카이\",\"phone\":\"010-3682-8506\"},{\"id\":56,\"name\":\"유영진\",\"role\":\"\",\"company\":\"남원시청\",\"phone\":\"010-5633-7881\"},{\"id\":57,\"name\":\"이상목\",\"role\":\"운영위원\",\"company\":\"가보테크\",\"phone\":\"010-3993-2372\"},{\"id\":58,\"name\":\"이성옥\",\"role\":\"\",\"company\":\"(유)남원종합농기계\",\"phone\":\"010-5823-7000\"},{\"id\":59,\"name\":\"이정석\",\"role\":\"운영위원\",\"company\":\"산아래영농법인\",\"phone\":\"010-9446-7517\"},{\"id\":60,\"name\":\"장호범\",\"role\":\"운영위원\",\"company\":\"휴먼시스템\",\"phone\":\"010-7146-7938\"},{\"id\":61,\"name\":\"우진용\",\"role\":\"\",\"company\":\"현대자동차\",\"phone\":\"010-4654-1010\"},{\"id\":62,\"name\":\"이삼록\",\"role\":\"\",\"company\":\"동양유리건축/스카이\",\"phone\":\"010-3659-6204\"},{\"id\":63,\"name\":\"이선영\",\"role\":\"부회장\",\"company\":\"365할인마트\",\"phone\":\"010-3658-7350\"},{\"id\":64,\"name\":\"이우팔\",\"role\":\"감사\",\"company\":\"(주)금정레미콘\",\"phone\":\"010-2304-2586\"},{\"id\":65,\"name\":\"이평수\",\"role\":\"\",\"company\":\"농업\",\"phone\":\"010-8627-3715\"},{\"id\":66,\"name\":\"정동환\",\"role\":\"\",\"company\":\"종합인슈판넬\",\"phone\":\"010-2608-0620\"},{\"id\":67,\"name\":\"정영구\",\"role\":\"회장\",\"company\":\"제일컴퓨터학원\",\"phone\":\"010-7176-8844\"},{\"id\":68,\"name\":\"정영성\",\"role\":\"운영위원\",\"company\":\"두배마니/로컬푸드수산코너\",\"phone\":\"010-3651-3577\"},{\"id\":69,\"name\":\"조규현\",\"role\":\"\",\"company\":\"부림종합개발/한일건기\",\"phone\":\"010-3652-5758\"},{\"id\":70,\"name\":\"조영환\",\"role\":\"\",\"company\":\"남원농협\",\"phone\":\"010-8604-9401\"},{\"id\":72,\"name\":\"한성동\",\"role\":\"상조위원\",\"company\":\"서남사무기(서남OA)\",\"phone\":\"010-8642-0380\"},{\"id\":73,\"name\":\"황인\",\"role\":\"\",\"company\":\"남원원예농협\",\"phone\":\"010-3083-8149\"},{\"id\":74,\"name\":\"정영권\",\"role\":\"10대 회장\",\"company\":\"보배아카데미학원\",\"phone\":\"010-5485-2873\"},{\"id\":75,\"name\":\"정용욱\",\"role\":\"5대 회장\",\"company\":\"목포중앙병원\",\"phone\":\"010-7302-5348\"},{\"id\":76,\"name\":\"조민영\",\"role\":\"운영위원\",\"company\":\"어사장\",\"phone\":\"010-4015-2372\"},{\"id\":77,\"name\":\"조중근\",\"role\":\"\",\"company\":\"대호카라반(전국총판)\",\"phone\":\"010-9822-2222\"},{\"id\":78,\"name\":\"주학동\",\"role\":\"\",\"company\":\"자영업\",\"phone\":\"010-3659-7491\"},{\"id\":79,\"name\":\"한재석\",\"role\":\"\",\"company\":\"남원현대카서비스\",\"phone\":\"010-6866-8060\"},{\"id\":80,\"name\":\"황창수\",\"role\":\"상조위원\",\"company\":\"진보건설기계\",\"phone\":\"010-3672-0266\"},{\"id\":81,\"name\":\"김경만\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":82,\"name\":\"김경수\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":83,\"name\":\"김형근\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":84,\"name\":\"김환옥\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":85,\"name\":\"노지훈\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":86,\"name\":\"라광수\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":87,\"name\":\"박병인\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":88,\"name\":\"박상일\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"},{\"id\":89,\"name\":\"박승현\",\"role\":\"\",\"company\":\"\",\"phone\":\"\"}]");
 //#endregion
 //#region node_modules/tslib/tslib.es6.mjs
 function __rest(s, e) {
@@ -13803,7 +13803,9 @@ var FunctionsClient = class {
 	* @category Edge Functions
 	*
 	* @remarks
-	* - Requires an Authorization header.
+	* - The API key is sent in the `apikey` header. The `Authorization` header is reserved
+	*   for the signed-in user's JWT (or a custom auth token) — when there is no session, a
+	*   new-format API key (`sb_publishable_…` / `sb_secret_…`) is not sent as a Bearer token.
 	* - Invoke params generally match the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) spec.
 	* - When you pass in a body to your function, we automatically attach the Content-Type header for `Blob`, `ArrayBuffer`, `File`, `FormData` and `String`. If it doesn't match any of these types we assume the payload is `json`, serialize it and attach the `Content-Type` header as `application/json`. You can override this behavior by passing in a `Content-Type` header of your own.
 	* - Responses are automatically parsed as `json`, `blob` and `form-data` depending on the `Content-Type` header sent by your function. Responses are parsed as `text` by default.
@@ -17917,7 +17919,7 @@ var WebSocketFactory = class {
 };
 //#endregion
 //#region node_modules/@supabase/realtime-js/dist/module/lib/constants.js
-var DEFAULT_VERSION = `realtime-js/2.110.2`;
+var DEFAULT_VERSION = `realtime-js/2.110.7`;
 var VSN_1_0_0 = "1.0.0";
 var VSN_2_0_0 = "2.0.0";
 var DEFAULT_VSN$1 = VSN_2_0_0;
@@ -17988,12 +17990,13 @@ var Serializer = class {
 	}
 	_encodeUserBroadcastPush(message, encodingType, encodedPayload) {
 		var _a, _b;
-		const topic = message.topic;
-		const ref = (_a = message.ref) !== null && _a !== void 0 ? _a : "";
-		const joinRef = (_b = message.join_ref) !== null && _b !== void 0 ? _b : "";
-		const userEvent = message.payload.event;
+		const encoder = new TextEncoder();
+		const topic = encoder.encode(message.topic);
+		const ref = encoder.encode((_a = message.ref) !== null && _a !== void 0 ? _a : "");
+		const joinRef = encoder.encode((_b = message.join_ref) !== null && _b !== void 0 ? _b : "");
+		const userEvent = encoder.encode(message.payload.event);
 		const rest = this.allowedMetadataKeys ? this._pick(message.payload, this.allowedMetadataKeys) : {};
-		const metadata = Object.keys(rest).length === 0 ? "" : JSON.stringify(rest);
+		const metadata = encoder.encode(Object.keys(rest).length === 0 ? "" : JSON.stringify(rest));
 		if (joinRef.length > 255) throw new Error(`joinRef length ${joinRef.length} exceeds maximum of 255`);
 		if (ref.length > 255) throw new Error(`ref length ${ref.length} exceeds maximum of 255`);
 		if (topic.length > 255) throw new Error(`topic length ${topic.length} exceeds maximum of 255`);
@@ -18001,7 +18004,8 @@ var Serializer = class {
 		if (metadata.length > 255) throw new Error(`metadata length ${metadata.length} exceeds maximum of 255`);
 		const metaLength = this.USER_BROADCAST_PUSH_META_LENGTH + joinRef.length + ref.length + topic.length + userEvent.length + metadata.length;
 		const header = new ArrayBuffer(this.HEADER_LENGTH + metaLength);
-		let view = new DataView(header);
+		const view = new DataView(header);
+		const bytes = new Uint8Array(header);
 		let offset = 0;
 		view.setUint8(offset++, this.KINDS.userBroadcastPush);
 		view.setUint8(offset++, joinRef.length);
@@ -18010,11 +18014,16 @@ var Serializer = class {
 		view.setUint8(offset++, userEvent.length);
 		view.setUint8(offset++, metadata.length);
 		view.setUint8(offset++, encodingType);
-		Array.from(joinRef, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(ref, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(topic, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(userEvent, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(metadata, (char) => view.setUint8(offset++, char.charCodeAt(0)));
+		bytes.set(joinRef, offset);
+		offset += joinRef.length;
+		bytes.set(ref, offset);
+		offset += ref.length;
+		bytes.set(topic, offset);
+		offset += topic.length;
+		bytes.set(userEvent, offset);
+		offset += userEvent.length;
+		bytes.set(metadata, offset);
+		offset += metadata.length;
 		var combined = new Uint8Array(header.byteLength + encodedPayload.byteLength);
 		combined.set(new Uint8Array(header), 0);
 		combined.set(new Uint8Array(encodedPayload), header.byteLength);
@@ -18283,6 +18292,7 @@ var global$1 = globalSelf || phxWindow || globalThis;
 var DEFAULT_VSN = "2.0.0";
 var DEFAULT_TIMEOUT = 1e4;
 var WS_CLOSE_NORMAL = 1e3;
+var MAX_LONGPOLL_BATCH_SIZE = 100;
 var SOCKET_STATES = (
 /** @type {const} */
 {
@@ -18928,17 +18938,20 @@ var LongPoll = class {
 			}, 0);
 		}
 	}
-	batchSend(messages) {
+	batchSend(messages, offset = 0) {
 		this.awaitingBatchAck = true;
-		this.ajax("POST", { "Content-Type": "application/x-ndjson" }, messages.join("\n"), () => this.onerror("timeout"), (resp) => {
-			this.awaitingBatchAck = false;
+		const next = offset + MAX_LONGPOLL_BATCH_SIZE;
+		const batch = messages.slice(offset, next);
+		this.ajax("POST", { "Content-Type": "application/x-ndjson" }, batch.join("\n"), () => this.onerror("timeout"), (resp) => {
 			if (!resp || resp.status !== 200) {
+				this.awaitingBatchAck = false;
 				this.onerror(resp && resp.status);
 				this.closeAndRetry(1011, "internal server error", false);
-			} else if (this.batchBuffer.length > 0) {
+			} else if (next < messages.length) this.batchSend(messages, next);
+			else if (this.batchBuffer.length > 0) {
 				this.batchSend(this.batchBuffer);
 				this.batchBuffer = [];
-			}
+			} else this.awaitingBatchAck = false;
 		});
 	}
 	close(code, reason, wasClean) {
@@ -18983,7 +18996,7 @@ var Presence = class _Presence {
 			state: "presence_state",
 			diff: "presence_diff"
 		};
-		this.state = {};
+		this.state = /* @__PURE__ */ Object.create(null);
 		this.pendingDiffs = [];
 		this.channel = channel;
 		this.joinRef = null;
@@ -19057,9 +19070,10 @@ var Presence = class _Presence {
 	* @returns {Record<string, PresenceState>}
 	*/
 	static syncState(currentState, newState, onJoin, onLeave) {
-		let state = this.clone(currentState);
-		let joins = {};
-		let leaves = {};
+		let state = this.toNullProtoObj(this.clone(currentState));
+		newState = this.toNullProtoObj(newState);
+		let joins = /* @__PURE__ */ Object.create(null);
+		let leaves = /* @__PURE__ */ Object.create(null);
 		this.map(state, (key, presence) => {
 			if (!newState[key]) leaves[key] = presence;
 		});
@@ -19100,6 +19114,7 @@ var Presence = class _Presence {
 	* @returns {Record<string, PresenceState>}
 	*/
 	static syncDiff(state, diff, onJoin, onLeave) {
+		state = this.toNullProtoObj(state);
 		let { joins, leaves } = this.clone(diff);
 		if (!onJoin) onJoin = function() {};
 		if (!onLeave) onLeave = function() {};
@@ -19149,6 +19164,14 @@ var Presence = class _Presence {
 	*/
 	static map(obj, func) {
 		return Object.getOwnPropertyNames(obj).map((key) => func(key, obj[key]));
+	}
+	static toNullProtoObj(obj) {
+		if (Object.getPrototypeOf(obj) === null) return obj;
+		let cleaned = /* @__PURE__ */ Object.create(null);
+		Object.getOwnPropertyNames(obj).forEach((key) => {
+			cleaned[key] = obj[key];
+		});
+		return cleaned;
 	}
 	/**
 	* @template T
@@ -19208,23 +19231,40 @@ var serializer_default = {
 	/** @private */
 	binaryEncode(message) {
 		let { join_ref, ref, event, topic, payload } = message;
-		let metaLength = this.META_LENGTH + join_ref.length + ref.length + topic.length + event.length;
+		let encoder = new TextEncoder();
+		let joinRefBytes = encoder.encode(join_ref);
+		let refBytes = encoder.encode(ref);
+		let topicBytes = encoder.encode(topic);
+		let eventBytes = encoder.encode(event);
+		this.assertFieldSize(joinRefBytes.byteLength, "join_ref");
+		this.assertFieldSize(refBytes.byteLength, "ref");
+		this.assertFieldSize(topicBytes.byteLength, "topic");
+		this.assertFieldSize(eventBytes.byteLength, "event");
+		let metaLength = this.META_LENGTH + joinRefBytes.byteLength + refBytes.byteLength + topicBytes.byteLength + eventBytes.byteLength;
 		let header = new ArrayBuffer(this.HEADER_LENGTH + metaLength);
+		let headerBytes = new Uint8Array(header);
 		let view = new DataView(header);
 		let offset = 0;
 		view.setUint8(offset++, this.KINDS.push);
-		view.setUint8(offset++, join_ref.length);
-		view.setUint8(offset++, ref.length);
-		view.setUint8(offset++, topic.length);
-		view.setUint8(offset++, event.length);
-		Array.from(join_ref, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(ref, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(topic, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(event, (char) => view.setUint8(offset++, char.charCodeAt(0)));
+		view.setUint8(offset++, joinRefBytes.byteLength);
+		view.setUint8(offset++, refBytes.byteLength);
+		view.setUint8(offset++, topicBytes.byteLength);
+		view.setUint8(offset++, eventBytes.byteLength);
+		headerBytes.set(joinRefBytes, offset);
+		offset += joinRefBytes.byteLength;
+		headerBytes.set(refBytes, offset);
+		offset += refBytes.byteLength;
+		headerBytes.set(topicBytes, offset);
+		offset += topicBytes.byteLength;
+		headerBytes.set(eventBytes, offset);
+		offset += eventBytes.byteLength;
 		var combined = new Uint8Array(header.byteLength + payload.byteLength);
-		combined.set(new Uint8Array(header), 0);
+		combined.set(headerBytes, 0);
 		combined.set(new Uint8Array(payload), header.byteLength);
 		return combined.buffer;
+	},
+	assertFieldSize(size, name) {
+		if (size > 255) throw new Error(`unable to convert ${name} to binary: must be less than or equal to 255 bytes, but is ${size} bytes`);
 	},
 	/**
 	* @private
@@ -19424,7 +19464,7 @@ var Socket = class {
 				this.connect();
 			});
 		}, this.reconnectAfterMs);
-		this.authToken = opts.authToken;
+		this.authToken = opts.authToken && closure(opts.authToken);
 	}
 	/**
 	* Returns the LongPoll transport reference
@@ -19613,7 +19653,7 @@ var Socket = class {
 		this.connectClock++;
 		this.closeWasClean = false;
 		let protocols = void 0;
-		if (this.authToken) protocols = ["phoenix", `${AUTH_TOKEN_PREFIX}${btoa(this.authToken).replace(/=/g, "")}`];
+		if (this.authToken) protocols = ["phoenix", `${AUTH_TOKEN_PREFIX}${btoa(this.authToken()).replace(/=/g, "")}`];
 		this.conn = new this.transport(this.endPointURL(), protocols);
 		this.conn.binaryType = this.binaryType;
 		this.conn.timeout = this.longpollerTimeout;
@@ -20509,6 +20549,11 @@ var RealtimeChannel = class RealtimeChannel {
 	* Sends the supplied payload to the presence tracker so other subscribers can see that this
 	* client is online. Use `untrack` to stop broadcasting presence for the same key.
 	*
+	* Tracking makes this client visible to other subscribers immediately, regardless of this
+	* channel's `config.presence.enabled` setting or whether it has a `presence` listener — that
+	* flag only affects whether *this* client receives presence updates from others (and, on
+	* RLS-protected channels, whether it's authorized to do so).
+	*
 	* @category Realtime
 	*/
 	async track(payload, opts = {}) {
@@ -20516,7 +20561,7 @@ var RealtimeChannel = class RealtimeChannel {
 			type: "presence",
 			event: "track",
 			payload
-		}, opts.timeout || this.timeout);
+		}, opts);
 	}
 	/**
 	* Removes the current presence state for this client.
@@ -23676,7 +23721,7 @@ var StorageFileApi = class extends BaseApiClient {
 		return query;
 	}
 };
-var DEFAULT_HEADERS$1 = { "X-Client-Info": `storage-js/2.110.2` };
+var DEFAULT_HEADERS$1 = { "X-Client-Info": `storage-js/2.110.7` };
 var StorageBucketApi = class extends BaseApiClient {
 	constructor(url, headers = {}, fetch$1, opts) {
 		const baseUrl = new URL(url);
@@ -25156,7 +25201,7 @@ var StorageClient = class extends StorageBucketApi {
 };
 //#endregion
 //#region node_modules/@supabase/auth-js/dist/module/lib/version.js
-var version$1 = "2.110.2";
+var version$1 = "2.110.7";
 //#endregion
 //#region node_modules/@supabase/auth-js/dist/module/lib/constants.js
 /** Current session will be checked for refresh at this interval. */
@@ -32142,7 +32187,6 @@ var GoTrueClient = class GoTrueClient {
 	async _saveSession(session) {
 		this._debug("#_saveSession()", session);
 		this.suppressGetSessionWarning = true;
-		await removeItemAsync(this.storage, `${this.storageKey}-code-verifier`);
 		const sessionToProcess = Object.assign({}, session);
 		const userIsProxy = sessionToProcess.user && sessionToProcess.user.__isUserNotAvailableProxy === true;
 		if (this.userStorage) {
@@ -33445,7 +33489,7 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 };
 //#endregion
 //#region node_modules/@supabase/supabase-js/dist/index.mjs
-var version = "2.110.2";
+var version = "2.110.7";
 var JS_ENV = "";
 var JS_RUNTIME_VERSION;
 if (typeof Deno !== "undefined") {
@@ -33457,7 +33501,8 @@ else if (typeof navigator !== "undefined" && navigator.product === "ReactNative"
 else {
 	var _process$version;
 	JS_ENV = "node";
-	JS_RUNTIME_VERSION = typeof process !== "undefined" ? (_process$version = process.version) === null || _process$version === void 0 ? void 0 : _process$version.replace(/^v/, "") : void 0;
+	const _process = globalThis["process"];
+	JS_RUNTIME_VERSION = _process === null || _process === void 0 || (_process$version = _process["version"]) === null || _process$version === void 0 ? void 0 : _process$version.replace(/^v/, "");
 }
 var _runtimeMeta = [`runtime=${JS_ENV}`];
 if (JS_RUNTIME_VERSION) _runtimeMeta.push(`runtime-version=${JS_RUNTIME_VERSION}`);
@@ -33733,18 +33778,43 @@ var resolveFetch = (customFetch) => {
 var resolveHeadersConstructor = () => {
 	return Headers;
 };
-var fetchWithAuth = (supabaseKey, supabaseUrl, getAccessToken, customFetch, tracePropagationOptions) => {
+/**
+* New-format Supabase API keys (`sb_publishable_…` / `sb_secret_…`) are not JWTs and
+* must never be sent as a Bearer token — they belong only in the `apikey` header.
+* All other keys (legacy JWT keys, `sb_temp_…` temporary keys, unrecognized `sb_`
+* subtypes) keep the Bearer fallback.
+*/
+var isNewApiKey = (key) => key.startsWith("sb_publishable_") || key.startsWith("sb_secret_");
+var TEMP_KEY_PREFIX = "sb_temp_";
+var warnedKeySubtypes = /* @__PURE__ */ new Set();
+/**
+* Warn (once per subtype) when an `sb_` key isn't a subtype this SDK version recognizes.
+* Never throws — the server, not the SDK, decides key validity. The key value is never
+* included in the message.
+*/
+var checkApiKeyFormat = (key) => {
+	var _key$match$, _key$match;
+	if (!key.startsWith("sb_") || isNewApiKey(key) || key.startsWith(TEMP_KEY_PREFIX)) return;
+	const subtype = (_key$match$ = (_key$match = key.match(/^sb_[a-zA-Z0-9]+_/)) === null || _key$match === void 0 ? void 0 : _key$match[0]) !== null && _key$match$ !== void 0 ? _key$match$ : "unknown";
+	if (warnedKeySubtypes.has(subtype)) return;
+	warnedKeySubtypes.add(subtype);
+	console.warn("@supabase/supabase-js: Unrecognized Supabase API key format. The client will proceed and send this key as-is; if you see authentication errors you may need to upgrade @supabase/supabase-js to a version that recognizes this key type.");
+};
+var fetchWithAuth = (supabaseKey, supabaseUrl, getAccessToken, customFetch, tracePropagationOptions, options) => {
 	const fetch$1 = resolveFetch(customFetch);
 	const HeadersConstructor = resolveHeadersConstructor();
 	const traceEnabled = (tracePropagationOptions === null || tracePropagationOptions === void 0 ? void 0 : tracePropagationOptions.enabled) === true;
 	const respectSampling = (tracePropagationOptions === null || tracePropagationOptions === void 0 ? void 0 : tracePropagationOptions.respectSamplingDecision) !== false;
 	const traceTargets = traceEnabled ? getDefaultPropagationTargets(supabaseUrl) : null;
+	const allowKeyAsBearer = !((options === null || options === void 0 ? void 0 : options.omitApiKeyAsBearer) && isNewApiKey(supabaseKey));
 	return async (input, init) => {
-		var _await$getAccessToken;
-		const accessToken = (_await$getAccessToken = await getAccessToken()) !== null && _await$getAccessToken !== void 0 ? _await$getAccessToken : supabaseKey;
+		const realToken = await getAccessToken();
 		let headers = new HeadersConstructor(init === null || init === void 0 ? void 0 : init.headers);
 		if (!headers.has("apikey")) headers.set("apikey", supabaseKey);
-		if (!headers.has("Authorization")) headers.set("Authorization", `Bearer ${accessToken}`);
+		if (!headers.has("Authorization")) {
+			const bearer = realToken !== null && realToken !== void 0 ? realToken : allowKeyAsBearer ? supabaseKey : null;
+			if (bearer) headers.set("Authorization", `Bearer ${bearer}`);
+		}
 		if (traceTargets) {
 			const traceHeaders = await getTraceHeaders(input, traceTargets, respectSampling);
 			if (traceHeaders) {
@@ -33892,9 +33962,9 @@ var SupabaseClient = class {
 	* ```
 	*
 	* @exampleDescription Custom fetch implementation
-	* `supabase-js` uses the [`cross-fetch`](https://www.npmjs.com/package/cross-fetch) library to make HTTP requests,
+	* `supabase-js` uses the runtime's global `fetch` to make HTTP requests,
 	* but an alternative `fetch` implementation can be provided as an option.
-	* This is most useful in environments where `cross-fetch` is not compatible (for instance Cloudflare Workers).
+	* This is useful in environments where the global `fetch` is unavailable or where you want to customize request behavior.
 	*
 	* @example Custom fetch implementation
 	* ```js
@@ -34040,6 +34110,7 @@ var SupabaseClient = class {
 		this.supabaseKey = supabaseKey;
 		const baseUrl = validateSupabaseUrl(supabaseUrl);
 		if (!supabaseKey) throw new Error("supabaseKey is required.");
+		checkApiKeyFormat(supabaseKey);
 		this.realtimeUrl = new URL("realtime/v1", baseUrl);
 		this.realtimeUrl.protocol = this.realtimeUrl.protocol.replace("http", "ws");
 		this.authUrl = new URL("auth/v1", baseUrl);
@@ -34066,7 +34137,8 @@ var SupabaseClient = class {
 				throw new Error(`@supabase/supabase-js: Supabase Client is configured with the accessToken option, accessing supabase.auth.${String(prop)} is not possible`);
 			} });
 		}
-		this.fetch = fetchWithAuth(supabaseKey, supabaseUrl, this._getAccessToken.bind(this), settings.global.fetch, settings.tracePropagation);
+		this.fetch = fetchWithAuth(supabaseKey, supabaseUrl, this._getSessionToken.bind(this), settings.global.fetch, settings.tracePropagation);
+		this.functionsFetch = fetchWithAuth(supabaseKey, supabaseUrl, this._getSessionToken.bind(this), settings.global.fetch, settings.tracePropagation, { omitApiKeyAsBearer: true });
 		this.realtime = this._initRealtimeClient(_objectSpread2({
 			headers: this.headers,
 			accessToken: this._getAccessToken.bind(this),
@@ -34089,7 +34161,7 @@ var SupabaseClient = class {
 	get functions() {
 		return new FunctionsClient(this.functionsUrl.href, {
 			headers: this.headers,
-			customFetch: this.fetch
+			customFetch: this.functionsFetch
 		});
 	}
 	/**
@@ -34199,12 +34271,22 @@ var SupabaseClient = class {
 	removeAllChannels() {
 		return this.realtime.removeAllChannels();
 	}
-	async _getAccessToken() {
+	/**
+	* The raw session token — the custom `accessToken` result or the signed-in user's JWT —
+	* or `null` when there is no session. Unlike {@link _getAccessToken} it does not fall back
+	* to `supabaseKey`, so callers can distinguish "no session" from "has session".
+	*/
+	async _getSessionToken() {
 		var _this = this;
 		var _data$session$access_, _data$session;
 		if (_this.accessToken) return await _this.accessToken();
 		const { data } = await _this.auth.getSession();
-		return (_data$session$access_ = (_data$session = data.session) === null || _data$session === void 0 ? void 0 : _data$session.access_token) !== null && _data$session$access_ !== void 0 ? _data$session$access_ : _this.supabaseKey;
+		return (_data$session$access_ = (_data$session = data.session) === null || _data$session === void 0 ? void 0 : _data$session.access_token) !== null && _data$session$access_ !== void 0 ? _data$session$access_ : null;
+	}
+	async _getAccessToken() {
+		var _this2 = this;
+		var _await$this$_getSessi;
+		return (_await$this$_getSessi = await _this2._getSessionToken()) !== null && _await$this$_getSessi !== void 0 ? _await$this$_getSessi : _this2.supabaseKey;
 	}
 	_initSupabaseAuthClient({ autoRefreshToken, persistSession, detectSessionInUrl, storage, userStorage, storageKey, flowType, lock, debug, throwOnError, experimental, lockAcquireTimeout, skipAutoInitialize }, headers, fetch$1) {
 		const authHeaders = {
@@ -34240,7 +34322,7 @@ var SupabaseClient = class {
 		});
 	}
 	_handleTokenChanged(event, source, token) {
-		if ((event === "TOKEN_REFRESHED" || event === "SIGNED_IN") && this.changedAccessToken !== token) {
+		if ((event === "TOKEN_REFRESHED" || event === "SIGNED_IN" || event === "INITIAL_SESSION") && this.changedAccessToken !== token) {
 			this.changedAccessToken = token;
 			this.realtime.setAuth(token);
 		} else if (event === "SIGNED_OUT") {
