@@ -7,6 +7,48 @@ interface MemberDetailProps {
   onUpdateMember: (updatedMember: Member) => void;
 }
 
+const compressImage = (file: File, maxWidth: number, maxHeight: number, quality: number): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Canvas context failed'));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
 const MemberDetail: React.FC<MemberDetailProps> = ({ member, onClose, onUpdateMember }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,20 +81,19 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ member, onClose, onUpdateMe
       return;
     }
 
-    // 2. Base64로 이미지 변환
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64Data = event.target?.result as string;
-      onUpdateMember({
-        ...member,
-        photo: base64Data
+    // 2. 이미지 압축 및 변환
+    compressImage(file, 300, 300, 0.7)
+      .then((compressedBase64) => {
+        onUpdateMember({
+          ...member,
+          photo: compressedBase64
+        });
+        alert("프로필 이미지가 성공적으로 변경되었습니다.");
+      })
+      .catch((err) => {
+        console.error("Image compression failed:", err);
+        alert("이미지 처리 중 실패했습니다.");
       });
-      alert("프로필 이미지가 성공적으로 변경되었습니다.");
-    };
-    reader.onerror = () => {
-      alert("이미지 파일을 읽는 데 실패했습니다.");
-    };
-    reader.readAsDataURL(file);
   };
 
   return (

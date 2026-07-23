@@ -3,6 +3,48 @@ import { createPortal } from 'react-dom';
 import type { Member, BankAccount } from './MembersTab';
 import type { MeetingSchedule } from './ScheduleTab';
 
+const compressImage = (file: File, maxWidth: number, maxHeight: number, quality: number): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Canvas context failed'));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
 interface AdminTabProps {
   members: Member[];
   onAddMember: (member: Omit<Member, 'id'>) => void;
@@ -143,15 +185,18 @@ const AdminTab: React.FC<AdminTabProps> = ({
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 1 * 1024 * 1024) {
-        alert('이미지 크기는 1MB 이하여야 합니다.');
+      if (file.size > 10 * 1024 * 1024) {
+        alert('이미지 크기는 10MB 이하여야 합니다.');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setMemberFormData((prev) => ({ ...prev, photo: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
+      compressImage(file, 300, 300, 0.7)
+        .then((compressedBase64) => {
+          setMemberFormData((prev) => ({ ...prev, photo: compressedBase64 }));
+        })
+        .catch((err) => {
+          console.error("Image compression error:", err);
+          alert("이미지 압축 처리 중 실패했습니다.");
+        });
     }
   };
 
