@@ -90,6 +90,16 @@ const AdminTab: React.FC<AdminTabProps> = ({
     treasurerId: currentTreasurer
   });
 
+  // 전화번호 중복 체크를 위한 계산 변수
+  const cleanPhone = memberFormData.phone.replace(/[^0-9]/g, '');
+  const isPhoneDuplicate = cleanPhone.length > 0 && members.some(m => {
+    // 수정 모드일 때는 자기 자신은 중복 체크에서 제외
+    if (memberModalMode === 'edit' && selectedMember && m.id === selectedMember.id) {
+      return false;
+    }
+    return m.phone.replace(/[^0-9]/g, '') === cleanPhone;
+  });
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || '1234';
@@ -140,6 +150,10 @@ const AdminTab: React.FC<AdminTabProps> = ({
     e.preventDefault();
     if (!memberFormData.name.trim() || !memberFormData.phone.trim()) {
       alert('이름과 전화번호는 필수 입력 항목입니다.');
+      return;
+    }
+    if (isPhoneDuplicate) {
+      alert('이미 등록된 전화번호입니다.');
       return;
     }
     if (memberModalMode === 'add') {
@@ -596,12 +610,28 @@ const AdminTab: React.FC<AdminTabProps> = ({
               <label>전화번호 *</label>
               <input
                 type="text"
-                className="input-field"
+                className={`input-field ${isPhoneDuplicate ? 'error' : ''}`}
                 required
                 placeholder="010-0000-0000"
                 value={memberFormData.phone}
-                onChange={(e) => setMemberFormData({ ...memberFormData, phone: e.target.value })}
+                onChange={(e) => {
+                  const rawValue = e.target.value;
+                  // 자동으로 하이픈 적용
+                  const clean = rawValue.replace(/[^0-9]/g, '');
+                  let formatted = clean;
+                  if (clean.length > 3 && clean.length <= 7) {
+                    formatted = `${clean.slice(0, 3)}-${clean.slice(3)}`;
+                  } else if (clean.length > 7) {
+                    formatted = `${clean.slice(0, 3)}-${clean.slice(3, 7)}-${clean.slice(7, 11)}`;
+                  }
+                  setMemberFormData({ ...memberFormData, phone: formatted });
+                }}
               />
+              {isPhoneDuplicate && (
+                <span className="error-message" style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                  ⚠️ 이미 등록된 전화번호입니다.
+                </span>
+              )}
             </div>
 
             <div className="form-group" style={{ marginTop: '10px' }}>
@@ -656,7 +686,16 @@ const AdminTab: React.FC<AdminTabProps> = ({
               <button type="button" className="btn-secondary" onClick={() => setIsMemberModalOpen(false)}>
                 취소
               </button>
-              <button type="submit" className="btn-primary" style={{ width: 'auto' }}>
+              <button 
+                type="submit" 
+                className="btn-primary" 
+                style={{ 
+                  width: 'auto',
+                  opacity: isPhoneDuplicate ? 0.6 : 1,
+                  cursor: isPhoneDuplicate ? 'not-allowed' : 'pointer'
+                }} 
+                disabled={isPhoneDuplicate}
+              >
                 저장
               </button>
             </div>
