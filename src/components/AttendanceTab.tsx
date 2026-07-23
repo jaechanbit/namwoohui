@@ -118,13 +118,6 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
   // 4. Click handler: cycling through states
   // order: '' -> 'present' -> 'mutual_aid' -> 'absent' -> 'pending' -> ''
   const handleCellClick = (memberId: number, sessionId: string) => {
-    if (!isAdmin) {
-      setAuthPassword('');
-      setAuthError('');
-      setShowAuthModal(true);
-      return;
-    }
-
     const currentStatus = (recordsMap.get(memberId) || {})[sessionId] || '';
     let nextStatus = '';
     
