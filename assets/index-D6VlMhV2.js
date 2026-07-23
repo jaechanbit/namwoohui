@@ -13673,10 +13673,14 @@ const AdminTab = ({
     }
     return m.phone.replace(/[^0-9]/g, "") === cleanPhone;
   });
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const adminPassword = "1234";
-    if (password === adminPassword) {
+    const msgBuffer = new TextEncoder().encode(password);
+    const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    const adminPasswordHash = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4";
+    if (hashHex === adminPasswordHash) {
       setIsAdmin(true);
       setErrorMsg("");
     } else {
@@ -15094,10 +15098,14 @@ const AttendanceTab = ({
         children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "form",
           {
-            onSubmit: (e) => {
+            onSubmit: async (e) => {
               e.preventDefault();
-              const adminPassword = "1234";
-              if (authPassword === adminPassword) {
+              const msgBuffer = new TextEncoder().encode(authPassword);
+              const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgBuffer);
+              const hashArray = Array.from(new Uint8Array(hashBuffer));
+              const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+              const adminPasswordHash = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4";
+              if (hashHex === adminPasswordHash) {
                 setIsAdmin(true);
                 setShowAuthModal(false);
                 setAuthError("");
