@@ -118,6 +118,9 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
   // 4. Click handler: cycling through states
   // order: '' -> 'present' -> 'mutual_aid' -> 'absent' -> 'pending' -> ''
   const handleCellClick = (memberId: number, sessionId: string) => {
+    if (!isAdmin) {
+      return;
+    }
     const currentStatus = (recordsMap.get(memberId) || {})[sessionId] || '';
     let nextStatus = '';
     
@@ -172,7 +175,7 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
       color: detail.color,
       fontWeight: detail.fontWeight,
       fontSize: detail.fontSize || 'inherit',
-      cursor: 'pointer'
+      cursor: isAdmin ? 'pointer' : 'default'
     };
   };
 
@@ -468,7 +471,7 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
                             transition: 'all 0.1s',
                             ...getCellStyles(status)
                           }}
-                          className="btn-interactive"
+                          className={isAdmin ? "btn-interactive" : ""}
                         >
                           {getCellLabel(status)}
                         </td>
