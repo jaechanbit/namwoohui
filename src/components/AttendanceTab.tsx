@@ -275,7 +275,7 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
               </tr>
             </thead>
             <tbody>
-              {filteredMembers.map((member) => {
+              {filteredMembers.map((member, index) => {
                 const memberStatus = recordsMap.get(member.id) || {};
                 return (
                   <tr 
@@ -286,7 +286,7 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
                     }}
                     className="table-row-hover"
                   >
-                    <td style={{ padding: '10px 4px', color: 'var(--text-muted)', fontWeight: 500 }}>{member.id}</td>
+                    <td style={{ padding: '10px 4px', color: 'var(--text-muted)', fontWeight: 500 }}>{index + 1}</td>
                     <td 
                       style={{ 
                         padding: '10px 8px', 
