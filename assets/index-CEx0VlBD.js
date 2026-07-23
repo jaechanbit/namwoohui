@@ -14331,16 +14331,16 @@ const AttendanceTab = ({
     }
     const currentStatus = (recordsMap.get(memberId) || {})[sessionId] || "";
     let nextStatus = "";
-    if (currentStatus === "") {
-      nextStatus = "present";
-    } else if (currentStatus === "present") {
-      nextStatus = "absent";
-    } else if (currentStatus === "absent") {
+    if (currentStatus === "present") {
+      nextStatus = "";
+    } else if (currentStatus === "") {
       nextStatus = "mutual_aid";
     } else if (currentStatus === "mutual_aid") {
+      nextStatus = "absent";
+    } else if (currentStatus === "absent") {
       nextStatus = "pending";
     } else {
-      nextStatus = "";
+      nextStatus = "present";
     }
     onUpdateRecord(memberId, sessionId, nextStatus);
   };
@@ -14705,13 +14705,13 @@ const AttendanceTab = ({
       "💡 셀을 터치하면 [ ",
       /* @__PURE__ */ jsxRuntimeExports.jsx("b", { children: "○" }),
       " ➔ ",
+      /* @__PURE__ */ jsxRuntimeExports.jsx("b", { children: "공란(-)" }),
+      " ➔ ",
       /* @__PURE__ */ jsxRuntimeExports.jsx("b", { children: "상주" }),
       " ➔ ",
       /* @__PURE__ */ jsxRuntimeExports.jsx("b", { children: "X" }),
       " ➔ ",
       /* @__PURE__ */ jsxRuntimeExports.jsx("b", { children: "유보" }),
-      " ➔ ",
-      /* @__PURE__ */ jsxRuntimeExports.jsx("b", { children: "공란(-)" }),
       " ] 순으로 변경됩니다."
     ] }),
     isModalOpen && /* @__PURE__ */ jsxRuntimeExports.jsx(
