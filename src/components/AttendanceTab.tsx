@@ -128,16 +128,16 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
     const currentStatus = (recordsMap.get(memberId) || {})[sessionId] || '';
     let nextStatus = '';
     
-    if (currentStatus === '') {
-      nextStatus = 'present';
-    } else if (currentStatus === 'present') {
-      nextStatus = 'absent';
-    } else if (currentStatus === 'absent') {
+    if (currentStatus === 'present') {
+      nextStatus = '';
+    } else if (currentStatus === '') {
       nextStatus = 'mutual_aid';
     } else if (currentStatus === 'mutual_aid') {
+      nextStatus = 'absent';
+    } else if (currentStatus === 'absent') {
       nextStatus = 'pending';
     } else {
-      nextStatus = '';
+      nextStatus = 'present';
     }
 
     onUpdateRecord(memberId, sessionId, nextStatus);
@@ -497,7 +497,7 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
       </div>
 
       <div style={{ fontSize: '10px', color: 'var(--text-muted)', textAlign: 'center', marginTop: '4px' }}>
-        💡 셀을 터치하면 [ <b>○</b> ➔ <b>상주</b> ➔ <b>X</b> ➔ <b>유보</b> ➔ <b>공란(-)</b> ] 순으로 변경됩니다.
+        💡 셀을 터치하면 [ <b>○</b> ➔ <b>공란(-)</b> ➔ <b>상주</b> ➔ <b>X</b> ➔ <b>유보</b> ] 순으로 변경됩니다.
       </div>
 
       {/* 4. Add Session Modal */}
