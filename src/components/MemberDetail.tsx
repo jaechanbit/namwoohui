@@ -1,13 +1,59 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import type { Member } from './MembersTab';
 
 interface MemberDetailProps {
   member: Member | null;
   onClose: () => void;
+  onUpdateMember: (updatedMember: Member) => void;
 }
 
-const MemberDetail: React.FC<MemberDetailProps> = ({ member, onClose }) => {
+const MemberDetail: React.FC<MemberDetailProps> = ({ member, onClose, onUpdateMember }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   if (!member) return null;
+
+  const handleAvatarClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !member) return;
+
+    // 1. 휴대폰 번호 뒤 4자리 비밀번호 검증
+    const phoneDigits = member.phone.replace(/[^0-9]/g, '');
+    if (phoneDigits.length < 4) {
+      alert("전화번호 형식이 올바르지 않아 본인 확인을 진행할 수 없습니다.");
+      return;
+    }
+    const lastFourDigits = phoneDigits.slice(-4);
+
+    const userInput = window.prompt("본인 확인을 위해 회원의 휴대전화 번호 뒤 4자리를 입력해주세요:");
+    if (userInput === null) return; // 취소
+
+    if (userInput !== lastFourDigits) {
+      alert("비밀번호가 일치하지 않습니다. 이미지 업로드가 취소되었습니다.");
+      e.target.value = '';
+      return;
+    }
+
+    // 2. Base64로 이미지 변환
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Data = event.target?.result as string;
+      onUpdateMember({
+        ...member,
+        photo: base64Data
+      });
+      alert("프로필 이미지가 성공적으로 변경되었습니다.");
+    };
+    reader.onerror = () => {
+      alert("이미지 파일을 읽는 데 실패했습니다.");
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <>
@@ -19,13 +65,46 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ member, onClose }) => {
         <div className="drawer-handle" />
         
         <div className="drawer-header">
-          <div className="member-avatar drawer-avatar" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div 
+            className="member-avatar drawer-avatar btn-interactive" 
+            onClick={handleAvatarClick}
+            style={{ 
+              padding: 0, 
+              overflow: 'hidden', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              cursor: 'pointer',
+              position: 'relative'
+            }}
+            title="프로필 이미지 변경하려면 클릭"
+          >
             {member.photo ? (
               <img src={member.photo} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
               member.name.charAt(0)
             )}
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              color: 'white',
+              fontSize: '8px',
+              padding: '2px 0',
+              textAlign: 'center'
+            }}>
+              편집 ✏️
+            </div>
           </div>
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            style={{ display: 'none' }} 
+            accept="image/*" 
+          />
           <button className="drawer-close btn-interactive" onClick={onClose} aria-label="닫기">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" style={{ width: '16px', height: '16px' }}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

@@ -811,6 +811,7 @@ function App() {
       <MemberDetail
         member={selectedMember}
         onClose={() => setSelectedMember(null)}
+        onUpdateMember={handleUpdateMember}
       />
 
       {/* Rules Popup Drawer */}
