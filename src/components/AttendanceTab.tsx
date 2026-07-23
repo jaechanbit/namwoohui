@@ -131,10 +131,10 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
     if (currentStatus === '') {
       nextStatus = 'present';
     } else if (currentStatus === 'present') {
-      nextStatus = 'mutual_aid';
-    } else if (currentStatus === 'mutual_aid') {
       nextStatus = 'absent';
     } else if (currentStatus === 'absent') {
+      nextStatus = 'mutual_aid';
+    } else if (currentStatus === 'mutual_aid') {
       nextStatus = 'pending';
     } else {
       nextStatus = '';

@@ -576,7 +576,7 @@ function App() {
       ...rec,
       status: {
         ...rec.status,
-        [newSessionId]: ''
+        [newSessionId]: 'present'
       }
     }));
 
@@ -594,7 +594,7 @@ function App() {
           const recordInserts = members.map(m => ({
             member_id: m.id,
             session_id: newSessionId,
-            status: ''
+            status: 'present'
           }));
 
           supabase
