@@ -939,16 +939,30 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   color: var(--text-muted);
   font-size: 10.5px;
   font-weight: 700;
   cursor: pointer;
   height: 100%;
   transition: all 0.2s ease;
+  padding: 4px 0;
 }
 .nav-item.active {
   color: var(--primary);
+}
+.nav-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+.nav-item.active .nav-icon-wrapper {
+  background-color: rgba(15, 76, 58, 0.08);
 }
 .nav-icon {
   width: 20px;
