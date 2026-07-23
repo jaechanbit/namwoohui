@@ -4,6 +4,7 @@
 /* ==========================================================================
    🌿 NAMWOOHUI PREMIUM DESIGN SYSTEM (Unified Theme)
    ========================================================================== */
+
 :root {
   /* 색상 팔레트 (포레스트 & 골드 럭셔리 일원화) */
   --primary: #0f4c3a;          /* 딥 포레스트 그린 */
@@ -35,6 +36,7 @@
   --shadow-md: 0 8px 24px rgba(15, 76, 58, 0.04), 0 2px 6px rgba(0, 0, 0, 0.01);
   --shadow-lg: 0 16px 36px rgba(15, 76, 58, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
 }
+
 /* Reset & Global Base */
 * {
   box-sizing: border-box;
@@ -42,6 +44,13 @@
   padding: 0;
   -webkit-tap-highlight-color: transparent;
 }
+
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 body {
   font-family: var(--font-kor);
   background-color: var(--background);
@@ -52,10 +61,13 @@ body {
   justify-content: center;
   min-height: 100vh;
 }
+
 /* App Layout Container */
 .app-container {
   width: 100%;
   max-width: 480px; /* 스마트폰 전용 뷰포트 고정 */
+  flex-grow: 1;     /* flex 컨텍스트에서 공간을 다 차지하도록 강제 */
+  flex-shrink: 0;   /* flex 컨텍스트에서 가로 폭 수축 방지 */
   background-color: var(--background);
   min-height: 100vh;
   display: flex;
@@ -64,6 +76,7 @@ body {
   box-shadow: 0 0 32px rgba(0, 0, 0, 0.03);
   padding-bottom: 84px; /* 하단 네비게이션 공간 확보 */
 }
+
 /* ==========================================================================
    👑 APP HEADER (Unified Forest Gradient)
    ========================================================================== */
@@ -80,6 +93,7 @@ body {
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
 }
+
 .app-title {
   font-size: 20px;
   font-weight: 900;
@@ -93,6 +107,7 @@ body {
   align-items: baseline;
   gap: 6px;
 }
+
 .app-title span {
   font-family: var(--font-eng);
   font-size: 10px;
@@ -101,6 +116,7 @@ body {
   color: var(--accent);
   opacity: 0.8;
 }
+
 .db-sync-badge {
   background: rgba(16, 185, 129, 0.08);
   color: #059669;
@@ -112,17 +128,21 @@ body {
   letter-spacing: -0.3px;
   animation: pulse-badge 2s infinite;
 }
+
 @keyframes pulse-badge {
   0% { opacity: 0.7; }
   50% { opacity: 1; box-shadow: 0 0 6px rgba(16, 185, 129, 0.15); }
   100% { opacity: 0.7; }
 }
+
 /* Main Content Wrapper */
 .app-content {
+  width: 100%;
   flex: 1;
   padding: 16px 20px;
   overflow-y: auto;
 }
+
 /* ==========================================================================
    🧱 UNIFIED CARD SYSTEM (Standard Design)
    ========================================================================== */
@@ -134,6 +154,7 @@ body {
   box-shadow: var(--shadow-md);
   margin-bottom: 24px; /* 표준 섹션 마진 여백 일원화 */
 }
+
 /* 섹션 대제목 규격 일원화 */
 .account-header, 
 .exec-title-row, 
@@ -148,9 +169,11 @@ body {
   gap: 6px;
   margin-bottom: 12px;
 }
+
 .info-title svg {
   color: var(--primary);
 }
+
 .info-item {
   display: flex;
   justify-content: space-between;
@@ -158,46 +181,55 @@ body {
   padding: 10px 0;
   border-bottom: 1px dashed var(--border-color);
 }
+
 .info-item:last-of-type {
   border-bottom: none;
 }
+
 .info-label {
   font-size: 12px;
   color: var(--text-muted);
   font-weight: 500;
 }
+
 .info-value {
   font-size: 13.5px;
   font-weight: 600;
   color: var(--text-main);
 }
+
 /* ==========================================================================
    💳 2-COLUMN BANK CARDS (Refined)
    ========================================================================== */
 .account-section {
   margin-bottom: 24px;
 }
+
 .account-header {
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 10px;
 }
+
 .account-title {
   font-size: 16px;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.4px;
 }
+
 .account-subtitle {
   font-size: 10.5px;
   color: var(--text-muted);
   font-weight: 500;
 }
+
 .bank-cards-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
+
 .bank-card {
   border-radius: var(--radius-md);
   padding: 14px 10px;
@@ -210,16 +242,20 @@ body {
   transition: all 0.2s ease;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
+
 .bank-card:active {
   transform: scale(0.97);
   opacity: 0.95;
 }
+
 .bank-card.membership {
   background: linear-gradient(135deg, #113f30 0%, #09261c 100%);
 }
+
 .bank-card.mutual-aid {
   background: linear-gradient(135deg, #705536 0%, #523e27 100%);
 }
+
 .bank-card-type {
   font-size: 8.5px;
   font-weight: 800;
@@ -227,10 +263,12 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
 .bank-card-name {
   font-size: 13.5px;
   font-weight: 800;
 }
+
 .bank-card-number {
   font-size: 14px;
   font-weight: 800;
@@ -239,11 +277,13 @@ body {
   margin: 4px 0;
   word-break: break-all;
 }
+
 .bank-card-owner {
   font-size: 10px;
   opacity: 0.75;
   font-weight: 500;
 }
+
 .bank-copy-btn {
   position: absolute;
   top: 12px;
@@ -257,12 +297,14 @@ body {
   font-weight: 800;
   pointer-events: none; /* 카드 터치를 방해하지 않음 */
 }
+
 /* ==========================================================================
    👑 EXECUTIVE COMMITTEE (Luxury Cards)
    ========================================================================== */
 .exec-section {
   margin-bottom: 24px;
 }
+
 .exec-label {
   font-family: var(--font-eng);
   font-size: 9px;
@@ -271,6 +313,7 @@ body {
   letter-spacing: 1.5px;
   margin-bottom: 4px;
 }
+
 .exec-title {
   font-size: 16px;
   font-weight: 800;
@@ -278,11 +321,13 @@ body {
   margin-bottom: 12px;
   letter-spacing: -0.4px;
 }
+
 .exec-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
 }
+
 .exec-card {
   background-color: var(--surface);
   border: 1px solid var(--border-color);
@@ -297,6 +342,7 @@ body {
   position: relative;
   overflow: hidden;
 }
+
 .exec-card::before {
   content: '';
   position: absolute;
@@ -306,14 +352,17 @@ body {
   height: 3px;
   opacity: 0.85;
 }
+
 .exec-card.president::before { background: #10b981; }
 .exec-card.secretary::before { background: #3b82f6; }
 .exec-card.treasurer::before { background: #f59e0b; }
+
 .exec-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md);
   border-color: rgba(15, 76, 58, 0.2);
 }
+
 .exec-badge-tag {
   font-size: 10.5px;
   font-weight: 800;
@@ -323,6 +372,7 @@ body {
   border-radius: 20px;
   letter-spacing: -0.3px;
 }
+
 .exec-card-avatar {
   width: 50px;
   height: 50px;
@@ -339,14 +389,17 @@ body {
   overflow: hidden;
   transition: transform 0.25s ease;
 }
+
 .exec-card:hover .exec-card-avatar {
   transform: scale(1.04);
 }
+
 .exec-card-name {
   font-size: 13.5px;
   font-weight: 800;
   color: var(--text-main);
 }
+
 /* ==========================================================================
    🔍 SEARCH & FILTERS (Clean and Unified)
    ========================================================================== */
@@ -354,6 +407,7 @@ body {
   position: relative;
   margin-bottom: 12px;
 }
+
 .search-icon {
   position: absolute;
   left: 14px;
@@ -364,6 +418,7 @@ body {
   color: var(--text-muted);
   pointer-events: none;
 }
+
 .search-input {
   width: 100%;
   padding: 12px 16px 12px 38px;
@@ -376,11 +431,13 @@ body {
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
 }
+
 .search-input:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(15, 76, 58, 0.08);
 }
+
 .search-clear-btn {
   position: absolute;
   right: 12px;
@@ -398,11 +455,13 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .search-clear-btn:hover {
   background: rgba(0, 0, 0, 0.12);
   color: var(--text-main);
   transform: translateY(-50%) scale(1.05);
 }
+
 /* Filter Chips Scrolling */
 .filter-container {
   display: flex;
@@ -413,9 +472,11 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
 .filter-container::-webkit-scrollbar {
   display: none;
 }
+
 .filter-chip {
   white-space: nowrap;
   padding: 6px 12px;
@@ -429,11 +490,13 @@ body {
   transition: all 0.2s ease;
   box-shadow: var(--shadow-sm);
 }
+
 .filter-chip.active {
   background-color: var(--primary);
   color: white;
   border-color: var(--primary);
 }
+
 /* ==========================================================================
    👥 MEMBERS LIST & CARD
    ========================================================================== */
@@ -442,6 +505,7 @@ body {
   flex-direction: column;
   gap: 8px;
 }
+
 .member-card {
   background-color: var(--surface);
   border: 1px solid var(--border-color);
@@ -453,17 +517,20 @@ body {
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
 }
+
 .member-card:hover {
   border-color: rgba(15, 76, 58, 0.15);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
+
 .member-info-wrapper {
   display: flex;
   align-items: center;
   gap: 12px;
   flex: 1;
 }
+
 .member-avatar {
   width: 44px;
   height: 44px;
@@ -479,21 +546,25 @@ body {
   overflow: hidden;
   flex-shrink: 0;
 }
+
 .member-text {
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
+
 .member-name-row {
   display: flex;
   align-items: center;
   gap: 6px;
 }
+
 .member-name {
   font-size: 14.5px;
   font-weight: 800;
   color: var(--text-main);
 }
+
 .member-role-badge {
   font-size: 10px;
   font-weight: 800;
@@ -502,22 +573,26 @@ body {
   padding: 1px 6px;
   border-radius: 4px;
 }
+
 .member-company {
   font-size: 11.5px;
   color: var(--text-muted);
   font-weight: 500;
 }
+
 .member-phone {
   font-family: var(--font-eng);
   font-size: 11px;
   color: var(--text-muted);
   font-weight: 600;
 }
+
 /* Quick Call/SMS Actions */
 .member-actions {
   display: flex;
   gap: 6px;
 }
+
 .action-btn {
   width: 34px;
   height: 34px;
@@ -529,28 +604,34 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .action-btn-icon {
   width: 14px;
   height: 14px;
 }
+
 .action-btn.call {
   background-color: rgba(5, 150, 105, 0.08);
   color: #059669;
 }
+
 .action-btn.call:hover {
   background-color: #059669;
   color: white;
   transform: scale(1.05);
 }
+
 .action-btn.sms {
   background-color: rgba(59, 130, 246, 0.08);
   color: #3b82f6;
 }
+
 .action-btn.sms:hover {
   background-color: #3b82f6;
   color: white;
   transform: scale(1.05);
 }
+
 /* ==========================================================================
    📅 SCHEDULE & D-DAY WIDGETS
    ========================================================================== */
@@ -565,6 +646,7 @@ body {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
+
 .dday-card::after {
   content: '';
   position: absolute;
@@ -575,6 +657,7 @@ body {
   background: rgba(255, 255, 255, 0.03);
   border-radius: 50%;
 }
+
 .dday-badge {
   font-family: var(--font-eng);
   font-size: 8.5px;
@@ -586,6 +669,7 @@ body {
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
+
 .dday-number {
   font-size: 26px;
   font-weight: 800;
@@ -593,34 +677,41 @@ body {
   margin: 10px 0 6px;
   letter-spacing: -0.5px;
 }
+
 .dday-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
+
 /* 모임 상세 장소 (2단 칸막이) */
 .location-info-card {
   padding-bottom: 18px;
 }
+
 .location-box {
   border-radius: var(--radius-md);
   padding: 14px 14px;
   border: 1px solid var(--border-color);
 }
+
 .location-box.meeting-box {
   background-color: rgba(15, 76, 58, 0.02);
   border-color: rgba(15, 76, 58, 0.1);
 }
+
 .location-box.dinner-box {
   background-color: rgba(184, 134, 11, 0.02);
   border-color: rgba(184, 134, 11, 0.1);
 }
+
 .location-box-header {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
 }
+
 .location-badge {
   font-size: 10px;
   font-weight: 800;
@@ -629,29 +720,35 @@ body {
   letter-spacing: -0.3px;
   flex-shrink: 0;
 }
+
 .location-badge.meeting {
   background-color: rgba(15, 76, 58, 0.08);
   color: var(--primary);
 }
+
 .location-badge.dinner {
   background-color: rgba(184, 134, 11, 0.08);
   color: #a17c18;
 }
+
 .location-name-text {
   font-size: 14.5px;
   font-weight: 800;
   color: var(--text-main);
 }
+
 .location-name-text.pending {
   color: var(--text-muted);
   font-weight: 500;
   font-size: 13.5px;
 }
+
 .map-btn-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
 }
+
 .map-link-btn {
   display: flex;
   align-items: center;
@@ -663,20 +760,25 @@ body {
   text-decoration: none;
   transition: all 0.2s ease;
 }
+
 .map-link-btn.naver {
   background-color: #03c75a;
   color: white;
 }
+
 .map-link-btn.naver:hover {
   background-color: #02a84c;
 }
+
 .map-link-btn.kakao {
   background-color: #fee500;
   color: #191919;
 }
+
 .map-link-btn.kakao:hover {
   background-color: #e5cf00;
 }
+
 .pending-location-msg {
   font-size: 11.5px;
   color: var(--text-muted);
@@ -685,6 +787,7 @@ body {
   border-radius: var(--radius-sm);
   text-align: center;
 }
+
 /* 다가올 일정 리스트 하이라이트 */
 .upcoming-schedule-item {
   position: relative;
@@ -697,12 +800,14 @@ body {
   overflow: hidden;
   margin-bottom: 8px;
 }
+
 .upcoming-schedule-item.highlighted {
   border: 2px solid var(--primary);
   background: linear-gradient(135deg, #f3faf7 0%, #ffffff 100%);
   box-shadow: var(--shadow-md);
   padding-top: 26px; /* 상단 배지 공간 */
 }
+
 .next-badge-icon {
   position: absolute;
   top: 0;
@@ -716,30 +821,36 @@ body {
   letter-spacing: 0.3px;
   text-transform: uppercase;
 }
+
 .schedule-item-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .schedule-item-content {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
+
 .schedule-item-title {
   font-weight: 800;
   font-size: 14px;
   color: var(--text-main);
 }
+
 .upcoming-schedule-item.highlighted .schedule-item-title {
   color: var(--primary);
   font-size: 15.5px;
 }
+
 .schedule-item-meta {
   font-size: 11px;
   color: var(--text-muted);
   font-weight: 500;
 }
+
 .schedule-item-dday {
   font-size: 11px;
   font-weight: 800;
@@ -748,6 +859,7 @@ body {
   padding: 3px 8px;
   border-radius: 10px;
 }
+
 .upcoming-schedule-item.highlighted .schedule-item-dday {
   color: white;
   background-color: var(--primary);
@@ -755,15 +867,18 @@ body {
   padding: 4px 10px;
   animation: pulse-dday-badge 2s infinite;
 }
+
 @keyframes pulse-dday-badge {
   0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(15, 76, 58, 0.4); }
   70% { transform: scale(1.03); box-shadow: 0 0 0 6px rgba(15, 76, 58, 0); }
   100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(15, 76, 58, 0); }
 }
+
 /* ==========================================================================
    ⚙️ ADMIN CONTROLS & AUTH (Standard Formats)
    ========================================================================== */
 .admin-auth-container {
+  width: 100%;
   background-color: var(--surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
@@ -775,12 +890,14 @@ body {
   align-items: center;
   gap: 16px;
 }
+
 .auth-form {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
 .input-field {
   width: 100%;
   padding: 10px 14px;
@@ -792,12 +909,23 @@ body {
   color: var(--text-main);
   transition: all 0.2s ease;
 }
+
 .input-field:focus {
   outline: none;
   border-color: var(--primary);
   background-color: white;
   box-shadow: 0 0 0 3px rgba(15, 76, 58, 0.06);
 }
+
+.input-field.error {
+  border-color: #ef4444;
+}
+
+.input-field.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
 .btn-primary {
   width: 100%;
   padding: 12px 16px;
@@ -811,10 +939,12 @@ body {
   transition: all 0.2s ease;
   text-align: center;
 }
+
 .btn-primary:active {
   background-color: var(--primary-dark);
   transform: scale(0.98);
 }
+
 .btn-secondary {
   padding: 10px 16px;
   background-color: rgba(0, 0, 0, 0.05);
@@ -826,19 +956,23 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .btn-secondary:active {
   background-color: rgba(0, 0, 0, 0.1);
 }
+
 .admin-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
 }
+
 .admin-list-header {
   margin-bottom: 0;
   font-size: 14.5px;
 }
+
 /* ==========================================================================
    🎛️ MODALS & DRAWERS (Clean Alignment)
    ========================================================================== */
@@ -857,6 +991,7 @@ body {
   justify-content: center;
   padding: 20px;
 }
+
 .modal-content {
   width: 100%;
   max-width: 400px;
@@ -869,30 +1004,35 @@ body {
   flex-direction: column;
   gap: 14px;
 }
+
 .modal-title {
   font-size: 16px;
   font-weight: 800;
   color: var(--text-main);
   margin-bottom: 4px;
 }
+
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 5px;
   text-align: left;
 }
+
 .form-group label {
   font-size: 11.5px;
   font-weight: 800;
   color: var(--text-muted);
   text-transform: uppercase;
 }
+
 .modal-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 8px;
 }
+
 /* ==========================================================================
    🧭 BOTTOM NAVIGATION (Tab Bar)
    ========================================================================== */
@@ -910,12 +1050,14 @@ body {
   border-top: 1px solid var(--border-color);
   z-index: 1000;
 }
+
 .bottom-nav-container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   height: 100%;
   width: 100%;
 }
+
 .nav-item {
   border: none;
   background: transparent;
@@ -931,32 +1073,40 @@ body {
   height: 100%;
   transition: all 0.2s ease;
 }
+
 .nav-item.active {
   color: var(--primary);
 }
+
 .nav-icon {
   width: 20px;
   height: 20px;
   transition: transform 0.2s ease;
 }
+
 .nav-item.active .nav-icon {
   transform: translateY(-2px);
 }
+
 /* Animation helpers */
 .animate-fade-in {
   animation: anim-fade-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 @keyframes anim-fade-in {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
 .btn-interactive {
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
+
 .btn-interactive:active {
   transform: scale(0.97);
   opacity: 0.9;
 }
+
 /* ==========================================================================
    📱 MOBILE BOTTOM DRAWER (Member Profile Detail)
    ========================================================================== */
@@ -971,6 +1121,7 @@ body {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
+
 .drawer-content {
   position: fixed;
   bottom: 0;
@@ -990,10 +1141,12 @@ body {
   flex-direction: column;
   gap: 16px;
 }
+
 @keyframes slide-up {
   from { transform: translate(-50%, 100%); }
   to { transform: translate(-50%, 0); }
 }
+
 .drawer-handle {
   width: 36px;
   height: 5px;
@@ -1002,11 +1155,13 @@ body {
   align-self: center;
   margin-bottom: 4px;
 }
+
 .drawer-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .drawer-avatar {
   width: 60px;
   height: 60px;
@@ -1018,6 +1173,7 @@ body {
   border: 2px solid var(--primary-light);
   box-shadow: var(--shadow-sm);
 }
+
 .drawer-close {
   width: 32px;
   height: 32px;
@@ -1030,14 +1186,17 @@ body {
   color: var(--text-muted);
   cursor: pointer;
 }
+
 .drawer-close:hover {
   background-color: rgba(0, 0, 0, 0.08);
 }
+
 .drawer-body {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 .detail-row {
   display: flex;
   justify-content: space-between;
@@ -1045,25 +1204,30 @@ body {
   padding: 12px 0;
   border-bottom: 1px solid rgba(15, 76, 58, 0.04);
 }
+
 .detail-row:last-child {
   border-bottom: none;
 }
+
 .detail-label {
   font-size: 13px;
   color: var(--text-muted);
   font-weight: 500;
 }
+
 .detail-value {
   font-size: 15px;
   font-weight: 800;
   color: var(--text-main);
 }
+
 .drawer-actions-full {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin-top: 10px;
 }
+
 .btn-large {
   display: flex;
   align-items: center;
@@ -1078,17 +1242,21 @@ body {
   border: none;
   cursor: pointer;
 }
+
 .btn-large.call {
   background-color: var(--primary);
   color: white;
 }
+
 .btn-large.call:hover {
   background-color: var(--primary-dark);
 }
+
 .btn-large.sms {
   background-color: #3b82f6;
   color: white;
 }
+
 .btn-large.sms:hover {
   background-color: #2563eb;
 }

@@ -10230,6 +10230,23 @@ var BottomNav = ({ activeTab, setActiveTab }) => {
 					})
 				},
 				{
+					id: "attendance",
+					label: "나의출석",
+					icon: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+						xmlns: "http://www.w3.org/2000/svg",
+						fill: "none",
+						viewBox: "0 0 24 24",
+						strokeWidth: 2,
+						stroke: "currentColor",
+						className: "nav-icon",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							strokeLinecap: "round",
+							strokeLinejoin: "round",
+							d: "M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.03 0 1.9.693 2.166 1.638m-7.377 0A48.536 48.536 0 0112 3m0 0c2.917 0 5.747.294 8.5.862m-21 1.402v12.338c0 1.135.845 2.098 1.976 2.192m3.899.22c.266.945 1.134 1.638 2.166 1.638h1.5c1.03 0 1.9-.693 2.166-1.638m-7.377-1.638a48.536 48.536 0 012.21-1.638M3 18.75h3.75a2.25 2.25 0 002.25-2.25v-10.5A2.25 2.25 0 006.75 3.75H3"
+						})
+					})
+				},
+				{
 					id: "admin",
 					label: "회원 관리",
 					icon: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
@@ -11725,6 +11742,11 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 		secretaryId: members.find((m) => m.role === "총무")?.id || 0,
 		treasurerId: members.find((m) => m.role === "재무")?.id || 0
 	});
+	const cleanPhone = memberFormData.phone.replace(/[^0-9]/g, "");
+	const isPhoneDuplicate = cleanPhone.length > 0 && members.some((m) => {
+		if (memberModalMode === "edit" && selectedMember && m.id === selectedMember.id) return false;
+		return m.phone.replace(/[^0-9]/g, "") === cleanPhone;
+	});
 	const handleLogin = (e) => {
 		e.preventDefault();
 		if (password === "1234") {
@@ -11776,6 +11798,10 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 		e.preventDefault();
 		if (!memberFormData.name.trim() || !memberFormData.phone.trim()) {
 			alert("이름과 전화번호는 필수 입력 항목입니다.");
+			return;
+		}
+		if (isPhoneDuplicate) {
+			alert("이미 등록된 전화번호입니다.");
 			return;
 		}
 		if (memberModalMode === "add") onAddMember(memberFormData);
@@ -12485,17 +12511,36 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "form-group",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "전화번호 *" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-								type: "text",
-								className: "input-field",
-								required: true,
-								placeholder: "010-0000-0000",
-								value: memberFormData.phone,
-								onChange: (e) => setMemberFormData({
-									...memberFormData,
-									phone: e.target.value
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "전화번호 *" }),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+									type: "text",
+									className: `input-field ${isPhoneDuplicate ? "error" : ""}`,
+									required: true,
+									placeholder: "010-0000-0000",
+									value: memberFormData.phone,
+									onChange: (e) => {
+										const clean = e.target.value.replace(/[^0-9]/g, "");
+										let formatted = clean;
+										if (clean.length > 3 && clean.length <= 7) formatted = `${clean.slice(0, 3)}-${clean.slice(3)}`;
+										else if (clean.length > 7) formatted = `${clean.slice(0, 3)}-${clean.slice(3, 7)}-${clean.slice(7, 11)}`;
+										setMemberFormData({
+											...memberFormData,
+											phone: formatted
+										});
+									}
+								}),
+								isPhoneDuplicate && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "error-message",
+									style: {
+										color: "#ef4444",
+										fontSize: "12px",
+										marginTop: "4px",
+										display: "block"
+									},
+									children: "⚠️ 이미 등록된 전화번호입니다."
 								})
-							})]
+							]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "form-group",
@@ -12607,7 +12652,12 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 								type: "submit",
 								className: "btn-primary",
-								style: { width: "auto" },
+								style: {
+									width: "auto",
+									opacity: isPhoneDuplicate ? .6 : 1,
+									cursor: isPhoneDuplicate ? "not-allowed" : "pointer"
+								},
+								disabled: isPhoneDuplicate,
 								children: "저장"
 							})]
 						})
@@ -12681,6 +12731,620 @@ var AdminTab = ({ members, onAddMember, onUpdateMember, onDeleteMember, schedule
 					]
 				})
 			}), document.body)
+		]
+	});
+};
+//#endregion
+//#region src/components/AttendanceTab.tsx
+var STATUS_DETAILS = {
+	"present": {
+		label: "○",
+		bg: "rgba(15, 76, 58, 0.08)",
+		color: "var(--primary)",
+		fontWeight: "900"
+	},
+	"mutual_aid": {
+		label: "상주",
+		bg: "rgba(184, 134, 11, 0.08)",
+		color: "var(--accent)",
+		fontWeight: "800",
+		fontSize: "11px"
+	},
+	"absent": {
+		label: "X",
+		bg: "rgba(239, 68, 68, 0.08)",
+		color: "var(--danger)",
+		fontWeight: "800"
+	},
+	"pending": {
+		label: "유보",
+		bg: "#fffbeb",
+		color: "#d97706",
+		fontWeight: "800",
+		fontSize: "11px"
+	},
+	"": {
+		label: "-",
+		bg: "transparent",
+		color: "var(--text-muted)",
+		fontWeight: "500"
+	}
+};
+var AttendanceTab = ({ members, sessions, records, onAddSession, onUpdateRecord }) => {
+	const [searchTerm, setSearchTerm] = (0, import_react.useState)("");
+	const [filterType, setFilterType] = (0, import_react.useState)("all");
+	const [isModalOpen, setIsModalOpen] = (0, import_react.useState)(false);
+	const [newTitle, setNewTitle] = (0, import_react.useState)("");
+	const [newDate, setNewDate] = (0, import_react.useState)((/* @__PURE__ */ new Date()).toISOString().split("T")[0]);
+	const [newIsMutual, setNewIsMutual] = (0, import_react.useState)(false);
+	const recordsMap = (0, import_react.useMemo)(() => {
+		const map = /* @__PURE__ */ new Map();
+		records.forEach((r) => {
+			map.set(r.memberId, r.status);
+		});
+		return map;
+	}, [records]);
+	const filteredSessions = (0, import_react.useMemo)(() => {
+		return sessions.filter((s) => {
+			if (filterType === "regular") return !s.is_mutual_aid;
+			if (filterType === "mutual_aid") return s.is_mutual_aid;
+			return true;
+		});
+	}, [sessions, filterType]);
+	const filteredMembers = (0, import_react.useMemo)(() => {
+		return members.filter((m) => m.name.toLowerCase().includes(searchTerm.toLowerCase())).sort((a, b) => a.id - b.id);
+	}, [members, searchTerm]);
+	const stats = (0, import_react.useMemo)(() => {
+		const totalMembers = members.length;
+		if (totalMembers === 0) return {
+			avgRate: 0,
+			totalAid: 0
+		};
+		const regularSessions = sessions.filter((s) => !s.is_mutual_aid);
+		const aidSessions = sessions.filter((s) => s.is_mutual_aid);
+		let totalRegularAttendanceCount = 0;
+		let totalRegularPossible = regularSessions.length * totalMembers;
+		records.forEach((r) => {
+			regularSessions.forEach((s) => {
+				if (r.status[s.id] === "present") totalRegularAttendanceCount++;
+			});
+		});
+		return {
+			avgRate: totalRegularPossible > 0 ? Math.round(totalRegularAttendanceCount / totalRegularPossible * 100) : 0,
+			totalAid: aidSessions.length
+		};
+	}, [
+		members,
+		sessions,
+		records
+	]);
+	const handleCellClick = (memberId, sessionId) => {
+		const currentStatus = (recordsMap.get(memberId) || {})[sessionId] || "";
+		let nextStatus = "";
+		if (currentStatus === "") nextStatus = "present";
+		else if (currentStatus === "present") nextStatus = "mutual_aid";
+		else if (currentStatus === "mutual_aid") nextStatus = "absent";
+		else if (currentStatus === "absent") nextStatus = "pending";
+		else nextStatus = "";
+		onUpdateRecord(memberId, sessionId, nextStatus);
+	};
+	const handleAddSessionSubmit = (e) => {
+		e.preventDefault();
+		if (!newTitle.trim()) {
+			alert("항목 제목을 입력해주세요.");
+			return;
+		}
+		onAddSession(newTitle, newDate, newIsMutual);
+		setNewTitle("");
+		setIsModalOpen(false);
+	};
+	const getCellStyles = (status) => {
+		const detail = STATUS_DETAILS[status] || STATUS_DETAILS[""];
+		return {
+			backgroundColor: detail.bg,
+			color: detail.color,
+			fontWeight: detail.fontWeight,
+			fontSize: detail.fontSize || "inherit",
+			cursor: "pointer"
+		};
+	};
+	const getCellLabel = (status) => {
+		return (STATUS_DETAILS[status] || STATUS_DETAILS[""]).label;
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "attendance-tab",
+		style: {
+			display: "flex",
+			flexDirection: "column",
+			gap: "16px"
+		},
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "attendance-stats",
+				style: {
+					display: "grid",
+					gridTemplateColumns: "repeat(3, 1fr)",
+					gap: "10px"
+				},
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "info-card glass",
+						style: {
+							padding: "12px 10px",
+							textAlign: "center",
+							borderRadius: "12px"
+						},
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							style: {
+								fontSize: "10px",
+								color: "var(--text-muted)",
+								fontWeight: 700,
+								marginBottom: "4px"
+							},
+							children: "전체 회원"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							style: {
+								fontSize: "18px",
+								fontWeight: 900,
+								color: "var(--primary)"
+							},
+							children: [members.length, "명"]
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "info-card glass",
+						style: {
+							padding: "12px 10px",
+							textAlign: "center",
+							borderRadius: "12px"
+						},
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							style: {
+								fontSize: "10px",
+								color: "var(--text-muted)",
+								fontWeight: 700,
+								marginBottom: "4px"
+							},
+							children: "평균 출석률"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							style: {
+								fontSize: "18px",
+								fontWeight: 900,
+								color: "var(--accent)"
+							},
+							children: [stats.avgRate, "%"]
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "info-card glass",
+						style: {
+							padding: "12px 10px",
+							textAlign: "center",
+							borderRadius: "12px"
+						},
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							style: {
+								fontSize: "10px",
+								color: "var(--text-muted)",
+								fontWeight: 700,
+								marginBottom: "4px"
+							},
+							children: "상조 발생"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							style: {
+								fontSize: "18px",
+								fontWeight: 900,
+								color: "#2563eb"
+							},
+							children: [stats.totalAid, "건"]
+						})]
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "attendance-controls",
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					gap: "10px"
+				},
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					style: {
+						display: "flex",
+						gap: "8px"
+					},
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						type: "text",
+						placeholder: "이름으로 검색..",
+						value: searchTerm,
+						onChange: (e) => setSearchTerm(e.target.value),
+						style: {
+							flex: 1,
+							padding: "10px 14px",
+							borderRadius: "8px",
+							border: "1px solid var(--border-color)",
+							fontSize: "13px",
+							outline: "none",
+							backgroundColor: "#fff"
+						}
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						onClick: () => setIsModalOpen(true),
+						className: "btn-interactive",
+						style: {
+							padding: "0 16px",
+							backgroundColor: "var(--primary)",
+							color: "white",
+							border: "none",
+							borderRadius: "8px",
+							fontSize: "13px",
+							fontWeight: 800,
+							cursor: "pointer",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center"
+						},
+						children: "항목 추가"
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					style: {
+						display: "flex",
+						gap: "6px"
+					},
+					children: [
+						"all",
+						"regular",
+						"mutual_aid"
+					].map((type) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						onClick: () => setFilterType(type),
+						className: "btn-interactive",
+						style: {
+							flex: 1,
+							padding: "8px",
+							borderRadius: "6px",
+							border: "1px solid var(--border-color)",
+							fontSize: "11px",
+							fontWeight: 700,
+							cursor: "pointer",
+							backgroundColor: filterType === type ? "var(--primary)" : "rgba(255,255,255,0.8)",
+							color: filterType === type ? "white" : "var(--text-main)"
+						},
+						children: [
+							type === "all" && "전체 보기",
+							type === "regular" && "정기모임",
+							type === "mutual_aid" && "상조"
+						]
+					}, type))
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "info-card glass",
+				style: {
+					padding: "0",
+					borderRadius: "16px",
+					overflow: "hidden",
+					border: "1px solid var(--border-color)"
+				},
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "table-scroll-container",
+					style: {
+						overflowX: "auto",
+						WebkitOverflowScrolling: "touch"
+					},
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", {
+						style: {
+							width: "100%",
+							borderCollapse: "collapse",
+							fontSize: "12px",
+							textAlign: "center",
+							minWidth: "380px"
+						},
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", {
+							style: {
+								backgroundColor: "var(--primary-light)",
+								borderBottom: "1px solid var(--border-color)"
+							},
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+									style: {
+										padding: "12px 6px",
+										fontWeight: 800,
+										width: "40px",
+										color: "var(--primary-dark)"
+									},
+									children: "번호"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+									style: {
+										padding: "12px 8px",
+										fontWeight: 800,
+										width: "70px",
+										color: "var(--primary-dark)",
+										textAlign: "left",
+										position: "sticky",
+										left: 0,
+										backgroundColor: "var(--primary-light)",
+										zIndex: 1
+									},
+									children: "이름"
+								}),
+								filteredSessions.map((session) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("th", {
+									style: {
+										padding: "12px 6px",
+										fontWeight: 800,
+										color: session.is_mutual_aid ? "var(--accent)" : "var(--primary)",
+										minWidth: "60px"
+									},
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: session.title }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										style: {
+											fontSize: "9px",
+											opacity: .6,
+											fontWeight: 500
+										},
+										children: session.date.substring(5)
+									})]
+								}, session.id))
+							]
+						}) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { children: [filteredMembers.map((member) => {
+							const memberStatus = recordsMap.get(member.id) || {};
+							return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", {
+								style: {
+									borderBottom: "1px solid rgba(15, 76, 58, 0.04)",
+									transition: "background-color 0.2s"
+								},
+								className: "table-row-hover",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										style: {
+											padding: "10px 4px",
+											color: "var(--text-muted)",
+											fontWeight: 500
+										},
+										children: member.id
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										style: {
+											padding: "10px 8px",
+											fontWeight: 700,
+											textAlign: "left",
+											position: "sticky",
+											left: 0,
+											backgroundColor: "#fff",
+											zIndex: 1,
+											boxShadow: "2px 0 5px rgba(0,0,0,0.02)"
+										},
+										children: member.name
+									}),
+									filteredSessions.map((session) => {
+										const status = memberStatus[session.id] || "";
+										return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+											onClick: () => handleCellClick(member.id, session.id),
+											style: {
+												padding: "10px 4px",
+												transition: "all 0.1s",
+												...getCellStyles(status)
+											},
+											className: "btn-interactive",
+											children: getCellLabel(status)
+										}, session.id);
+									})
+								]
+							}, member.id);
+						}), filteredMembers.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tr", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+							colSpan: filteredSessions.length + 2,
+							style: {
+								padding: "24px",
+								color: "var(--text-muted)"
+							},
+							children: "일치하는 회원이 없습니다."
+						}) })] })]
+					})
+				})
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				style: {
+					fontSize: "10px",
+					color: "var(--text-muted)",
+					textAlign: "center",
+					marginTop: "4px"
+				},
+				children: [
+					"💡 셀을 터치하면 [ ",
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "○" }),
+					" ➔ ",
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "상주" }),
+					" ➔ ",
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "X" }),
+					" ➔ ",
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "유보" }),
+					" ➔ ",
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "공란(-)" }),
+					" ] 순으로 변경됩니다."
+				]
+			}),
+			isModalOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				style: {
+					position: "fixed",
+					top: 0,
+					left: 0,
+					width: "100%",
+					height: "100%",
+					backgroundColor: "rgba(0,0,0,0.4)",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					zIndex: 999,
+					padding: "20px"
+				},
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "info-card glass",
+					style: {
+						width: "100%",
+						maxWidth: "340px",
+						padding: "24px",
+						borderRadius: "16px",
+						backgroundColor: "white",
+						boxShadow: "var(--shadow-lg)"
+					},
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+						style: {
+							fontSize: "16px",
+							fontWeight: 900,
+							marginBottom: "16px",
+							color: "var(--primary)"
+						},
+						children: "새 출석 항목 추가"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+						onSubmit: handleAddSessionSubmit,
+						style: {
+							display: "flex",
+							flexDirection: "column",
+							gap: "14px"
+						},
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									flexDirection: "column",
+									gap: "4px"
+								},
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+									style: {
+										fontSize: "11px",
+										fontWeight: 700,
+										color: "var(--text-muted)"
+									},
+									children: "구분"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									style: {
+										display: "flex",
+										gap: "10px"
+									},
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+										style: {
+											display: "flex",
+											alignItems: "center",
+											gap: "6px",
+											fontSize: "13px",
+											cursor: "pointer"
+										},
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+											type: "radio",
+											name: "session_type",
+											checked: !newIsMutual,
+											onChange: () => setNewIsMutual(false),
+											style: { accentColor: "var(--primary)" }
+										}), "정기모임"]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+										style: {
+											display: "flex",
+											alignItems: "center",
+											gap: "6px",
+											fontSize: "13px",
+											cursor: "pointer"
+										},
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+											type: "radio",
+											name: "session_type",
+											checked: newIsMutual,
+											onChange: () => setNewIsMutual(true),
+											style: { accentColor: "var(--primary)" }
+										}), "상조"]
+									})]
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									flexDirection: "column",
+									gap: "4px"
+								},
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+									style: {
+										fontSize: "11px",
+										fontWeight: 700,
+										color: "var(--text-muted)"
+									},
+									children: "항목 제목"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+									type: "text",
+									value: newTitle,
+									onChange: (e) => setNewTitle(e.target.value),
+									placeholder: "예: 9월 정기모임, 상조(김동부)",
+									style: {
+										padding: "10px",
+										borderRadius: "8px",
+										border: "1px solid var(--border-color)",
+										fontSize: "13px",
+										outline: "none"
+									}
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									flexDirection: "column",
+									gap: "4px"
+								},
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+									style: {
+										fontSize: "11px",
+										fontWeight: 700,
+										color: "var(--text-muted)"
+									},
+									children: "일자"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+									type: "date",
+									value: newDate,
+									onChange: (e) => setNewDate(e.target.value),
+									style: {
+										padding: "10px",
+										borderRadius: "8px",
+										border: "1px solid var(--border-color)",
+										fontSize: "13px",
+										outline: "none"
+									}
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									gap: "8px",
+									marginTop: "8px"
+								},
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "button",
+									onClick: () => setIsModalOpen(false),
+									style: {
+										flex: 1,
+										padding: "10px",
+										border: "1px solid var(--border-color)",
+										backgroundColor: "#fff",
+										borderRadius: "8px",
+										fontSize: "13px",
+										fontWeight: 700,
+										cursor: "pointer"
+									},
+									children: "취소"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "submit",
+									style: {
+										flex: 1,
+										padding: "10px",
+										backgroundColor: "var(--primary)",
+										color: "white",
+										border: "none",
+										borderRadius: "8px",
+										fontSize: "13px",
+										fontWeight: 800,
+										cursor: "pointer"
+									},
+									children: "추가하기"
+								})]
+							})
+						]
+					})]
+				})
+			})
 		]
 	});
 };
@@ -13445,7 +14109,9 @@ var FunctionsClient = class {
 	* @category Edge Functions
 	*
 	* @remarks
-	* - Requires an Authorization header.
+	* - The API key is sent in the `apikey` header. The `Authorization` header is reserved
+	*   for the signed-in user's JWT (or a custom auth token) — when there is no session, a
+	*   new-format API key (`sb_publishable_…` / `sb_secret_…`) is not sent as a Bearer token.
 	* - Invoke params generally match the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) spec.
 	* - When you pass in a body to your function, we automatically attach the Content-Type header for `Blob`, `ArrayBuffer`, `File`, `FormData` and `String`. If it doesn't match any of these types we assume the payload is `json`, serialize it and attach the `Content-Type` header as `application/json`. You can override this behavior by passing in a `Content-Type` header of your own.
 	* - Responses are automatically parsed as `json`, `blob` and `form-data` depending on the `Content-Type` header sent by your function. Responses are parsed as `text` by default.
@@ -17559,7 +18225,7 @@ var WebSocketFactory = class {
 };
 //#endregion
 //#region node_modules/@supabase/realtime-js/dist/module/lib/constants.js
-var DEFAULT_VERSION = `realtime-js/2.110.2`;
+var DEFAULT_VERSION = `realtime-js/2.110.7`;
 var VSN_1_0_0 = "1.0.0";
 var VSN_2_0_0 = "2.0.0";
 var DEFAULT_VSN$1 = VSN_2_0_0;
@@ -17630,12 +18296,13 @@ var Serializer = class {
 	}
 	_encodeUserBroadcastPush(message, encodingType, encodedPayload) {
 		var _a, _b;
-		const topic = message.topic;
-		const ref = (_a = message.ref) !== null && _a !== void 0 ? _a : "";
-		const joinRef = (_b = message.join_ref) !== null && _b !== void 0 ? _b : "";
-		const userEvent = message.payload.event;
+		const encoder = new TextEncoder();
+		const topic = encoder.encode(message.topic);
+		const ref = encoder.encode((_a = message.ref) !== null && _a !== void 0 ? _a : "");
+		const joinRef = encoder.encode((_b = message.join_ref) !== null && _b !== void 0 ? _b : "");
+		const userEvent = encoder.encode(message.payload.event);
 		const rest = this.allowedMetadataKeys ? this._pick(message.payload, this.allowedMetadataKeys) : {};
-		const metadata = Object.keys(rest).length === 0 ? "" : JSON.stringify(rest);
+		const metadata = encoder.encode(Object.keys(rest).length === 0 ? "" : JSON.stringify(rest));
 		if (joinRef.length > 255) throw new Error(`joinRef length ${joinRef.length} exceeds maximum of 255`);
 		if (ref.length > 255) throw new Error(`ref length ${ref.length} exceeds maximum of 255`);
 		if (topic.length > 255) throw new Error(`topic length ${topic.length} exceeds maximum of 255`);
@@ -17643,7 +18310,8 @@ var Serializer = class {
 		if (metadata.length > 255) throw new Error(`metadata length ${metadata.length} exceeds maximum of 255`);
 		const metaLength = this.USER_BROADCAST_PUSH_META_LENGTH + joinRef.length + ref.length + topic.length + userEvent.length + metadata.length;
 		const header = new ArrayBuffer(this.HEADER_LENGTH + metaLength);
-		let view = new DataView(header);
+		const view = new DataView(header);
+		const bytes = new Uint8Array(header);
 		let offset = 0;
 		view.setUint8(offset++, this.KINDS.userBroadcastPush);
 		view.setUint8(offset++, joinRef.length);
@@ -17652,11 +18320,16 @@ var Serializer = class {
 		view.setUint8(offset++, userEvent.length);
 		view.setUint8(offset++, metadata.length);
 		view.setUint8(offset++, encodingType);
-		Array.from(joinRef, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(ref, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(topic, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(userEvent, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(metadata, (char) => view.setUint8(offset++, char.charCodeAt(0)));
+		bytes.set(joinRef, offset);
+		offset += joinRef.length;
+		bytes.set(ref, offset);
+		offset += ref.length;
+		bytes.set(topic, offset);
+		offset += topic.length;
+		bytes.set(userEvent, offset);
+		offset += userEvent.length;
+		bytes.set(metadata, offset);
+		offset += metadata.length;
 		var combined = new Uint8Array(header.byteLength + encodedPayload.byteLength);
 		combined.set(new Uint8Array(header), 0);
 		combined.set(new Uint8Array(encodedPayload), header.byteLength);
@@ -17925,6 +18598,7 @@ var global$1 = globalSelf || phxWindow || globalThis;
 var DEFAULT_VSN = "2.0.0";
 var DEFAULT_TIMEOUT = 1e4;
 var WS_CLOSE_NORMAL = 1e3;
+var MAX_LONGPOLL_BATCH_SIZE = 100;
 var SOCKET_STATES = (
 /** @type {const} */
 {
@@ -18570,17 +19244,20 @@ var LongPoll = class {
 			}, 0);
 		}
 	}
-	batchSend(messages) {
+	batchSend(messages, offset = 0) {
 		this.awaitingBatchAck = true;
-		this.ajax("POST", { "Content-Type": "application/x-ndjson" }, messages.join("\n"), () => this.onerror("timeout"), (resp) => {
-			this.awaitingBatchAck = false;
+		const next = offset + MAX_LONGPOLL_BATCH_SIZE;
+		const batch = messages.slice(offset, next);
+		this.ajax("POST", { "Content-Type": "application/x-ndjson" }, batch.join("\n"), () => this.onerror("timeout"), (resp) => {
 			if (!resp || resp.status !== 200) {
+				this.awaitingBatchAck = false;
 				this.onerror(resp && resp.status);
 				this.closeAndRetry(1011, "internal server error", false);
-			} else if (this.batchBuffer.length > 0) {
+			} else if (next < messages.length) this.batchSend(messages, next);
+			else if (this.batchBuffer.length > 0) {
 				this.batchSend(this.batchBuffer);
 				this.batchBuffer = [];
-			}
+			} else this.awaitingBatchAck = false;
 		});
 	}
 	close(code, reason, wasClean) {
@@ -18625,7 +19302,7 @@ var Presence = class _Presence {
 			state: "presence_state",
 			diff: "presence_diff"
 		};
-		this.state = {};
+		this.state = /* @__PURE__ */ Object.create(null);
 		this.pendingDiffs = [];
 		this.channel = channel;
 		this.joinRef = null;
@@ -18699,9 +19376,10 @@ var Presence = class _Presence {
 	* @returns {Record<string, PresenceState>}
 	*/
 	static syncState(currentState, newState, onJoin, onLeave) {
-		let state = this.clone(currentState);
-		let joins = {};
-		let leaves = {};
+		let state = this.toNullProtoObj(this.clone(currentState));
+		newState = this.toNullProtoObj(newState);
+		let joins = /* @__PURE__ */ Object.create(null);
+		let leaves = /* @__PURE__ */ Object.create(null);
 		this.map(state, (key, presence) => {
 			if (!newState[key]) leaves[key] = presence;
 		});
@@ -18742,6 +19420,7 @@ var Presence = class _Presence {
 	* @returns {Record<string, PresenceState>}
 	*/
 	static syncDiff(state, diff, onJoin, onLeave) {
+		state = this.toNullProtoObj(state);
 		let { joins, leaves } = this.clone(diff);
 		if (!onJoin) onJoin = function() {};
 		if (!onLeave) onLeave = function() {};
@@ -18791,6 +19470,14 @@ var Presence = class _Presence {
 	*/
 	static map(obj, func) {
 		return Object.getOwnPropertyNames(obj).map((key) => func(key, obj[key]));
+	}
+	static toNullProtoObj(obj) {
+		if (Object.getPrototypeOf(obj) === null) return obj;
+		let cleaned = /* @__PURE__ */ Object.create(null);
+		Object.getOwnPropertyNames(obj).forEach((key) => {
+			cleaned[key] = obj[key];
+		});
+		return cleaned;
 	}
 	/**
 	* @template T
@@ -18850,23 +19537,40 @@ var serializer_default = {
 	/** @private */
 	binaryEncode(message) {
 		let { join_ref, ref, event, topic, payload } = message;
-		let metaLength = this.META_LENGTH + join_ref.length + ref.length + topic.length + event.length;
+		let encoder = new TextEncoder();
+		let joinRefBytes = encoder.encode(join_ref);
+		let refBytes = encoder.encode(ref);
+		let topicBytes = encoder.encode(topic);
+		let eventBytes = encoder.encode(event);
+		this.assertFieldSize(joinRefBytes.byteLength, "join_ref");
+		this.assertFieldSize(refBytes.byteLength, "ref");
+		this.assertFieldSize(topicBytes.byteLength, "topic");
+		this.assertFieldSize(eventBytes.byteLength, "event");
+		let metaLength = this.META_LENGTH + joinRefBytes.byteLength + refBytes.byteLength + topicBytes.byteLength + eventBytes.byteLength;
 		let header = new ArrayBuffer(this.HEADER_LENGTH + metaLength);
+		let headerBytes = new Uint8Array(header);
 		let view = new DataView(header);
 		let offset = 0;
 		view.setUint8(offset++, this.KINDS.push);
-		view.setUint8(offset++, join_ref.length);
-		view.setUint8(offset++, ref.length);
-		view.setUint8(offset++, topic.length);
-		view.setUint8(offset++, event.length);
-		Array.from(join_ref, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(ref, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(topic, (char) => view.setUint8(offset++, char.charCodeAt(0)));
-		Array.from(event, (char) => view.setUint8(offset++, char.charCodeAt(0)));
+		view.setUint8(offset++, joinRefBytes.byteLength);
+		view.setUint8(offset++, refBytes.byteLength);
+		view.setUint8(offset++, topicBytes.byteLength);
+		view.setUint8(offset++, eventBytes.byteLength);
+		headerBytes.set(joinRefBytes, offset);
+		offset += joinRefBytes.byteLength;
+		headerBytes.set(refBytes, offset);
+		offset += refBytes.byteLength;
+		headerBytes.set(topicBytes, offset);
+		offset += topicBytes.byteLength;
+		headerBytes.set(eventBytes, offset);
+		offset += eventBytes.byteLength;
 		var combined = new Uint8Array(header.byteLength + payload.byteLength);
-		combined.set(new Uint8Array(header), 0);
+		combined.set(headerBytes, 0);
 		combined.set(new Uint8Array(payload), header.byteLength);
 		return combined.buffer;
+	},
+	assertFieldSize(size, name) {
+		if (size > 255) throw new Error(`unable to convert ${name} to binary: must be less than or equal to 255 bytes, but is ${size} bytes`);
 	},
 	/**
 	* @private
@@ -19066,7 +19770,7 @@ var Socket = class {
 				this.connect();
 			});
 		}, this.reconnectAfterMs);
-		this.authToken = opts.authToken;
+		this.authToken = opts.authToken && closure(opts.authToken);
 	}
 	/**
 	* Returns the LongPoll transport reference
@@ -19255,7 +19959,7 @@ var Socket = class {
 		this.connectClock++;
 		this.closeWasClean = false;
 		let protocols = void 0;
-		if (this.authToken) protocols = ["phoenix", `${AUTH_TOKEN_PREFIX}${btoa(this.authToken).replace(/=/g, "")}`];
+		if (this.authToken) protocols = ["phoenix", `${AUTH_TOKEN_PREFIX}${btoa(this.authToken()).replace(/=/g, "")}`];
 		this.conn = new this.transport(this.endPointURL(), protocols);
 		this.conn.binaryType = this.binaryType;
 		this.conn.timeout = this.longpollerTimeout;
@@ -20151,6 +20855,11 @@ var RealtimeChannel = class RealtimeChannel {
 	* Sends the supplied payload to the presence tracker so other subscribers can see that this
 	* client is online. Use `untrack` to stop broadcasting presence for the same key.
 	*
+	* Tracking makes this client visible to other subscribers immediately, regardless of this
+	* channel's `config.presence.enabled` setting or whether it has a `presence` listener — that
+	* flag only affects whether *this* client receives presence updates from others (and, on
+	* RLS-protected channels, whether it's authorized to do so).
+	*
 	* @category Realtime
 	*/
 	async track(payload, opts = {}) {
@@ -20158,7 +20867,7 @@ var RealtimeChannel = class RealtimeChannel {
 			type: "presence",
 			event: "track",
 			payload
-		}, opts.timeout || this.timeout);
+		}, opts);
 	}
 	/**
 	* Removes the current presence state for this client.
@@ -23318,7 +24027,7 @@ var StorageFileApi = class extends BaseApiClient {
 		return query;
 	}
 };
-var DEFAULT_HEADERS$1 = { "X-Client-Info": `storage-js/2.110.2` };
+var DEFAULT_HEADERS$1 = { "X-Client-Info": `storage-js/2.110.7` };
 var StorageBucketApi = class extends BaseApiClient {
 	constructor(url, headers = {}, fetch$1, opts) {
 		const baseUrl = new URL(url);
@@ -24798,7 +25507,7 @@ var StorageClient = class extends StorageBucketApi {
 };
 //#endregion
 //#region node_modules/@supabase/auth-js/dist/module/lib/version.js
-var version$1 = "2.110.2";
+var version$1 = "2.110.7";
 //#endregion
 //#region node_modules/@supabase/auth-js/dist/module/lib/constants.js
 /** Current session will be checked for refresh at this interval. */
@@ -31784,7 +32493,6 @@ var GoTrueClient = class GoTrueClient {
 	async _saveSession(session) {
 		this._debug("#_saveSession()", session);
 		this.suppressGetSessionWarning = true;
-		await removeItemAsync(this.storage, `${this.storageKey}-code-verifier`);
 		const sessionToProcess = Object.assign({}, session);
 		const userIsProxy = sessionToProcess.user && sessionToProcess.user.__isUserNotAvailableProxy === true;
 		if (this.userStorage) {
@@ -33087,7 +33795,7 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 };
 //#endregion
 //#region node_modules/@supabase/supabase-js/dist/index.mjs
-var version = "2.110.2";
+var version = "2.110.7";
 var JS_ENV = "";
 var JS_RUNTIME_VERSION;
 if (typeof Deno !== "undefined") {
@@ -33099,7 +33807,8 @@ else if (typeof navigator !== "undefined" && navigator.product === "ReactNative"
 else {
 	var _process$version;
 	JS_ENV = "node";
-	JS_RUNTIME_VERSION = typeof process !== "undefined" ? (_process$version = process.version) === null || _process$version === void 0 ? void 0 : _process$version.replace(/^v/, "") : void 0;
+	const _process = globalThis["process"];
+	JS_RUNTIME_VERSION = _process === null || _process === void 0 || (_process$version = _process["version"]) === null || _process$version === void 0 ? void 0 : _process$version.replace(/^v/, "");
 }
 var _runtimeMeta = [`runtime=${JS_ENV}`];
 if (JS_RUNTIME_VERSION) _runtimeMeta.push(`runtime-version=${JS_RUNTIME_VERSION}`);
@@ -33375,18 +34084,43 @@ var resolveFetch = (customFetch) => {
 var resolveHeadersConstructor = () => {
 	return Headers;
 };
-var fetchWithAuth = (supabaseKey, supabaseUrl, getAccessToken, customFetch, tracePropagationOptions) => {
+/**
+* New-format Supabase API keys (`sb_publishable_…` / `sb_secret_…`) are not JWTs and
+* must never be sent as a Bearer token — they belong only in the `apikey` header.
+* All other keys (legacy JWT keys, `sb_temp_…` temporary keys, unrecognized `sb_`
+* subtypes) keep the Bearer fallback.
+*/
+var isNewApiKey = (key) => key.startsWith("sb_publishable_") || key.startsWith("sb_secret_");
+var TEMP_KEY_PREFIX = "sb_temp_";
+var warnedKeySubtypes = /* @__PURE__ */ new Set();
+/**
+* Warn (once per subtype) when an `sb_` key isn't a subtype this SDK version recognizes.
+* Never throws — the server, not the SDK, decides key validity. The key value is never
+* included in the message.
+*/
+var checkApiKeyFormat = (key) => {
+	var _key$match$, _key$match;
+	if (!key.startsWith("sb_") || isNewApiKey(key) || key.startsWith(TEMP_KEY_PREFIX)) return;
+	const subtype = (_key$match$ = (_key$match = key.match(/^sb_[a-zA-Z0-9]+_/)) === null || _key$match === void 0 ? void 0 : _key$match[0]) !== null && _key$match$ !== void 0 ? _key$match$ : "unknown";
+	if (warnedKeySubtypes.has(subtype)) return;
+	warnedKeySubtypes.add(subtype);
+	console.warn("@supabase/supabase-js: Unrecognized Supabase API key format. The client will proceed and send this key as-is; if you see authentication errors you may need to upgrade @supabase/supabase-js to a version that recognizes this key type.");
+};
+var fetchWithAuth = (supabaseKey, supabaseUrl, getAccessToken, customFetch, tracePropagationOptions, options) => {
 	const fetch$1 = resolveFetch(customFetch);
 	const HeadersConstructor = resolveHeadersConstructor();
 	const traceEnabled = (tracePropagationOptions === null || tracePropagationOptions === void 0 ? void 0 : tracePropagationOptions.enabled) === true;
 	const respectSampling = (tracePropagationOptions === null || tracePropagationOptions === void 0 ? void 0 : tracePropagationOptions.respectSamplingDecision) !== false;
 	const traceTargets = traceEnabled ? getDefaultPropagationTargets(supabaseUrl) : null;
+	const allowKeyAsBearer = !((options === null || options === void 0 ? void 0 : options.omitApiKeyAsBearer) && isNewApiKey(supabaseKey));
 	return async (input, init) => {
-		var _await$getAccessToken;
-		const accessToken = (_await$getAccessToken = await getAccessToken()) !== null && _await$getAccessToken !== void 0 ? _await$getAccessToken : supabaseKey;
+		const realToken = await getAccessToken();
 		let headers = new HeadersConstructor(init === null || init === void 0 ? void 0 : init.headers);
 		if (!headers.has("apikey")) headers.set("apikey", supabaseKey);
-		if (!headers.has("Authorization")) headers.set("Authorization", `Bearer ${accessToken}`);
+		if (!headers.has("Authorization")) {
+			const bearer = realToken !== null && realToken !== void 0 ? realToken : allowKeyAsBearer ? supabaseKey : null;
+			if (bearer) headers.set("Authorization", `Bearer ${bearer}`);
+		}
 		if (traceTargets) {
 			const traceHeaders = await getTraceHeaders(input, traceTargets, respectSampling);
 			if (traceHeaders) {
@@ -33534,9 +34268,9 @@ var SupabaseClient = class {
 	* ```
 	*
 	* @exampleDescription Custom fetch implementation
-	* `supabase-js` uses the [`cross-fetch`](https://www.npmjs.com/package/cross-fetch) library to make HTTP requests,
+	* `supabase-js` uses the runtime's global `fetch` to make HTTP requests,
 	* but an alternative `fetch` implementation can be provided as an option.
-	* This is most useful in environments where `cross-fetch` is not compatible (for instance Cloudflare Workers).
+	* This is useful in environments where the global `fetch` is unavailable or where you want to customize request behavior.
 	*
 	* @example Custom fetch implementation
 	* ```js
@@ -33682,6 +34416,7 @@ var SupabaseClient = class {
 		this.supabaseKey = supabaseKey;
 		const baseUrl = validateSupabaseUrl(supabaseUrl);
 		if (!supabaseKey) throw new Error("supabaseKey is required.");
+		checkApiKeyFormat(supabaseKey);
 		this.realtimeUrl = new URL("realtime/v1", baseUrl);
 		this.realtimeUrl.protocol = this.realtimeUrl.protocol.replace("http", "ws");
 		this.authUrl = new URL("auth/v1", baseUrl);
@@ -33708,7 +34443,8 @@ var SupabaseClient = class {
 				throw new Error(`@supabase/supabase-js: Supabase Client is configured with the accessToken option, accessing supabase.auth.${String(prop)} is not possible`);
 			} });
 		}
-		this.fetch = fetchWithAuth(supabaseKey, supabaseUrl, this._getAccessToken.bind(this), settings.global.fetch, settings.tracePropagation);
+		this.fetch = fetchWithAuth(supabaseKey, supabaseUrl, this._getSessionToken.bind(this), settings.global.fetch, settings.tracePropagation);
+		this.functionsFetch = fetchWithAuth(supabaseKey, supabaseUrl, this._getSessionToken.bind(this), settings.global.fetch, settings.tracePropagation, { omitApiKeyAsBearer: true });
 		this.realtime = this._initRealtimeClient(_objectSpread2({
 			headers: this.headers,
 			accessToken: this._getAccessToken.bind(this),
@@ -33731,7 +34467,7 @@ var SupabaseClient = class {
 	get functions() {
 		return new FunctionsClient(this.functionsUrl.href, {
 			headers: this.headers,
-			customFetch: this.fetch
+			customFetch: this.functionsFetch
 		});
 	}
 	/**
@@ -33841,12 +34577,22 @@ var SupabaseClient = class {
 	removeAllChannels() {
 		return this.realtime.removeAllChannels();
 	}
-	async _getAccessToken() {
+	/**
+	* The raw session token — the custom `accessToken` result or the signed-in user's JWT —
+	* or `null` when there is no session. Unlike {@link _getAccessToken} it does not fall back
+	* to `supabaseKey`, so callers can distinguish "no session" from "has session".
+	*/
+	async _getSessionToken() {
 		var _this = this;
 		var _data$session$access_, _data$session;
 		if (_this.accessToken) return await _this.accessToken();
 		const { data } = await _this.auth.getSession();
-		return (_data$session$access_ = (_data$session = data.session) === null || _data$session === void 0 ? void 0 : _data$session.access_token) !== null && _data$session$access_ !== void 0 ? _data$session$access_ : _this.supabaseKey;
+		return (_data$session$access_ = (_data$session = data.session) === null || _data$session === void 0 ? void 0 : _data$session.access_token) !== null && _data$session$access_ !== void 0 ? _data$session$access_ : null;
+	}
+	async _getAccessToken() {
+		var _this2 = this;
+		var _await$this$_getSessi;
+		return (_await$this$_getSessi = await _this2._getSessionToken()) !== null && _await$this$_getSessi !== void 0 ? _await$this$_getSessi : _this2.supabaseKey;
 	}
 	_initSupabaseAuthClient({ autoRefreshToken, persistSession, detectSessionInUrl, storage, userStorage, storageKey, flowType, lock, debug, throwOnError, experimental, lockAcquireTimeout, skipAutoInitialize }, headers, fetch$1) {
 		const authHeaders = {
@@ -33882,7 +34628,7 @@ var SupabaseClient = class {
 		});
 	}
 	_handleTokenChanged(event, source, token) {
-		if ((event === "TOKEN_REFRESHED" || event === "SIGNED_IN") && this.changedAccessToken !== token) {
+		if ((event === "TOKEN_REFRESHED" || event === "SIGNED_IN" || event === "INITIAL_SESSION") && this.changedAccessToken !== token) {
 			this.changedAccessToken = token;
 			this.realtime.setAuth(token);
 		} else if (event === "SIGNED_OUT") {
@@ -33918,6 +34664,801 @@ function shouldShowDeprecationWarning() {
 }
 if (shouldShowDeprecationWarning()) console.warn("⚠️  Node.js 20 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 22 or later. For more information, visit: https://github.com/orgs/supabase/discussions/45715");
 var supabase = createClient("https://wxrcvkjxmlflpwhilnvf.supabase.co", "sb_publishable_T5iyn7H-yw43C1W_DBi0BQ_28niP4vs");
+//#endregion
+//#region src/data/attendanceData.ts
+var initialSessions = [
+	{
+		"id": "2026-03-regular",
+		"title": "3월 정기모임",
+		"date": "2026-03-15",
+		"is_mutual_aid": false
+	},
+	{
+		"id": "2026-03-aid",
+		"title": "3월 상조",
+		"date": "2026-03-20",
+		"is_mutual_aid": true
+	},
+	{
+		"id": "2026-06-regular",
+		"title": "6월 정기모임",
+		"date": "2026-06-15",
+		"is_mutual_aid": false
+	},
+	{
+		"id": "2026-06-aid",
+		"title": "6월 상조",
+		"date": "2026-06-20",
+		"is_mutual_aid": true
+	}
+];
+var initialRecords = [
+	{
+		"memberId": 1,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 7,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 2,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 8,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 3,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 9,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 81,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 82,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 5,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 11,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 6,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 12,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 13,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "mutual_aid",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 19,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 14,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 20,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 15,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 21,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 22,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 16,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 17,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 23,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 18,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 24,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 83,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 25,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 26,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 84,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 27,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 85,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 86,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 28,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 87,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 29,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 88,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 30,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 31,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 37,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 89,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 32,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 33,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 39,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 34,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 40,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 35,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 41,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 36,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 42,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 43,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 49,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 44,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 50,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 45,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 51,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 46,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 52,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 47,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 53,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 48,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 54,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 55,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 61,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 56,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 62,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 57,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 63,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 58,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 64,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 59,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 65,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 60,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 66,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 67,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 74,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 68,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 75,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 69,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 76,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 70,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 77,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 78,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 72,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 79,
+		"status": {
+			"2026-03-regular": "present",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": "present"
+		}
+	},
+	{
+		"memberId": 73,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "",
+			"2026-06-aid": ""
+		}
+	},
+	{
+		"memberId": 80,
+		"status": {
+			"2026-03-regular": "",
+			"2026-03-aid": "present",
+			"2026-06-regular": "present",
+			"2026-06-aid": "present"
+		}
+	}
+];
 //#endregion
 //#region src/App.tsx
 var isSupabaseConfigured = () => {
@@ -34017,10 +35558,12 @@ var ErrorBoundary = class extends import_react.Component {
 	}
 };
 function App() {
-	const [activeTab, setActiveTab] = (0, import_react.useState)("members");
+	const [activeTab, setActiveTab] = (0, import_react.useState)("attendance");
 	const [members, setMembers] = (0, import_react.useState)([]);
 	const [schedules, setSchedules] = (0, import_react.useState)([]);
 	const [accounts, setAccounts] = (0, import_react.useState)([]);
+	const [attendanceSessions, setAttendanceSessions] = (0, import_react.useState)([]);
+	const [attendanceRecords, setAttendanceRecords] = (0, import_react.useState)([]);
 	const [selectedMember, setSelectedMember] = (0, import_react.useState)(null);
 	const [isRulesOpen, setIsRulesOpen] = (0, import_react.useState)(false);
 	const [isUsingDB, setIsUsingDB] = (0, import_react.useState)(false);
@@ -34111,6 +35654,59 @@ function App() {
 			else setAccounts(initialAccounts);
 		}
 	}, []);
+	(0, import_react.useEffect)(() => {
+		if (isSupabaseConfigured()) {
+			const fetchAttendance = async () => {
+				try {
+					const { data: dbSessions, error: sessionError } = await supabase.from("attendance_sessions").select("*").order("date", { ascending: true });
+					const { data: dbRecords, error: recordError } = await supabase.from("attendance_records").select("*");
+					if (!sessionError && !recordError && dbSessions && dbRecords) {
+						const formattedRecordsMap = {};
+						members.forEach((m) => {
+							formattedRecordsMap[m.id] = {};
+						});
+						dbRecords.forEach((r) => {
+							const mId = Number(r.member_id);
+							const sId = r.session_id;
+							const statusVal = r.status || "";
+							if (!formattedRecordsMap[mId]) formattedRecordsMap[mId] = {};
+							formattedRecordsMap[mId][sId] = statusVal;
+						});
+						const formattedRecordsList = Object.keys(formattedRecordsMap).map((key) => ({
+							memberId: Number(key),
+							status: formattedRecordsMap[Number(key)]
+						}));
+						setAttendanceSessions(dbSessions);
+						setAttendanceRecords(formattedRecordsList);
+					} else {
+						console.warn("Supabase fetch attendance failed or empty, fallback to local");
+						loadLocalAttendance();
+					}
+				} catch (e) {
+					console.error("Supabase connect error for attendance:", e);
+					loadLocalAttendance();
+				}
+			};
+			if (members.length > 0) fetchAttendance();
+		} else loadLocalAttendance();
+		function loadLocalAttendance() {
+			const savedSessions = localStorage.getItem("namwoohui_attendance_sessions");
+			const savedRecords = localStorage.getItem("namwoohui_attendance_records");
+			if (savedSessions && savedRecords) try {
+				setAttendanceSessions(JSON.parse(savedSessions));
+				setAttendanceRecords(JSON.parse(savedRecords));
+			} catch (e) {
+				setAttendanceSessions(initialSessions);
+				setAttendanceRecords(initialRecords);
+			}
+			else {
+				setAttendanceSessions(initialSessions);
+				setAttendanceRecords(initialRecords);
+				localStorage.setItem("namwoohui_attendance_sessions", JSON.stringify(initialSessions));
+				localStorage.setItem("namwoohui_attendance_records", JSON.stringify(initialRecords));
+			}
+		}
+	}, [isUsingDB, members.length]);
 	const handleAddMember = (newMemberData) => {
 		if (isUsingDB) supabase.from("members").insert([newMemberData]).select().then(({ data, error }) => {
 			if (!error && data && data.length > 0) setMembers((prev) => [data[0], ...prev]);
@@ -34302,6 +35898,81 @@ function App() {
 			alert(`데모용 ${role} 임명이 로컬에 기록되었습니다.`);
 		}
 	};
+	const handleAddAttendanceSession = (title, date, isMutualAid) => {
+		const newSessionId = `session-${Date.now()}`;
+		const newSession = {
+			id: newSessionId,
+			title,
+			date,
+			is_mutual_aid: isMutualAid
+		};
+		const updatedSessions = [...attendanceSessions, newSession].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+		const updatedRecords = attendanceRecords.map((rec) => ({
+			...rec,
+			status: {
+				...rec.status,
+				[newSessionId]: ""
+			}
+		}));
+		if (isUsingDB) supabase.from("attendance_sessions").insert([newSession]).then(({ error: sessErr }) => {
+			if (sessErr) {
+				console.error("DB session insert failed:", sessErr);
+				alert("출석 항목 DB 저장 실패: " + sessErr.message);
+				return;
+			}
+			const recordInserts = members.map((m) => ({
+				member_id: m.id,
+				session_id: newSessionId,
+				status: ""
+			}));
+			supabase.from("attendance_records").insert(recordInserts).then(({ error: recErr }) => {
+				if (!recErr) {
+					setAttendanceSessions(updatedSessions);
+					setAttendanceRecords(updatedRecords);
+				} else {
+					console.error("DB attendance records insert failed:", recErr);
+					alert("출석 레코드 초기화 DB 저장 실패: " + recErr.message);
+				}
+			});
+		});
+		else {
+			setAttendanceSessions(updatedSessions);
+			setAttendanceRecords(updatedRecords);
+			localStorage.setItem("namwoohui_attendance_sessions", JSON.stringify(updatedSessions));
+			localStorage.setItem("namwoohui_attendance_records", JSON.stringify(updatedRecords));
+		}
+	};
+	const handleUpdateAttendanceRecord = (memberId, sessionId, status) => {
+		const updatedRecords = attendanceRecords.map((rec) => {
+			if (rec.memberId === memberId) return {
+				...rec,
+				status: {
+					...rec.status,
+					[sessionId]: status
+				}
+			};
+			return rec;
+		});
+		if (!attendanceRecords.some((rec) => rec.memberId === memberId)) updatedRecords.push({
+			memberId,
+			status: { [sessionId]: status }
+		});
+		if (isUsingDB) supabase.from("attendance_records").upsert({
+			member_id: memberId,
+			session_id: sessionId,
+			status
+		}, { onConflict: "member_id,session_id" }).then(({ error }) => {
+			if (!error) setAttendanceRecords(updatedRecords);
+			else {
+				console.error("DB attendance upsert failed:", error);
+				alert("출석 기록 DB 저장 실패: " + error.message);
+			}
+		});
+		else {
+			setAttendanceRecords(updatedRecords);
+			localStorage.setItem("namwoohui_attendance_records", JSON.stringify(updatedRecords));
+		}
+	};
 	const renderTabContent = () => {
 		switch (activeTab) {
 			case "members": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MembersTab, {
@@ -34311,6 +35982,13 @@ function App() {
 				onOpenRules: () => setIsRulesOpen(true)
 			});
 			case "schedule": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ScheduleTab, { schedules });
+			case "attendance": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AttendanceTab, {
+				members,
+				sessions: attendanceSessions,
+				records: attendanceRecords,
+				onAddSession: handleAddAttendanceSession,
+				onUpdateRecord: handleUpdateAttendanceRecord
+			});
 			case "admin": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminTab, {
 				members,
 				onAddMember: handleAddMember,
