@@ -73,7 +73,7 @@ body {
   flex-direction: column;
   position: relative;
   box-shadow: 0 0 32px rgba(0, 0, 0, 0.03);
-  padding-bottom: 84px; /* 하단 네비게이션 공간 확보 */
+  padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); /* 하단 네비게이션 및 세이프에어리어 공간 확보 */
 }
 
 /* ==========================================================================
@@ -1042,12 +1042,14 @@ body {
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  height: 64px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-top: 1px solid var(--border-color);
   z-index: 1000;
+  box-sizing: border-box;
 }
 
 .bottom-nav-container {
