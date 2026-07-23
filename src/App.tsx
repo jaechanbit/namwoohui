@@ -82,6 +82,7 @@ function App() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isRulesOpen, setIsRulesOpen] = useState<boolean>(false);
   const [isUsingDB, setIsUsingDB] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   // 1. 회원 목록 로드
   useEffect(() => {
@@ -682,6 +683,8 @@ function App() {
             records={attendanceRecords}
             onAddSession={handleAddAttendanceSession}
             onUpdateRecord={handleUpdateAttendanceRecord}
+            isAdmin={isAdmin}
+            setIsAdmin={setIsAdmin}
           />
         );
       case 'admin':
@@ -698,6 +701,8 @@ function App() {
             accounts={accounts}
             onUpdateAccounts={handleUpdateAccounts}
             onAssignExecutive={handleAssignExecutive}
+            isAdmin={isAdmin}
+            setIsAdmin={setIsAdmin}
           />
         );
       default:

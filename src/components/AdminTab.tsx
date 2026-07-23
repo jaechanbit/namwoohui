@@ -14,10 +14,12 @@ interface AdminTabProps {
   onUpdateSchedule: (schedule: MeetingSchedule) => void;
   onDeleteSchedule: (id: number) => void;
 
-  // 통장 및 집행부 연동 Props 추가
   accounts: BankAccount[];
   onUpdateAccounts: (updatedAccounts: BankAccount[]) => void;
   onAssignExecutive: (role: '회장' | '총무' | '재무', targetMemberId: number) => void;
+
+  isAdmin: boolean;
+  setIsAdmin: (val: boolean) => void;
 }
 
 const AdminTab: React.FC<AdminTabProps> = ({
@@ -31,9 +33,10 @@ const AdminTab: React.FC<AdminTabProps> = ({
   onDeleteSchedule,
   accounts,
   onUpdateAccounts,
-  onAssignExecutive
+  onAssignExecutive,
+  isAdmin,
+  setIsAdmin
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -104,7 +107,7 @@ const AdminTab: React.FC<AdminTabProps> = ({
     e.preventDefault();
     const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || '1234';
     if (password === adminPassword) {
-      setIsAuthenticated(true);
+      setIsAdmin(true);
       setErrorMsg('');
     } else {
       setErrorMsg('비밀번호가 올바르지 않습니다.');
@@ -230,7 +233,7 @@ const AdminTab: React.FC<AdminTabProps> = ({
     }
   };
 
-  if (!isAuthenticated) {
+  if (!isAdmin) {
     return (
       <div className="admin-auth-container glass animate-fade-in" style={{ borderRadius: 'var(--radius-md)' }}>
         <img src="/namwoohui/logo.png" alt="남우회 로고" style={{ width: '80px', height: '80px', objectFit: 'contain', marginBottom: '8px' }} />

@@ -8,6 +8,8 @@ interface AttendanceTabProps {
   records: AttendanceRecord[];
   onAddSession: (title: string, date: string, isMutualAid: boolean) => void;
   onUpdateRecord: (memberId: number, sessionId: string, status: string) => void;
+  isAdmin: boolean;
+  setIsAdmin: (val: boolean) => void;
 }
 
 interface StatusSpec {
@@ -31,12 +33,19 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
   sessions,
   records,
   onAddSession,
-  onUpdateRecord
+  onUpdateRecord,
+  isAdmin,
+  setIsAdmin
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'regular' | 'mutual_aid'>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   
+  // 관리자 인증 모달 상태
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authPassword, setAuthPassword] = useState('');
+  const [authError, setAuthError] = useState('');
+
   const [newTitle, setNewTitle] = useState('');
   const [newDate, setNewDate] = useState(new Date().toISOString().split('T')[0]);
   const [newIsMutual, setNewIsMutual] = useState(false);
@@ -99,6 +108,13 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
   // 4. Click handler: cycling through states
   // order: '' -> 'present' -> 'mutual_aid' -> 'absent' -> 'pending' -> ''
   const handleCellClick = (memberId: number, sessionId: string) => {
+    if (!isAdmin) {
+      setAuthPassword('');
+      setAuthError('');
+      setShowAuthModal(true);
+      return;
+    }
+
     const currentStatus = (recordsMap.get(memberId) || {})[sessionId] || '';
     let nextStatus = '';
     
@@ -165,40 +181,108 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
       {/* 2. Controls & Search */}
       <div className="attendance-controls" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <input
-            type="text"
-            placeholder="이름으로 검색.."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              flex: 1,
-              padding: '10px 14px',
-              borderRadius: '8px',
-              border: '1px solid var(--border-color)',
-              fontSize: '13px',
-              outline: 'none',
-              backgroundColor: '#fff'
-            }}
-          />
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="btn-interactive"
-            style={{
-              padding: '0 16px',
-              backgroundColor: 'var(--primary)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '13px',
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            항목 추가
-          </button>
+          <div style={{ position: 'relative', flex: 1, display: 'flex', alignItems: 'center' }}>
+            <input
+              type="text"
+              placeholder="이름으로 검색.."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px 36px 10px 14px',
+                borderRadius: '8px',
+                border: '1px solid var(--border-color)',
+                fontSize: '13px',
+                outline: 'none',
+                backgroundColor: '#fff'
+              }}
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                style={{
+                  position: 'absolute',
+                  right: '8px',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" style={{ width: '14px', height: '14px' }}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+          
+          {!isAdmin ? (
+            <button
+              onClick={() => {
+                setAuthPassword('');
+                setAuthError('');
+                setShowAuthModal(true);
+              }}
+              className="btn-interactive"
+              style={{
+                padding: '0 16px',
+                backgroundColor: 'rgba(0,0,0,0.05)',
+                color: 'var(--text-muted)',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '12px',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              🔒 로그인
+            </button>
+          ) : (
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="btn-interactive"
+                style={{
+                  padding: '0 12px',
+                  backgroundColor: 'var(--primary)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                항목 추가
+              </button>
+              <button
+                onClick={() => setIsAdmin(false)}
+                className="btn-interactive"
+                style={{
+                  padding: '0 10px',
+                  backgroundColor: 'rgba(239,68,68,0.1)',
+                  color: '#ef4444',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  cursor: 'pointer'
+                }}
+              >
+                로그아웃
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Filter buttons */}
@@ -464,6 +548,117 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {/* Admin Passcode Modal */}
+      {showAuthModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 999,
+            padding: '20px'
+          }}
+        >
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || '1234';
+              if (authPassword === adminPassword) {
+                setIsAdmin(true);
+                setShowAuthModal(false);
+                setAuthError('');
+              } else {
+                setAuthError('비밀번호가 올바르지 않습니다.');
+              }
+            }}
+            className="info-card glass animate-fade-in" 
+            style={{ 
+              width: '100%', 
+              maxWidth: '320px', 
+              padding: '20px', 
+              borderRadius: '16px',
+              backgroundColor: '#fff',
+              boxShadow: 'var(--shadow-lg)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px'
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+              <div style={{ fontSize: '24px', marginBottom: '8px' }}>🔒</div>
+              <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>출석 관리 권한 인증</h3>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '4px 0 0' }}>출석 수정을 위해 비밀번호를 입력해주세요.</p>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <input
+                type="password"
+                placeholder="비밀번호 입력.."
+                value={authPassword}
+                onChange={(e) => setAuthPassword(e.target.value)}
+                autoFocus
+                style={{
+                  padding: '10px 12px',
+                  borderRadius: '8px',
+                  border: authError ? '1px solid #ef4444' : '1px solid var(--border-color)',
+                  fontSize: '13px',
+                  textAlign: 'center',
+                  outline: 'none',
+                  width: '100%'
+                }}
+              />
+              {authError && (
+                <div style={{ fontSize: '11px', color: '#ef4444', textAlign: 'center', marginTop: '2px' }}>
+                  {authError}
+                </div>
+              )}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+              <button
+                type="button"
+                onClick={() => setShowAuthModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  backgroundColor: 'rgba(0,0,0,0.05)',
+                  color: 'var(--text-main)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  backgroundColor: 'var(--primary)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 800,
+                  cursor: 'pointer'
+                }}
+              >
+                인증
+              </button>
+            </div>
+          </form>
         </div>
       )}
 
