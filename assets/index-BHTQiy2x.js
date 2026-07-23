@@ -14334,10 +14334,10 @@ const AttendanceTab = ({
     if (currentStatus === "") {
       nextStatus = "present";
     } else if (currentStatus === "present") {
-      nextStatus = "mutual_aid";
-    } else if (currentStatus === "mutual_aid") {
       nextStatus = "absent";
     } else if (currentStatus === "absent") {
+      nextStatus = "mutual_aid";
+    } else if (currentStatus === "mutual_aid") {
       nextStatus = "pending";
     } else {
       nextStatus = "";
@@ -36820,7 +36820,7 @@ function App() {
       ...rec,
       status: {
         ...rec.status,
-        [newSessionId]: ""
+        [newSessionId]: "present"
       }
     }));
     if (isUsingDB) {
@@ -36833,7 +36833,7 @@ function App() {
         const recordInserts = members.map((m) => ({
           member_id: m.id,
           session_id: newSessionId,
-          status: ""
+          status: "present"
         }));
         supabase.from("attendance_records").insert(recordInserts).then(({ error: recErr }) => {
           if (!recErr) {
