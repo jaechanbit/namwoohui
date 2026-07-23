@@ -62,7 +62,7 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
   const filteredMembers = useMemo(() => {
     return members
       .filter(m => m.name.toLowerCase().includes(searchTerm.toLowerCase()))
-      .sort((a, b) => a.id - b.id);
+      .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
   }, [members, searchTerm]);
 
   // 3. Stats
