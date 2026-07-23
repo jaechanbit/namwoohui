@@ -37083,15 +37083,17 @@ function App() {
         "h1",
         {
           className: "app-title btn-interactive",
-          style: { display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" },
+          style: { display: "flex", flexDirection: "column", alignItems: "flex-start", cursor: "pointer" },
           onClick: () => {
             setActiveTab("members");
             setSelectedMember(null);
           },
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: "/namwoohui/logo.png", alt: "남우회 로고", style: { height: "32px", width: "auto", objectFit: "contain", borderRadius: "4px" } }),
-            "남우회 ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "NAMWOOHUI" })
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { style: { display: "flex", alignItems: "center", gap: "8px" }, children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: "/namwoohui/logo.png", alt: "남우회 로고", style: { height: "32px", width: "auto", objectFit: "contain", borderRadius: "4px" } }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { fontSize: "18px", fontWeight: 900 }, children: "남우회 웹수첩" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { fontSize: "10px", fontWeight: 500, color: "var(--text-muted)", marginTop: "4px", paddingLeft: "40px" }, children: "함께한 인연, 오래도록" })
           ]
         }
       ),
