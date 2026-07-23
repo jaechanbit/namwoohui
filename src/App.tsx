@@ -788,22 +788,22 @@ function App() {
       <div className="app-container">
       {/* Header */}
       <header className="app-header glass">
-        <h1 
-          className="app-title btn-interactive" 
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', cursor: 'pointer' }}
+        <div 
+          className="btn-interactive"
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', cursor: 'pointer', gap: '2px' }}
           onClick={() => {
             setActiveTab('members');
             setSelectedMember(null);
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h1 className="app-title" style={{ margin: 0, fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img src="/namwoohui/logo.png" alt="남우회 로고" style={{ height: '32px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }} />
-            <span style={{ fontSize: '18px', fontWeight: 900 }}>남우회 웹수첩</span>
-          </div>
-          <span style={{ fontSize: '10px', fontWeight: 500, color: 'var(--text-muted)', marginTop: '4px', paddingLeft: '40px' }}>
+            남우회 웹수첩
+          </h1>
+          <span style={{ fontSize: '10px', fontWeight: 500, color: 'var(--text-muted)', paddingLeft: '40px', lineHeight: 1.1 }}>
             함께한 인연, 오래도록
           </span>
-        </h1>
+        </div>
         {isUsingDB && <span className="db-sync-badge">실시간 DB 동기화</span>}
       </header>
 
