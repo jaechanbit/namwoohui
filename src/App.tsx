@@ -73,7 +73,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<string>('attendance');
+  const [activeTab, setActiveTab] = useState<string>('members');
   const [members, setMembers] = useState<Member[]>([]);
   const [schedules, setSchedules] = useState<MeetingSchedule[]>([]);
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
@@ -698,6 +698,33 @@ function App() {
     }
   };
 
+  const handleUpdateAttendanceSession = (sessionId: string, newTitle: string, newDate: string, isMutualAid: boolean) => {
+    const updatedSessions = attendanceSessions.map(s => {
+      if (s.id === sessionId) {
+        return { ...s, title: newTitle, date: newDate, is_mutual_aid: isMutualAid };
+      }
+      return s;
+    }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    if (isUsingDB) {
+      supabase
+        .from('attendance_sessions')
+        .update({ title: newTitle, date: newDate, is_mutual_aid: isMutualAid })
+        .eq('id', sessionId)
+        .then(({ error }) => {
+          if (!error) {
+            setAttendanceSessions(updatedSessions);
+          } else {
+            console.error('DB session update failed:', error);
+            alert('출석 항목 DB 수정 실패: ' + error.message);
+          }
+        });
+    } else {
+      setAttendanceSessions(updatedSessions);
+      localStorage.setItem('namwoohui_attendance_sessions', JSON.stringify(updatedSessions));
+    }
+  };
+
   // 현재 활성화된 탭 컨텐츠 렌더링
   const renderTabContent = () => {
     switch (activeTab) {
@@ -721,6 +748,7 @@ function App() {
             onAddSession={handleAddAttendanceSession}
             onUpdateRecord={handleUpdateAttendanceRecord}
             onDeleteSession={handleDeleteAttendanceSession}
+            onUpdateSession={handleUpdateAttendanceSession}
             isAdmin={isAdmin}
             setIsAdmin={setIsAdmin}
           />

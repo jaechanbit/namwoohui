@@ -9,6 +9,7 @@ interface AttendanceTabProps {
   onAddSession: (title: string, date: string, isMutualAid: boolean) => void;
   onUpdateRecord: (memberId: number, sessionId: string, status: string) => void;
   onDeleteSession: (sessionId: string) => void;
+  onUpdateSession: (sessionId: string, title: string, date: string, isMutualAid: boolean) => void;
   isAdmin: boolean;
   setIsAdmin: (val: boolean) => void;
 }
@@ -36,12 +37,19 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
   onAddSession,
   onUpdateRecord,
   onDeleteSession,
+  onUpdateSession,
   isAdmin,
   setIsAdmin
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'regular' | 'mutual_aid'>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // 출석 항목 수정 관련 상태
+  const [editSession, setEditSession] = useState<AttendanceSession | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDate, setEditDate] = useState('');
+  const [editIsMutual, setEditIsMutual] = useState(false);
   
   // 관리자 인증 모달 상태
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -144,6 +152,24 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
     onAddSession(newTitle, newDate, newIsMutual);
     setNewTitle('');
     setIsModalOpen(false);
+  };
+
+  const handleEditSessionClick = (session: AttendanceSession) => {
+    setEditSession(session);
+    setEditTitle(session.title);
+    setEditDate(session.date);
+    setEditIsMutual(session.is_mutual_aid);
+  };
+
+  const handleEditSessionSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editSession) return;
+    if (!editTitle.trim()) {
+      alert('항목 제목을 입력해주세요.');
+      return;
+    }
+    onUpdateSession(editSession.id, editTitle, editDate, editIsMutual);
+    setEditSession(null);
   };
 
   const getCellStyles = (status: string) => {
@@ -356,29 +382,54 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
                     }}
                   >
                     {isAdmin && (
-                      <button
-                        onClick={() => onDeleteSession(session.id)}
-                        title="항목 삭제"
-                        style={{
-                          position: 'absolute',
-                          top: '2px',
-                          right: '2px',
-                          background: 'rgba(239, 68, 68, 0.1)',
-                          border: 'none',
-                          color: '#ef4444',
-                          borderRadius: '50%',
-                          width: '12px',
-                          height: '12px',
-                          fontSize: '8px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: 0
-                        }}
-                      >
-                        ✕
-                      </button>
+                      <div style={{
+                        position: 'absolute',
+                        top: '2px',
+                        right: '2px',
+                        display: 'flex',
+                        gap: '4px'
+                      }}>
+                        <button
+                          onClick={() => handleEditSessionClick(session)}
+                          title="항목 수정"
+                          style={{
+                            background: 'rgba(59, 130, 246, 0.1)',
+                            border: 'none',
+                            color: '#3b82f6',
+                            borderRadius: '50%',
+                            width: '12px',
+                            height: '12px',
+                            fontSize: '8px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0
+                          }}
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          onClick={() => onDeleteSession(session.id)}
+                          title="항목 삭제"
+                          style={{
+                            background: 'rgba(239, 68, 68, 0.1)',
+                            border: 'none',
+                            color: '#ef4444',
+                            borderRadius: '50%',
+                            width: '12px',
+                            height: '12px',
+                            fontSize: '8px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
                     )}
                     <div style={{ marginTop: isAdmin ? '4px' : '0' }}>{session.title}</div>
                     <div style={{ fontSize: '9px', opacity: 0.6, fontWeight: 500 }}>{session.date.substring(5)}</div>
@@ -572,6 +623,136 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
                   }}
                 >
                   추가하기
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 5. Edit Session Modal */}
+      {editSession && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 999,
+            padding: '20px'
+          }}
+        >
+          <div 
+            className="info-card glass" 
+            style={{ 
+              width: '100%', 
+              maxWidth: '340px', 
+              padding: '24px', 
+              borderRadius: '16px',
+              backgroundColor: 'white',
+              boxShadow: 'var(--shadow-lg)'
+            }}
+          >
+            <h3 style={{ fontSize: '16px', fontWeight: 900, marginBottom: '16px', color: 'var(--primary)' }}>
+              출석 항목 수정
+            </h3>
+            <form onSubmit={handleEditSessionSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>구분</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="edit_session_type" 
+                      checked={!editIsMutual} 
+                      onChange={() => setEditIsMutual(false)} 
+                      style={{ accentColor: 'var(--primary)' }}
+                    />
+                    정기모임
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="edit_session_type" 
+                      checked={editIsMutual} 
+                      onChange={() => setEditIsMutual(true)} 
+                      style={{ accentColor: 'var(--primary)' }}
+                    />
+                    상조
+                  </label>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>항목 제목</label>
+                <input 
+                  type="text" 
+                  value={editTitle} 
+                  onChange={(e) => setEditTitle(e.target.value)} 
+                  placeholder="예: 9월 정기모임, 상조(김동부)" 
+                  style={{
+                    padding: '10px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    fontSize: '13px',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>일자</label>
+                <input 
+                  type="date" 
+                  value={editDate} 
+                  onChange={(e) => setEditDate(e.target.value)} 
+                  style={{
+                    padding: '10px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    fontSize: '13px',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => setEditSession(null)}
+                  style={{
+                    flex: 1,
+                    padding: '10px',
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: '#fff',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  취소
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    flex: 1,
+                    padding: '10px',
+                    backgroundColor: 'var(--primary)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  수정완료
                 </button>
               </div>
             </form>
