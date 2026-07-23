@@ -12908,14 +12908,92 @@ const MembersTab = ({
     ] }) })
   ] });
 };
-const MemberDetail = ({ member, onClose }) => {
+const MemberDetail = ({ member, onClose, onUpdateMember }) => {
+  const fileInputRef = reactExports.useRef(null);
   if (!member) return null;
+  const handleAvatarClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  const handleFileChange = (e) => {
+    var _a;
+    const file = (_a = e.target.files) == null ? void 0 : _a[0];
+    if (!file || !member) return;
+    const phoneDigits = member.phone.replace(/[^0-9]/g, "");
+    if (phoneDigits.length < 4) {
+      alert("전화번호 형식이 올바르지 않아 본인 확인을 진행할 수 없습니다.");
+      return;
+    }
+    const lastFourDigits = phoneDigits.slice(-4);
+    const userInput = window.prompt("본인 확인을 위해 회원의 휴대전화 번호 뒤 4자리를 입력해주세요:");
+    if (userInput === null) return;
+    if (userInput !== lastFourDigits) {
+      alert("비밀번호가 일치하지 않습니다. 이미지 업로드가 취소되었습니다.");
+      e.target.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      var _a2;
+      const base64Data = (_a2 = event.target) == null ? void 0 : _a2.result;
+      onUpdateMember({
+        ...member,
+        photo: base64Data
+      });
+      alert("프로필 이미지가 성공적으로 변경되었습니다.");
+    };
+    reader.onerror = () => {
+      alert("이미지 파일을 읽는 데 실패했습니다.");
+    };
+    reader.readAsDataURL(file);
+  };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "drawer-backdrop animate-fade-in", onClick: onClose }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "drawer-content", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "drawer-handle" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "drawer-header", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "member-avatar drawer-avatar", style: { padding: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }, children: member.photo ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: member.photo, alt: member.name, style: { width: "100%", height: "100%", objectFit: "cover" } }) : member.name.charAt(0) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: "member-avatar drawer-avatar btn-interactive",
+            onClick: handleAvatarClick,
+            style: {
+              padding: 0,
+              overflow: "hidden",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              position: "relative"
+            },
+            title: "프로필 이미지 변경하려면 클릭",
+            children: [
+              member.photo ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: member.photo, alt: member.name, style: { width: "100%", height: "100%", objectFit: "cover" } }) : member.name.charAt(0),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { style: {
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                width: "100%",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                color: "white",
+                fontSize: "8px",
+                padding: "2px 0",
+                textAlign: "center"
+              }, children: "편집 ✏️" })
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "input",
+          {
+            type: "file",
+            ref: fileInputRef,
+            onChange: handleFileChange,
+            style: { display: "none" },
+            accept: "image/*"
+          }
+        ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("button", { className: "drawer-close btn-interactive", onClick: onClose, "aria-label": "닫기", children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 2.5, stroke: "currentColor", style: { width: "16px", height: "16px" }, children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M6 18L18 6M6 6l12 12" }) }) })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "drawer-body", children: [
@@ -37024,7 +37102,8 @@ function App() {
       MemberDetail,
       {
         member: selectedMember,
-        onClose: () => setSelectedMember(null)
+        onClose: () => setSelectedMember(null),
+        onUpdateMember: handleUpdateMember
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
